@@ -19,13 +19,13 @@ export default function Hero({ data }: { data: TmdbMovie }) {
     } else setImageindex(imageindex - 1);
   };
 
-  // useEffect(() => {
-  // const intervalId = setInterval(() => {
-  //   shownext();
-  // }, 8000);
+  useEffect(() => {
+  const intervalId = setInterval(() => {
+    shownext();
+  }, 8000);
 
-  // return () => clearInterval(intervalId);
-  // }, [imageindex])
+  return () => clearInterval(intervalId);
+  }, [imageindex])
 
   return (
     <div className=" w-full overflow-hidden">
