@@ -14,8 +14,8 @@ export function SaveLocalAnimeEpisode({
 }: {
   item: {
     title: string;
-    episodeId: string;
-    number: number;
+    episodeId: string|number
+    number: number|string
     isFiller: boolean;
 }
   text?: boolean;

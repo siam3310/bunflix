@@ -80,7 +80,7 @@ type aniwatchInfo = {
       stats: {
         rating: string;
         quality: string;
-        episodes: { sub: string; dub: string };
+        episodes: { sub: string|number; dub: string|number };
         type: string;
         duration: string;
       };
@@ -145,8 +145,8 @@ type aniwatchEpisodeData = {
   totalEpisodes: number;
   episodes: {
     title: string;
-    episodeId: string;
-    number: number;
+    episodeId: string|number
+    number: number|string
     isFiller: boolean;
   }[];
 };

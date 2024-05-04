@@ -9,7 +9,7 @@ export async function AniwatchInfo({ id }: { id: string }) {
 
   return (
     <div className="p-4 bg-black/60">
-        <img
+      <img
         className="-z-10 fixed top-0 size-full object-cover blur-2xl "
         src={data.anime.info.poster}
         alt={data.anime.info.name}
@@ -49,19 +49,19 @@ export async function AniwatchInfo({ id }: { id: string }) {
               <span className=" hidden xl:block">|</span>
             </p>
             <p className=" flex gap-2">
-              Dub : {data.anime.info.stats.episodes.dub}
+              Dub : {data.anime.info.stats.episodes.dub || "Not Available"}
               <span className=" hidden xl:block">|</span>
             </p>
           </div>
           <div className=" flex gap-2 items-center">
-          <Link
-            href={"#season"}
-            className="py-1 px-2 rounded-full border transition-all hover:bg-white/20 w-fit flex gap-2 items-center justify-between"
-          >
-            <BadgePlus size={15} />
-            Additional Seasons
-          </Link>
-          <SaveLocalAnime px="px-3 py-1" text rounded item={data} />
+            <Link
+              href={"#season"}
+              className="py-1 px-3 rounded-full border transition-all hover:bg-white/20 w-fit flex gap-2 items-center justify-between"
+            >
+              <BadgePlus size={15} />
+              Additional Seasons
+            </Link>
+            <SaveLocalAnime px="px-3 py-1" text rounded item={data} />
           </div>
         </div>
       </div>
@@ -87,16 +87,27 @@ export async function AniwatchInfo({ id }: { id: string }) {
                         href={`/animeWatch/en/${e.episodeId}&episode=${e.number}`}
                         className="w-full"
                       >
-                        <button className="w-full py-1 transition-all hover:font-semibold rounded-lg text-lg hover:bg-red-600">
+                        <button
+                          disabled={
+                            data.anime.info.stats.episodes.dub >= e.number ? false : true
+                          }
+                          className="w-full disabled:opacity-20 disabled:bg-black disabled:hover:font-normal py-1 transition-all hover:font-semibold rounded-lg text-lg hover:bg-red-600"
+                        >
                           English
                         </button>
                       </Link>
                       <Link
                         href={`/animeWatch/en/${e.episodeId}&episode=${e.number}`}
-                        className=" p-3 hover:bg-red-600 rounded-lg "
                         target="_blank"
                       >
+                        <button
+                        className=" p-3 hover:bg-red-600 rounded-lg disabled:opacity-20 disabled:bg-black disabled:hover:font-normal"
+                        disabled={
+                          data.anime.info.stats.episodes.dub >= e.number ? false : true
+                        }
+                        >
                         <SquareArrowOutUpRight size={15} />
+                        </button>
                       </Link>
                     </div>
                     <div className="w-full flex gap-2">
@@ -104,16 +115,26 @@ export async function AniwatchInfo({ id }: { id: string }) {
                         href={`/animeWatch/jp/${e.episodeId}&episode=${e.number}`}
                         className="w-full"
                       >
-                        <button className=" w-full py-1 transition-all hover:font-semibold rounded-lg text-lg hover:bg-red-600">
+                        <button
+                        disabled={
+                          data.anime.info.stats.episodes.sub >= e.number ? false : true
+                        }
+                        className=" w-full disabled:opacity-20 disabled:bg-black disabled:hover:font-normal py-1 transition-all hover:font-semibold rounded-lg text-lg hover:bg-red-600">
                           Japanesse
                         </button>
                       </Link>
                       <Link
                         href={`/animeWatch/jp/${e.episodeId}&episode=${e.number}`}
-                        className=" p-3 hover:bg-red-600 rounded-lg "
                         target="_blank"
                       >
-                        <SquareArrowOutUpRight size={15} />
+                        <button 
+                         disabled={
+                          data.anime.info.stats.episodes.sub >= e.number ? false : true
+                        }
+                        className=" p-3 hover:bg-red-600 rounded-lg disabled:opacity-20 disabled:bg-black disabled:hover:font-normal"
+                        >
+                          <SquareArrowOutUpRight size={15} />
+                        </button>
                       </Link>
                     </div>
                   </div>
@@ -130,8 +151,8 @@ export async function AniwatchInfo({ id }: { id: string }) {
                 key={e.id}
                 className=" p-4 rounded-lg bg-black/30 flex flex-col items-center justify-between"
               >
-                 <div>
-                 <img
+                <div>
+                  <img
                     className=" h-[250px] rounded-l w-full object-cover "
                     src={e.poster}
                     alt={e.title}
@@ -140,11 +161,11 @@ export async function AniwatchInfo({ id }: { id: string }) {
                     {e.title}
                   </p>
                   <p className=" opacity-65">{e.name}</p>
-                 </div>
+                </div>
                 <Link className=" w-full" href={`/anime/${e.id}`}>
-                <button className=" rounded-lg py-1 bg-white/90 flex items-center justify-center gap-2 transition-all  text-black font-semibold w-full mt-8">
-                      More Info <SquareArrowOutUpRight size={15} />
-                    </button>
+                  <button className=" rounded-lg py-1 bg-white/90 flex items-center justify-center gap-2 transition-all  text-black font-semibold w-full mt-8">
+                    More Info <SquareArrowOutUpRight size={15} />
+                  </button>
                 </Link>
               </div>
             ))}
