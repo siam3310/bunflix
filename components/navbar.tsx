@@ -3,10 +3,14 @@
 import { Home, List, Search, Star } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {  motion } from "framer-motion";
+import {  motion, useScroll } from "framer-motion";
 import SearchInput from "./search-input";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname()
+  const isHome = pathname==='/'
+  
   const categories = [
     {
       id: 1,
@@ -57,19 +61,28 @@ export default function Navbar() {
   const [navIndex, setNavIndex] = useState(2);
   const [openSearch, setOpenSearch] = useState(false);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Hook to get the scroll position
+  const { scrollY } = useScroll();
+ 
+  // Effect to update isScrolled state based on scroll position
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.key === "y") {
-        setOpenSearch(prevOpenSearch => !prevOpenSearch);
-      }
+    const checkScroll = () => {
+       setIsScrolled(scrollY.get() > 100);
     };
-
-    document.addEventListener("keydown", handleKeyDown);
-
+   
+    // Listen for changes to scrollY
+    const unsubscribe = scrollY.onChange(checkScroll);
+   
+    // Initial check
+    checkScroll();
+   
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+       // Clean up the subscription
+       unsubscribe();
     };
- }, []); 
+   }, [scrollY]); 
 
 
   return (
@@ -82,11 +95,20 @@ export default function Navbar() {
         <SearchInput onClick={()=>setOpenSearch(!openSearch)}/>
       </div>
     </motion.div>
-      <nav className="outline-none focus:outline-none z-50 fixed bottom-4 py-3 px-4 left-1/2 transform -translate-x-1/2 rounded-full bg-white/30 border border-white/40 backdrop-blur-sm">
-        <div className="flex gap-3 items-center w-fit relative justify-evenly ">
+
+
+      <nav
+
+      className="outline-none focus:outline-none z-20 fixed bottom-4 left-1/2 transform -translate-x-1/2 ">
+
+        <motion.div
+        style={{y:isHome?'300px':'0px'}}
+        animate={isHome ? (isScrolled ? { y: "0px" } : { y: "100px" }):{ y: "0px" }}
+        transition={{ duration: 0.5 }}
+        className="flex gap-3 items-center w-fit relative justify-evenly py-3 px-4  rounded-full bg-white/30 border border-white/40 backdrop-blur-sm">
           <div
             style={{ translate: `${52 * navIndex}px` }}
-            className=" bg-red-500/80 size-10  left-0 rounded-full absolute transition-all duration-700 ease-in-out"
+            className=" bg-red-500/80 size-10  left-4 rounded-full absolute transition-all duration-700 ease-in-out"
           />
 
           <Link
@@ -187,7 +209,7 @@ export default function Navbar() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </nav>
     </>
   );

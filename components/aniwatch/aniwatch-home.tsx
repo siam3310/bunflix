@@ -8,7 +8,7 @@ export async function AniwatchHome() {
   return (
     <>
       <h1 className=" p-4 font-bold text-3xl">Spotlight Anime</h1>
-      <div className=" grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5">
+      <div className=" grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
         {data.spotlightAnimes.map((e) => (
           <div
             key={e.id}
@@ -22,7 +22,7 @@ export async function AniwatchHome() {
             <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100 p-3  xl:pl-3 group">
               <div>
                 <p
-                  className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[24px] text-xl xl:text-2xl`}
+                  className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[24px] text-xl xl:text-xl`}
                 >
                   {e.name}
                 </p>
@@ -49,7 +49,7 @@ export async function AniwatchHome() {
       </div>
 
       <h1 className=" p-4 font-bold text-3xl">Treanding Anime</h1>
-      <div className="  grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5">
+      <div className="  grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
         {data.trendingAnimes.map((e) => (
           <div
             key={e.id}
@@ -82,7 +82,7 @@ export async function AniwatchHome() {
       </div>
 
       <h1 className=" p-4 font-bold text-3xl">Top Upcoming Anime</h1>
-      <div className=" grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 xl2:grid-cols-5 mb-24">
+      <div className=" grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 mb-24">
         {data.topUpcomingAnimes.map((e) => (
           <div
             key={e.id}

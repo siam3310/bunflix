@@ -12,7 +12,7 @@ export default async function TmdbSearch({page,type,search}:{type:string,page:nu
     return(
       <div className=" m-2 pb-24">
       <h1 className=" ml-2 mb-2 text-3xl xl:text-5xl font-semibold">Search</h1>
-        <div className=" grid grid-cols-2 lg:grid-cols-3  xl:grid-cols-5 gap-y-4 ">
+        <div className=" grid grid-cols-2 lg:grid-cols-3  xl:grid-cols-5 2xl:grid-cols-6 gap-y-4 ">
           {data.results.map((e)=>(
             <MovieItem key={e.id} grid type={e.media_type} movie={e}/>
           ))}

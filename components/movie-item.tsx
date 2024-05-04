@@ -27,8 +27,8 @@ export default function MovieItem({
 
   return (
     <div
-      className={`relative inline-block text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 h-[400px] ${
-        grid ? "" : "w-[250px]"
+      className={`relative inline-block text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 h-[300px] ${
+        grid ? "" : "w-[200px]"
       }`}
     >
       <img
@@ -40,10 +40,10 @@ export default function MovieItem({
         }
         alt={title}
       />
-      <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100  p-3 group">
+      <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full focus:hover:bg-red-700 transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100  p-3 group">
         <div>
           <p
-            className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[30px] text-2xl xl:text-[32px] `}
+            className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[26px] text-xl xl:text-[24px] `}
           >
             {title ? title : name}
           </p>
@@ -57,28 +57,26 @@ export default function MovieItem({
             </p>
           </div>
           <p
-            className=" whitespace-normal line-clamp-4  duration-500 group-hover:opacity-70 
+            className=" whitespace-normal line-clamp-2  duration-500 group-hover:opacity-70 
           text-[15px] pt-1 opacity-10"
           >
             {overview ? overview : synopsis}
           </p>
         </div>
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex gap-2 w-full">
           <Link
             href={`/video/${
               type || media_type
             }/${id}/${type==='tv'||media_type==='tv'?'?season=1&episode=1&provider=vidsrc':'?provider=vidsrc'}`}
           >
-            <div className=" rounded-lg w-full px-2 py-1 transition-all text-xl flex items-center justify-start gap-2 hover:bg-gray-400/30">
+            <div className=" rounded-full w-full p-4 transition-all text-xl flex items-center justify-start gap-2 hover:bg-red-700 ">
               <Play  size={20}/>
-              <span>Play</span>
             </div>
           </Link>
           <Link target='_blank' href={`/info/${type || media_type}/${id}`}>
-            <div className=" rounded-lg w-full px-2 py-1 transition-all text-xl flex items-center justify-start gap-4 hover:bg-gray-400/30">
+            <div className=" rounded-full w-full p-4 transition-all text-xl flex items-center justify-start gap-4 hover:bg-gray-400/30">
               <SquareArrowOutUpRight
                  size={20}/>
-              Info
             </div>
           </Link>
         </div>
