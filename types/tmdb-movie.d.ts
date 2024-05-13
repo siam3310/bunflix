@@ -17,6 +17,8 @@ type MovieResults = {
   imdb_id: number;
   name: string;
   image: string;
+  known_for?:any[];
+  profile_path?:string;
   media_type: "movie" | "tv";
   seasons: {
     air_date: string;

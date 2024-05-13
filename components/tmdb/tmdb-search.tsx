@@ -9,6 +9,8 @@ export default async function TmdbSearch({page,type,search}:{type:string,page:nu
   
   let currentPage = page 
 
+  // console.log(data);
+  
     return(
       <div className=" m-2 pb-24">
       <h1 className=" ml-2 mb-2 text-3xl xl:text-5xl font-semibold">Search</h1>

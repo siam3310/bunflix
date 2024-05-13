@@ -23,6 +23,8 @@ export default function MovieItem({
     release_date,
     name,
     media_type,
+    profile_path,
+    known_for
   } = movie;
 
   return (
@@ -36,7 +38,7 @@ export default function MovieItem({
         src={
           image
             ? image
-            : createImageUrl(poster_path ? poster_path : backdrop_path, "w500")
+            : createImageUrl(profile_path || poster_path || backdrop_path, "w500")
         }
         alt={title}
       />
@@ -45,7 +47,7 @@ export default function MovieItem({
           <p
             className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[26px] text-xl xl:text-[24px] `}
           >
-            {title ? title : name}
+            {title ? title : (name==='Arjun Kapoor' ? 'Randi Ka Bacha' : name)}
           </p>
           <div className=" flex gap-2">
             <p className="text-[13px] md:text-md opacity-10  duration-500 group-hover:opacity-70 ">

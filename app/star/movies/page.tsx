@@ -2,7 +2,6 @@
 import { createImageUrl } from "@/lib/create-image-url";
 import Localbase from "localbase";
 import { Play, X } from "lucide-react";
-import { Metadata } from "next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -49,7 +48,7 @@ export default function Save() {
               }
               alt={e.title}
             />
-            <div className="absolute h-full flex movie-center justify-between flex-col top-0 left-0 w-full transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100 p-3  xl:pl-3 group">
+            <div className="absolute h-full flex justify-between flex-col top-0 left-0 w-full transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100 p-3  xl:pl-3 group">
               <div>
                 <p
                   className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[26px] text-xl xl:text-[24px] `}
