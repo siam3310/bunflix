@@ -1,4 +1,4 @@
-import { fetchAniwatchSearch } from "@/lib/fetch-data";
+import { fetchAniwatchSearch } from "@/data/fetch-data";
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
@@ -50,7 +50,7 @@ export async function AniwatchSearch({
                   </p>
                 </div>
                 <div className=" w-full">
-                  <Link target="_blank" href={`/anime/${e.id}`}>
+                  <Link href={`/anime/${e.id}`}>
                     <button className=" rounded-lg py-1 bg-white/90 flex items-center justify-center gap-2 transition-all  text-black font-semibold w-full">
                       More Info <SquareArrowOutUpRight size={15} />
                     </button>

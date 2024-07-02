@@ -1,4 +1,4 @@
-import { createImageUrl } from "@/lib/create-image-url";
+import { createImageUrl } from "@/utils/create-image-url";
 import { Info, Play, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
@@ -27,8 +27,10 @@ export default function MovieItem({
     known_for
   } = movie;
 
+  
   return (
     <div
+      style={{display:media_type==='person'? 'none':'flex'}}
       className={`relative inline-block text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 h-[300px] ${
         grid ? "" : "w-[200px]"
       }`}
@@ -47,7 +49,7 @@ export default function MovieItem({
           <p
             className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[26px] text-xl xl:text-[24px] `}
           >
-            {title ? title : (name==='Arjun Kapoor' ? 'Randi Ka Bacha' : name)}
+            {title ? title : name}
           </p>
           <div className=" flex gap-2">
             <p className="text-[13px] md:text-md opacity-10  duration-500 group-hover:opacity-70 ">

@@ -1,5 +1,5 @@
 "use client";
-import { createImageUrl } from "@/lib/create-image-url";
+import { createImageUrl } from "@/utils/create-image-url";
 import { useEffect, useState } from "react";
 import {
   Info,
@@ -12,7 +12,6 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
-import { SaveLocalMovie } from "./save-local-movie";
 
 export default function Hero({ data }: { data: TmdbMovie }) {
   const [imageindex, setImageindex] = useState(0);
@@ -39,7 +38,6 @@ export default function Hero({ data }: { data: TmdbMovie }) {
     }
   }, [imageindex, preferAnimation]);
 
-  console.log(preferAnimation);
 
   return (
     <div className=" w-full overflow-hidden">
@@ -60,37 +58,39 @@ export default function Hero({ data }: { data: TmdbMovie }) {
               <h1 className=" font-bold  text-4xl">{movie.title}</h1>
               <p className=" leading-5 my-4">{movie.overview}</p>
               <div className=" flex justify-between ">
-               <div className="flex gap-2  ">
-               <Link
-                  href={`/video/movie/${movie.id}?provider=vidsrc`}
-                  className=" px-4 py-2 font-semibold rounded-full bg-red-600  flex xl:justify-center gap-2 items-center"
-                >
-                  <span>
-                    <Play fill="white" size={15} />
-                  </span>
-                  <p>Play</p>
-                </Link>
-                <Link
-                  href={`/info/movie/${movie.id}`}
-                  className=" px-3 font-semibold rounded-full border flex xl:justify-center gap-2 items-center"
-                >
-                  <Info size={15} />
-                </Link>
-                <SaveLocalMovie rounded item={movie} />
-               </div>
-                <div
-                  className=" px-3 font-semibold rounded-full flex xl:justify-center gap-2 items-center"
-                
-                >
-                   {preferAnimation ? (
-              <button className="xl:hidden" onClick={() => setPreferAnimation(false)}>
-                <PauseCircle size={30} />
-              </button>
-            ) : (
-              <button className="xl:hidden" onClick={() => setPreferAnimation(true)}>
-                <PlayCircle size={30} />
-              </button>
-            )}
+                <div className="flex gap-2  ">
+                  <Link
+                    href={`/video/movie/${movie.id}?provider=vidsrc`}
+                    className=" px-4 py-2 font-semibold rounded-full bg-red-600  flex xl:justify-center gap-2 items-center"
+                  >
+                    <span>
+                      <Play fill="white" size={15} />
+                    </span>
+                    <p>Play</p>
+                  </Link>
+                  <Link
+                    href={`/info/movie/${movie.id}`}
+                    className=" px-3 font-semibold rounded-full border flex xl:justify-center gap-2 items-center"
+                  >
+                    <Info size={15} />
+                  </Link>
+                </div>
+                <div className=" px-3 font-semibold rounded-full flex xl:justify-center gap-2 items-center">
+                  {preferAnimation ? (
+                    <button
+                      className="xl:hidden"
+                      onClick={() => setPreferAnimation(false)}
+                    >
+                      <PauseCircle size={30} />
+                    </button>
+                  ) : (
+                    <button
+                      className="xl:hidden"
+                      onClick={() => setPreferAnimation(true)}
+                    >
+                      <PlayCircle size={30} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

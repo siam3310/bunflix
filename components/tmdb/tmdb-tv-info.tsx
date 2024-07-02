@@ -1,8 +1,7 @@
-import { createImageUrl } from "@/lib/create-image-url";
-import { fetchTmdbInfo } from "@/lib/fetch-data";
+import { createImageUrl } from "@/utils/create-image-url";
+import { fetchTmdbInfo } from "@/data/fetch-data";
 import {  Play, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
-import { SaveLocalShow } from "./save-local-show";
 
 export async function TmdbTvInfo({ id }: { id: number }) {
   const data: tmdbTvInfo = await fetchTmdbInfo("tv", id);
@@ -27,9 +26,6 @@ export async function TmdbTvInfo({ id }: { id: number }) {
             <p>{data.status} |</p>
             <p>{data.popularity} |</p>
             <p>{data.first_air_date} |</p>
-          </div>
-          <div className=" flex mb-2 items-center gap-2">
-            <SaveLocalShow text px item={data}/>
           </div>
           <h1 className="text-xl font-semibold">Categories</h1>
           <div className=" flex gap-2 opacity-70">

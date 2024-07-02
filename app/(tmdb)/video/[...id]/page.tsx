@@ -1,5 +1,5 @@
 import { TmdbVideo } from "@/components/tmdb/tmdb-video";
-import { fetchSeasonData, fetchTmdbInfo } from "@/lib/fetch-data";
+import { fetchSeasonData, fetchTmdbInfo } from "@/data/fetch-data";
 
 export async function generateMetadata({
   params,

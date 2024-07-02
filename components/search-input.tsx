@@ -43,7 +43,7 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
             onClick={() => setType("multi")}
             className=" px-2 py-.5 rounded bg-gray-500 cursor-pointer"
           >
-            Movie/TV/Actor
+            Movie/TV
           </p>
           <p
             style={{

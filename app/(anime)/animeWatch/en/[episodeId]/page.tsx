@@ -1,5 +1,5 @@
 import { HlsPlayer } from "@/components/aniwatch/hls-player";
-import { fetchAniwatchEpisodeSrcDub, fetchAniwatchId } from "@/lib/fetch-data";
+import { fetchAniwatchEpisodeSrcDub, fetchAniwatchId } from "@/data/fetch-data";
 
 export async function generateMetadata({
   params,

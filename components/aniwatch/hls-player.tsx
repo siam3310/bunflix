@@ -11,9 +11,9 @@ export function HlsPlayer({
   episode,
 }: {
   videoSrc: string;
-  track: {file:string,kind:string,label:string,default:boolean}[];
-  id:string
-  episode:string|number
+  track: { file: string; kind: string; label: string; default: boolean }[];
+  id: string;
+  episode: string | number;
 }) {
   const player = useRef<HTMLVideoElement>(null);
 
@@ -25,22 +25,29 @@ export function HlsPlayer({
     }
   }, [player, videoSrc]);
 
-  
-  
   return (
     <div className="p-4 bg-black/70 pb-24">
       <div className=" md:h-[450px] mb-4 lg:h-[600px]">
-      <video 
-    className="h-full w-full rounded-lg" crossOrigin="anonymous" controls ref={player}>
-      {track.map((e) => 
-        <track key={e.file} kind={e.kind} src={e.file} default={e.default} label={e.label} ></track>
-      )}
-    </video>
+        <video
+          className="h-full w-full rounded-lg"
+          crossOrigin="anonymous"
+          controls
+          ref={player}
+        >
+          {track.map((e) => (
+            <track
+              key={e.file}
+              kind={e.kind}
+              src={e.file}
+              default={e.default}
+              label={e.label}
+            ></track>
+          ))}
+        </video>
       </div>
-      <Suspense fallback={<AnimeWatchPlayerInfoSkeleton/>}>
+      <Suspense fallback={<AnimeWatchPlayerInfoSkeleton />}>
         <AnimeWatchPlayerInfo id={id} episode={episode} />
       </Suspense>
-      
     </div>
   );
 }

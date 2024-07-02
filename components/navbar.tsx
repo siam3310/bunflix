@@ -3,14 +3,14 @@
 import { Home, List, Search, Star } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {  motion, useScroll } from "framer-motion";
+import { motion, useMotionValue, useScroll } from "framer-motion";
 import SearchInput from "./search-input";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const pathname = usePathname()
-  const isHome = pathname==='/'
-  
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const categories = [
     {
       id: 1,
@@ -63,71 +63,54 @@ export default function Navbar() {
 
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Hook to get the scroll position
-  const { scrollY } = useScroll();
- 
-  // Effect to update isScrolled state based on scroll position
-  useEffect(() => {
-    const checkScroll = () => {
-       setIsScrolled(scrollY.get() > 100);
-    };
-   
-    // Listen for changes to scrollY
-    const unsubscribe = scrollY.onChange(checkScroll);
-   
-    // Initial check
-    checkScroll();
-   
-    return () => {
-       // Clean up the subscription
-       unsubscribe();
-    };
-   }, [scrollY]); 
+  const  scrollY  = useMotionValue(0);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      scrollY.set(window.scrollY); 
+      setIsScrolled(true)
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []); 
 
   return (
     <>
-    <motion.div
-    initial={{y:250}}
-    animate={{y:openSearch?20:250}}
-    className=" w-full px-4 fixed bottom-0  flex items-center justify-center z-[51]">
-      <div className="  bg-gray-700 h-full pb-8 rounded-t-xl overflow-hidden w-[700px]">
-        <SearchInput onClick={()=>setOpenSearch(!openSearch)}/>
-      </div>
-    </motion.div>
+      <motion.div
+        initial={{ y: 250 }}
+        animate={{ y: openSearch ? 20 : 250 }}
+        className=" w-full px-4 fixed bottom-0  flex items-center justify-center z-[51]"
+      >
+        <div className="  bg-gray-700 h-full pb-8 rounded-t-xl overflow-hidden w-[700px]">
+          <SearchInput onClick={() => setOpenSearch(!openSearch)} />
+        </div>
+      </motion.div>
 
-
-      <nav
-
-      className="outline-none focus:outline-none z-20 fixed bottom-4 left-1/2 transform -translate-x-1/2 ">
-
+      <nav className="outline-none group focus:outline-none z-20 fixed bottom-4 left-1/2 transform -translate-x-1/2 ">
         <motion.div
-        style={{y:isHome?'300px':'0px'}}
-        animate={isHome ? (isScrolled ? { y: "0px" } : { y: "100px" }):{ y: "0px" }}
-        transition={{ duration: 0.5 }}
-        className="flex gap-3 items-center w-fit relative justify-evenly py-3 px-4  rounded-full bg-white/30 border border-white/40 backdrop-blur-sm">
+          style={{ y: isHome ? "300px" : "0px" }}
+          animate={
+            isHome ? (isScrolled ? { y: "0px" } : { y: "100px" }) : { y: "0px" }
+          }
+          transition={{ duration: 0.5 }}
+          className="flex gap-3 items-center w-fit relative justify-evenly py-3 px-4  rounded-full bg-white/30 border border-white/40 backdrop-blur-sm"
+        >
           <div
             style={{ translate: `${52 * navIndex}px` }}
-            className=" bg-red-500/80 size-10  left-4 rounded-full absolute transition-all duration-700 ease-in-out"
+            className="group-hover:bg-blue-500/70 animate-pulse duration-[5000ms] size-10  left-4 rounded-full absolute transition-all  ease-in-out"
           />
-
           <Link
-          className=" outline-none focus:outline-none"     
             onClick={() => setNavIndex(0)}
             onMouseEnter={() => setNavIndex(0)}
-            href={"/star"}
-          >
-            <div className="relative group p-2 w-fit outline-none focus:outline-none">
-              <Star color="white" className=" size-6" />
-              <h1 className=" absolute  bottom-0 transform -translate-x-1/2 left-1/2 text-nowrap group-hover:-translate-y-14 text-transparent delay-200 group-hover:text-black transition-all scale-0 group-hover:scale-100 px-2 group-hover:bg-white rounded-md">
-                Your Stars
-              </h1>
-            </div>
-          </Link>
-          <Link
-            onClick={() => setNavIndex(1)}
-            onMouseEnter={() => setNavIndex(1)}
             href={"/anime"}
+            style={{
+              backgroundColor:pathname.split('/')[1]==='anime' ? '#dc2626' : '',
+              borderRadius:'50px'
+            }}
           >
             <div className="relative group p-2 w-fit ">
               <svg className=" size-6 fill-white">
@@ -141,8 +124,12 @@ export default function Navbar() {
           </Link>
           <Link
             href={"/"}
-            onMouseEnter={() => setNavIndex(2)}
-            onClick={() => setNavIndex(2)}
+            onMouseEnter={() => setNavIndex(1)}
+            onClick={() => setNavIndex(1)}
+            style={{
+              backgroundColor:isHome ? '#dc2626' : '',
+              borderRadius:'50px'
+            }}
           >
             <div className="relative group p-2 w-fit ">
               <Home color="white" className=" size-6" />
@@ -155,17 +142,21 @@ export default function Navbar() {
             onClick={() => {
               setNavIndex(3), setOpenSearch(!openSearch);
             }}
-            onMouseEnter={() => setNavIndex(3)}
+            onMouseEnter={() => setNavIndex(2)}
             className="outline-none focus:outline-none"
+            style={{
+              backgroundColor:pathname.split('/')[1]==='search' ? '#dc2626' : '',
+              borderRadius:'50px'
+            }}
           >
-            <div className="relative group p-2 w-fit ">
+            <div className="relative group p-2 w-fit">
               <Search color="white" className=" size-6" />
               <h1 className=" absolute  bottom-0 transform -translate-x-1/2 left-1/2 text-nowrap group-hover:-translate-y-14 text-transparent delay-200 group-hover:text-black transition-all scale-0 group-hover:scale-100 px-2 group-hover:bg-white rounded-md">
                 Search
               </h1>
             </div>
           </motion.button>
-           
+
           <div className=" cursor-pointer">
             <div className="relative group p-2 w-fit ">
               <List color="white" className=" size-6" />
@@ -196,7 +187,7 @@ export default function Navbar() {
                     Categories :
                   </h1>
                   {categories.map((e) => (
-                    <Link target='_blank' href={e.link} key={e.id}>
+                    <Link target="_blank" href={e.link} key={e.id}>
                       <h1
                         className=" text-black text-lg text-center hover:bg-black/20 rounded-md transition-all hover:font-semibold"
                         onMouseEnter={() => setImageindex(e.id - 1)}

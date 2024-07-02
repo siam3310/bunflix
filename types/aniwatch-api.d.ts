@@ -3,7 +3,7 @@ type aniwatchApi = {
   trendingAnimes: trendingAnimes[];
   latestEpisodeAnimes: latestEpisodeAnimes[];
   topUpcomingAnimes: topUpcomingAnimes[];
-  top10Animes: top10Animes[];
+  top10Animes: top10Animes
   topAiringAnimes: topAiringAnimes[];
   genres: string[];
 };

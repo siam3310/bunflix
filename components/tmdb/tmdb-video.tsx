@@ -1,11 +1,8 @@
 "use client";
 
-import { createImageUrl } from "@/lib/create-image-url";
+import { createImageUrl } from "@/utils/create-image-url";
 import { Home, Info, Play, Star } from "lucide-react";
 import Link from "next/link";
-import { SaveLocalMovie } from "./save-local-movie";
-import { SaveLocalShow } from "./save-local-show";
-import { SaveLocalTmdbEpisode } from "./save-local-tmdb-episode";
 
 export function TmdbVideo({
   type,
@@ -18,7 +15,7 @@ export function TmdbVideo({
 }: {
   type: string;
   id: string;
-  data: MovieResults
+  data: MovieResults;
   url: string;
   provider: string;
   seasonData?: tmdbEpisodesInfo | undefined;
@@ -26,7 +23,7 @@ export function TmdbVideo({
 }) {
   return (
     <div className="p-4 pb-24 bg-black/60">
-       <img
+      <img
         className="-z-10 fixed top-0 size-full object-cover blur-2xl "
         src={createImageUrl(data.backdrop_path, "original")}
         alt={data.name}
@@ -52,7 +49,6 @@ export function TmdbVideo({
               </p>
               <p className="text-lg my-2">Server : </p>
               <div className=" flex gap-2 flex-wrap ">
-                
                 <Link
                   href={`/video/${type}/${id}/${
                     type === "tv"
@@ -132,14 +128,18 @@ export function TmdbVideo({
                 </Link>
               </div>
               <div className="my-5 gap-2 flex font-bold">
-                <SaveLocalShow px  item={data}   text/>
-                <Link target='_blank' href={`/info/${type || data.media_type}/${data.id}`}>
+                <Link
+                  target="_blank"
+                  href={`/info/${type || data.media_type}/${data.id}`}
+                >
                   <button
                     className="
                   flex  border border-white transition-all py-1 disabled:border-black  disabled:text-white/60 disabled:bg-black/60 xl:justify-center gap-2 items-center w-fit px-3  font-semibold rounded-md"
                   >
                     <Info size={15} />
-                    {type==='movie' || data.media_type==='movie'? 'Movie Info' : 'Season Info'}
+                    {type === "movie" || data.media_type === "movie"
+                      ? "Movie Info"
+                      : "Season Info"}
                   </button>
                 </Link>
               </div>
@@ -172,8 +172,7 @@ export function TmdbVideo({
                     <div className=" flex gap-2">
                       <Link
                         href={`/video/${type}/${id}?season=${e.season_number}&episode=${e.episode_number}`}
-              className=" px-2 py-1 font-semibold rounded-md bg-red-600 w-full justify-center  xl:w-fit  flex xl:justify-center gap-1 items-center"
-
+                        className=" px-2 py-1 font-semibold rounded-md bg-red-600 w-full justify-center  xl:w-fit  flex xl:justify-center gap-1 items-center"
                       >
                         <span>
                           <Play fill="white" size={15} />
@@ -181,14 +180,12 @@ export function TmdbVideo({
                         <p>Play</p>
                       </Link>
                       <Link
-                      target='_blank'
+                        target="_blank"
                         href={`/info/${type || data.media_type}/${data.id}`}
-              className=" px-2 py-1 font-semibold rounded-full border w-full justify-center  xl:w-fit  flex xl:justify-center gap-1 items-center"
-
+                        className=" px-2 py-1 font-semibold rounded-full border w-full justify-center  xl:w-fit  flex xl:justify-center gap-1 items-center"
                       >
-                          <Info size={15} />
+                        <Info size={15} />
                       </Link>
-                      <SaveLocalTmdbEpisode season={e.season_number} episode={e.episode_number} item={e} rounded px/>
                     </div>
                   </div>
                 ))}

@@ -1,8 +1,7 @@
-import { createImageUrl } from "@/lib/create-image-url";
-import { fetchTmdbInfo } from "@/lib/fetch-data";
+import { createImageUrl } from "@/utils/create-image-url";
+import { fetchTmdbInfo } from "@/data/fetch-data";
 import { Info, Play, Star } from "lucide-react";
 import Link from "next/link";
-import { SaveLocalMovie } from "./save-local-movie";
 
 export async function TmdbMovieInfo({ id }: { id: number }) {
   const data: tmdbMovieInfo = await fetchTmdbInfo("movie", id);
@@ -71,7 +70,6 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
               </span>
               <p>Play</p>
             </Link>
-            <SaveLocalMovie  item={data}   />          
           </div>
         </div>
       </div>

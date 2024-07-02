@@ -1,7 +1,7 @@
 import  TmdbInfoSkeleton  from "@/components/fallback-ui/tmdb-info-skeleton";
 import { TmdbMovieInfo } from "@/components/tmdb/tmdb-movie-info";
 import { TmdbTvInfo } from "@/components/tmdb/tmdb-tv-info";
-import { fetchTmdbInfo } from "@/lib/fetch-data";
+import { fetchTmdbInfo } from "@/data/fetch-data";
 import { Suspense } from "react";
 
 export async function generateMetadata({

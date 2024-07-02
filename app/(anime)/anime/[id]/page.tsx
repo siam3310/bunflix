@@ -1,6 +1,6 @@
 import { AniwatchInfo } from "@/components/aniwatch/aniwatch-info";
 import AniwatchInfoSkeleton from "@/components/fallback-ui/aniwatch-info-skeleton";
-import { fetchAniwatchId } from "@/lib/fetch-data";
+import { fetchAniwatchId } from "@/data/fetch-data";
 import { Suspense } from "react";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
@@ -11,11 +11,20 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   };
 }
 
-export default async function Anime({ params }: { params: { id: string } }) {
+export default async function Anime({
+  params,
+  searchParams,
+}: {
+  params: { id: string };
+  searchParams: { ep: string };
+}) {
   return (
     <>
       <Suspense fallback={<AniwatchInfoSkeleton />}>
-        <AniwatchInfo id={params.id} />
+        <AniwatchInfo
+          id={params.id}
+          ep={searchParams.ep}
+        />
       </Suspense>
     </>
   );
