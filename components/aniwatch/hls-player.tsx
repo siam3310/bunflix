@@ -122,7 +122,7 @@ export function HlsPlayer({
     setTimeout(() => {
       updateCurrentTime();
     }, 1000);
-  }, []);
+  }, [currentTime,currentTimeSec]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
