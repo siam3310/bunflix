@@ -1,16 +1,10 @@
 "use client";
 import Hls from "hls.js";
-import React, {
-  Suspense,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import AnimeWatchPlayerInfo from "./aniwatch-player-info";
-import AnimeWatchPlayerInfoSkeleton from "../fallback-ui/aniwatch-player-info-skeleton";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   FullscreenIcon,
+  HandIcon,
+  LoaderIcon,
   PauseIcon,
   PlayIcon,
   Volume2Icon,
@@ -22,17 +16,13 @@ import { Slider } from "../ui/slider";
 export function HlsPlayer({
   videoSrc,
   track,
-  id,
-  episode,
 }: {
   videoSrc: string;
   track: { file: string; kind: string; label: string; default: boolean }[];
-  id: string;
-  episode: string | number;
 }) {
   const player = useRef<HTMLVideoElement>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState([0, 0]);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>();
@@ -40,6 +30,7 @@ export function HlsPlayer({
   const [durationSec, setDurationSec] = useState<number>();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
@@ -50,26 +41,18 @@ export function HlsPlayer({
 
       player.current.addEventListener("canplaythrough", () => {
         setLoading(false);
-        if (player.current) {
-          setIsPlaying(true);
-          player.current.play();
-        }
       });
 
       return () => {
         if (player.current) {
           player.current.addEventListener("canplaythrough", () => {
             setLoading(false);
-            if (player.current) {
-              setIsPlaying(true);
-              player.current.play();
-            }
           });
         }
         hls.destroy();
       };
     }
-  }, [player, videoSrc]);
+  }, [player, videoSrc, hasInteracted]);
 
   const tooglePlayPause = useCallback(() => {
     if (player.current) {
@@ -136,8 +119,10 @@ export function HlsPlayer({
   }, [isPlaying, player]);
 
   useEffect(() => {
-    updateCurrentTime();
-  }, [updateCurrentTime]);
+    setTimeout(() => {
+      updateCurrentTime();
+    }, 1000);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -153,6 +138,7 @@ export function HlsPlayer({
           break;
       }
     };
+    updateCurrentTime();
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -162,42 +148,64 @@ export function HlsPlayer({
     isPlaying,
     isFullscreen,
     isMuted,
+    updateCurrentTime,
     toogleMute,
     tooglePlayPause,
     toggleFullscreen,
   ]);
 
-  return (
-    <div className="p-4 bg-black/70 ">
-      {/* <div className=" ">
-        <video
-          className="h-full w-full rounded-lg"
-          crossOrigin="anonymous"
-          controls
-          ref={player}
-        >
-        
-        </video>
-        </div> */}
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      setHasInteracted(true);
+    };
+    document.addEventListener("click", handleUserInteraction);
+    document.addEventListener("keydown", handleUserInteraction);
 
+    return () => {
+      document.removeEventListener("click", handleUserInteraction);
+      document.removeEventListener("keydown", handleUserInteraction);
+    };
+  }, []);
+
+  return (
+    <div className="p-4 bg-black/50 ">
       <div className="group md:h-[450px] mb-4 lg:h-[600px] relative overflow-hidden">
-        <video
-          className="h-full w-full md:rounded-lg"
-          crossOrigin="anonymous"
-          controlsList="nodownload"
-          autoPlay={isPlaying}
-          ref={player}
-        >
-          {track.map((e) => (
-            <track
-              key={e.file}
-              kind={e.kind}
-              src={e.file}
-              default={e.default}
-              label={e.label}
-            ></track>
-          ))}
-        </video>
+        {hasInteracted && (
+          <div
+            style={{ opacity: loading ? "100%" : "0%" }}
+            className=" absolute -translate-y-1/2 -translate-x-1/2 left-1/2 top-1/2 rounded-lg text-black p-3 flex items-center gap-2 bg-white"
+          >
+            <LoaderIcon
+              color="black"
+              size={18}
+              className=" animate-spin transition-all duration-[2000ms]"
+            />
+            Loading ...
+          </div>
+        )}
+        {hasInteracted ? (
+          <video
+            className="h-full w-full md:rounded-lg"
+            crossOrigin="anonymous"
+            controlsList="nodownload"
+            autoPlay
+            ref={player}
+          >
+            {track.map((e) => (
+              <track
+                key={e.file}
+                kind={e.kind}
+                src={e.file}
+                default={e.default}
+                label={e.label}
+              ></track>
+            ))}
+          </video>
+        ) : (
+          <span className="flex items-center gap-2">
+            <HandIcon color="white" size={18} /> Waiting for user input{" "}
+          </span>
+        )}
 
         <div className="absolute top-0 right-0 flex items-center justify-center size-full">
           <Button

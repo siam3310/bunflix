@@ -25,6 +25,6 @@ export default async function AnimeWatch({
     const data:aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(params.episodeId,searchParams.ep)
 
 return <>
-  <HlsPlayer id={params.episodeId} episode={searchParams.ep} track={data.tracks} videoSrc={data.sources[0].url}/>
+  <HlsPlayer track={data.tracks} videoSrc={data.sources[0].url}/>
   </>;
 }

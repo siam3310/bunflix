@@ -30,8 +30,6 @@ export default async function AnimeWatch({
   return (
     <>
       <HlsPlayer
-        id={params.episodeId}
-        episode={searchParams.episode}
         track={data.tracks}
         videoSrc={data.sources[0].url}
       />
