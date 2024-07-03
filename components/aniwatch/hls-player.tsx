@@ -2,11 +2,15 @@
 import Hls from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  ChevronLeftCircleIcon,
+  ChevronRightCircleIcon,
   FullscreenIcon,
   HandIcon,
   LoaderIcon,
   PauseIcon,
   PlayIcon,
+  StepBackIcon,
+  StepForwardIcon,
   Volume2Icon,
   VolumeXIcon,
 } from "lucide-react";
@@ -122,12 +126,36 @@ export function HlsPlayer({
     setTimeout(() => {
       updateCurrentTime();
     }, 1000);
-  }, [currentTime,currentTimeSec]);
+  }, [currentTime, currentTimeSec]);
+
+  const volumnControl = (control: "increase" | "decrease") => {
+    if (player.current) {
+      let newVolume = player.current.volume;
+      if (control === "increase" && player.current.volume !== 1) {
+        newVolume += 0.1;
+      } else if (control === "decrease" && player.current.volume > 0) {
+        newVolume -= 0.1;
+      }
+
+      player.current.volume = Math.max(0, Math.min(newVolume, 1));
+    }
+  };
+
+  const timelineControl = (control: "foreward" | "backward") => {
+    if (player.current) {
+      if (control === "foreward") {
+        player.current.currentTime = player.current.currentTime + 5;
+      } else {
+        player.current.currentTime = player.current.currentTime - 5;
+      }
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.code) {
         case "Space":
+          event.preventDefault();
           tooglePlayPause();
           break;
         case "KeyF":
@@ -135,6 +163,22 @@ export function HlsPlayer({
           break;
         case "KeyM":
           toogleMute();
+          break;
+        case "ArrowUp":
+          event.preventDefault();
+          volumnControl("increase");
+          break;
+        case "ArrowDown":
+          event.preventDefault();
+          volumnControl("decrease");
+          break;
+        case "ArrowLeft":
+          event.preventDefault();
+          timelineControl("backward");
+          break;
+        case "ArrowRight":
+          event.preventDefault();
+          timelineControl("foreward");
           break;
       }
     };
@@ -207,7 +251,13 @@ export function HlsPlayer({
           </span>
         )}
 
-        <div className="absolute top-0 right-0 flex items-center justify-center size-full">
+        <div className="absolute top-0 right-0 flex items-center justify-center size-full space-x-3">
+          <Button
+            onClick={() => timelineControl("backward")}
+            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-16 group-hover:opacity-100 opacity-0 transition-all"
+          >
+            <StepBackIcon color="black" size={30} />
+          </Button>
           <Button
             style={{ opacity: loading ? "0%" : "" }}
             className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-16 group-hover:opacity-100 opacity-0 transition-all"
@@ -218,6 +268,12 @@ export function HlsPlayer({
             ) : (
               <PlayIcon color="black" size={30} />
             )}
+          </Button>
+          <Button
+            onClick={() => timelineControl("foreward")}
+            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-16 group-hover:opacity-100 opacity-0 transition-all"
+          >
+            <StepForwardIcon color="black" size={30} />
           </Button>
         </div>
 
