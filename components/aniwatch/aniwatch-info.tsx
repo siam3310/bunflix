@@ -73,18 +73,19 @@ export async function AniwatchInfo({
           <div>
             <h1 className="text-3xl font-semibold py-4">Episode </h1>
             <div className="flex items-center mb-6">
-              <ul className="h-[500px] w-[300px] bg-slate-500 overflow-y-scroll rounded-lg scrollbar-hide">
+              <ul className="max-h-[500px] w-full lg:w-[300px] bg-slate-500 overflow-y-scroll rounded-lg scrollbar-hide">
                 {episode.episodes.map((episode, index) => (
                   <Link
                     key={episode.episodeId}
                     href={`/animeWatch/en/${episode.episodeId}&episode=${episode.number}`}
                     >
                     <li
+                    
                       style={{
                         backgroundColor:
                           index % 2 === 0 ? "#334155" : "#1e293b",
                       }}
-                      className="px-4 py-2 bg-slate-700"
+                      className="px-4 py-2"
                     >
                       {episode.number}. {episode.title}
                     </li>

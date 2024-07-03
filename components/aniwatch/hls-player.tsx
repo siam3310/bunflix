@@ -1,8 +1,23 @@
 "use client";
 import Hls from "hls.js";
-import React, { Suspense, useEffect, useRef } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import AnimeWatchPlayerInfo from "./aniwatch-player-info";
 import AnimeWatchPlayerInfoSkeleton from "../fallback-ui/aniwatch-player-info-skeleton";
+import {
+  FullscreenIcon,
+  PauseIcon,
+  PlayIcon,
+  Volume2Icon,
+  VolumeXIcon,
+} from "lucide-react";
+import { Button } from "../ui/button";
+import { Slider } from "../ui/slider";
 
 export function HlsPlayer({
   videoSrc,
@@ -17,21 +32,160 @@ export function HlsPlayer({
 }) {
   const player = useRef<HTMLVideoElement>(null);
 
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState([0, 0]);
+  const [currentTimeSec, setCurrentTimeSec] = useState<number>();
+  const [duration, setDuration] = useState<[number, number]>([0, 0]);
+  const [durationSec, setDurationSec] = useState<number>();
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
-      var hls = new Hls();
+      const hls = new Hls();
+
       hls.loadSource(videoSrc);
       hls.attachMedia(player.current);
+
+      player.current.addEventListener("canplaythrough", () => {
+        setLoading(false);
+        if (player.current) {
+          setIsPlaying(true);
+          player.current.play();
+        }
+      });
+
+      return () => {
+        if (player.current) {
+          player.current.addEventListener("canplaythrough", () => {
+            setLoading(false);
+            if (player.current) {
+              setIsPlaying(true);
+              player.current.play();
+            }
+          });
+        }
+        hls.destroy();
+      };
     }
   }, [player, videoSrc]);
 
+  const tooglePlayPause = useCallback(() => {
+    if (player.current) {
+      if (isPlaying) {
+        player.current.pause();
+      } else {
+        player.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  }, [player, isPlaying]);
+
+  const toogleMute = useCallback(() => {
+    if (player.current) {
+      if (isMuted) {
+        player.current.muted = false;
+        setIsMuted(false);
+      } else {
+        player.current.muted = true;
+        setIsMuted(true);
+      }
+    }
+  }, [isMuted, player]);
+
+  const toggleFullscreen = useCallback(() => {
+    if (player.current) {
+      if (!document.fullscreenElement) {
+        if (player.current.requestFullscreen) {
+          player.current.requestFullscreen();
+          setIsFullscreen(true);
+        }
+      } else {
+        document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    }
+  }, [player, isFullscreen]);
+
+  const sec2Min = (sec: number) => {
+    const min = Math.floor(sec / 60);
+    const secRemain = Math.floor(sec % 60);
+    return {
+      min: min,
+      sec: secRemain,
+    };
+  };
+
+  const updateCurrentTime = useCallback(() => {
+    if (!player.current) return;
+
+    const { min, sec } = sec2Min(player.current.duration);
+    setDurationSec(player.current.duration);
+    setDuration([min, sec]);
+
+    const interval = setInterval(() => {
+      if (!player.current) return;
+
+      const { min, sec } = sec2Min(player.current.currentTime);
+      setCurrentTimeSec(player.current.currentTime);
+      setCurrentTime([min, sec]);
+    }, 10);
+
+    return () => clearInterval(interval);
+  }, [isPlaying, player]);
+
+  useEffect(() => {
+    updateCurrentTime();
+  }, [updateCurrentTime]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case "Space":
+          tooglePlayPause();
+          break;
+        case "KeyF":
+          toggleFullscreen();
+          break;
+        case "KeyM":
+          toogleMute();
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    isPlaying,
+    isFullscreen,
+    isMuted,
+    toogleMute,
+    tooglePlayPause,
+    toggleFullscreen,
+  ]);
+
   return (
-    <div className="p-4 bg-black/70 pb-24">
-      <div className=" md:h-[450px] mb-4 lg:h-[600px]">
+    <div className="p-4 bg-black/70 ">
+      {/* <div className=" ">
         <video
           className="h-full w-full rounded-lg"
           crossOrigin="anonymous"
           controls
+          ref={player}
+        >
+        
+        </video>
+        </div> */}
+
+      <div className="group md:h-[450px] mb-4 lg:h-[600px] relative overflow-hidden">
+        <video
+          className="h-full w-full md:rounded-lg"
+          crossOrigin="anonymous"
+          controlsList="nodownload"
+          autoPlay={isPlaying}
           ref={player}
         >
           {track.map((e) => (
@@ -44,10 +198,73 @@ export function HlsPlayer({
             ></track>
           ))}
         </video>
+
+        <div className="absolute top-0 right-0 flex items-center justify-center size-full">
+          <Button
+            style={{ opacity: loading ? "0%" : "" }}
+            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-16 group-hover:opacity-100 opacity-0 transition-all"
+            onClick={tooglePlayPause}
+          >
+            {isPlaying ? (
+              <PauseIcon color="black" size={30} />
+            ) : (
+              <PlayIcon color="black" size={30} />
+            )}
+          </Button>
+        </div>
+
+        <div
+          style={{ opacity: !loading ? "100%" : "0%" }}
+          className="flex translate-y-16 group-hover:translate-y-0 transition-all items-center gap-2 px-4 absolute bottom-0 w-full py-2 bg-black/20"
+        >
+          <Button
+            size={"sm"}
+            className="rounded-full aspect-square p-2 hover:bg-white bg-white/60"
+            onClick={tooglePlayPause}
+          >
+            {isPlaying ? (
+              <PauseIcon color="black" />
+            ) : (
+              <PlayIcon color="black" />
+            )}
+          </Button>
+          <Button
+            size={"sm"}
+            style={{ backgroundColor: isMuted ? "#e67b6e" : "" }}
+            className="rounded-full aspect-square p-2 hover:bg-white bg-white/60"
+            onClick={toogleMute}
+          >
+            {isMuted ? (
+              <VolumeXIcon color="black" />
+            ) : (
+              <Volume2Icon color="black" />
+            )}
+          </Button>
+          <p className=" text-nowrap">
+            {currentTime[0]}:{currentTime[1]} / {duration[0] ? duration[0] : 0}:
+            {duration[1] ? duration[1] : 0}
+          </p>
+          <Slider
+            min={0}
+            max={durationSec}
+            defaultValue={currentTime}
+            value={[currentTimeSec ? currentTimeSec : 0, 0]}
+            onValueChange={(e) => {
+              if (player.current) {
+                player.current.currentTime = e[1];
+              }
+            }}
+            className="w-full ml-2 cursor-pointer opacity-60 hover:opacity-100 transition-all"
+          />
+          <Button
+            className="rounded-full hover:bg-white bg-white/60 aspect-square p-2 "
+            size={"sm"}
+            onClick={toggleFullscreen}
+          >
+            <FullscreenIcon color="black" />
+          </Button>
+        </div>
       </div>
-      <Suspense fallback={<AnimeWatchPlayerInfoSkeleton />}>
-        <AnimeWatchPlayerInfo id={id} episode={episode} />
-      </Suspense>
     </div>
   );
 }
