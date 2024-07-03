@@ -1,5 +1,5 @@
 import  TmdbHomeSkeleton  from "@/components/fallback-ui/tmdb-home-row";
-import Hero from "@/components/tmdb/hero";
+import Hero from "@/components/tmdb/tmdb-slider";
 import MovieRow from "@/components/movie-row";
 import { fetchHeroData } from "@/data/fetch-data";
 import endpoint from "@/services/apiEndpoint";

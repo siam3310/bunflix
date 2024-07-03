@@ -54,7 +54,7 @@ export default function Hero({ data }: { data: TmdbMovie }) {
               src={createImageUrl(movie.backdrop_path, "original")}
               alt=""
             />
-            <div className="xl:top-1/2 lg:w-2/5 px-8 md:p-0 bottom-12 md:left-12 text-white absolute ">
+            <div className="xl:top-1/2 lg:w-2/5 w-full px-8  bottom-12 text-white absolute ">
               <h1 className=" font-bold  text-4xl">{movie.title}</h1>
               <p className=" leading-5 my-4">{movie.overview}</p>
               <div className=" flex justify-between ">
@@ -112,7 +112,7 @@ export default function Hero({ data }: { data: TmdbMovie }) {
             {data.results.map((_, i) => (
               <span
                 key={_.id}
-                className={`hidden z-50 py-1 px-3 opacity-80 cursor-pointer transition-all duration-150 rounded-full xl:flex items-center justify-center`}
+                className={`hidden z-50 py-1 px-3 opacity-80 cursor-pointer transition-all duration-150 rounded-full xl:flex items-center justify-center aspect-square`}
                 style={{ backgroundColor: i == imageindex ? "red" : "" }}
                 onClick={() => setImageindex(i)}
               >

@@ -13,7 +13,7 @@ export default async function AnimeWatchPlayerInfo({
   const episodeData: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
 
   return (
-    <div className="flex flex-col p-4 bg-black/30 rounded-lg xl:flex-row gap-4 justify-between">
+    <div className="flex flex-col pb-24 p-4 bg-black/30 rounded-lg xl:flex-row gap-4 justify-between">
       <img
         className="-z-10 fixed top-0 size-full  object-cover blur-2xl "
         src={data.anime.info.poster}

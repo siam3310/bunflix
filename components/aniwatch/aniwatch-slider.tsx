@@ -53,8 +53,8 @@ export default function AniwatchSlider({anime}:{anime:aniwatchApi}){
                 src={show.poster}
                 alt=""
               />
-              <div className="xl:top-1/2 lg:w-2/5 px-8 md:p-0 bottom-12 md:left-12 text-white absolute ">
-                <h1 className=" font-bold  text-4xl">{show.name}</h1>
+            <div className="xl:top-1/2 lg:w-2/5 w-full px-8  bottom-12 text-white absolute ">
+            <h1 className=" font-bold  text-4xl">{show.name}</h1>
                 <p className=" leading-5 my-4 line-clamp-6">{show.description}</p>
                 <div className=" flex justify-between ">
                   <div className="flex gap-2  ">
@@ -105,7 +105,7 @@ export default function AniwatchSlider({anime}:{anime:aniwatchApi}){
               {anime.spotlightAnimes.map((_, i) => (
                 <span
                   key={_.id}
-                  className={`hidden z-50 py-1 px-3 opacity-80 cursor-pointer transition-all duration-150 rounded-full xl:flex items-center justify-center`}
+                  className={`hidden z-50 py-1 px-3 opacity-80 cursor-pointer transition-all aspect-square duration-150 rounded-full xl:flex items-center justify-center`}
                   style={{ backgroundColor: i == imageindex ? "red" : "" }}
                   onClick={() => setImageindex(i)}
                 >

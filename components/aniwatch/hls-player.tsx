@@ -2,20 +2,19 @@
 import Hls from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ChevronLeftCircleIcon,
-  ChevronRightCircleIcon,
   FullscreenIcon,
   HandIcon,
   LoaderIcon,
   PauseIcon,
   PlayIcon,
-  StepBackIcon,
-  StepForwardIcon,
+  RotateCcwIcon,
+  RotateCwIcon,
   Volume2Icon,
   VolumeXIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
+import { toast } from "sonner";
 
 export function HlsPlayer({
   videoSrc,
@@ -117,7 +116,7 @@ export function HlsPlayer({
       const { min, sec } = sec2Min(player.current.currentTime);
       setCurrentTimeSec(player.current.currentTime);
       setCurrentTime([min, sec]);
-    }, 10);
+    }, 500);
 
     return () => clearInterval(interval);
   }, [isPlaying, player]);
@@ -125,15 +124,24 @@ export function HlsPlayer({
   useEffect(() => {
     setTimeout(() => {
       updateCurrentTime();
+      updateCurrentTime();
+      updateCurrentTime();
     }, 1000);
-  }, [currentTime, currentTimeSec]);
+   
+  }, []);
 
   const volumnControl = (control: "increase" | "decrease") => {
     if (player.current) {
       let newVolume = player.current.volume;
-      if (control === "increase" && player.current.volume !== 1) {
+      if (control === "increase") {
+        if(player.current.volume===1){
+          toast.warning("Max volumn reached")
+        }
         newVolume += 0.1;
-      } else if (control === "decrease" && player.current.volume > 0) {
+      } else if (control === "decrease") {
+        if(player.current.volume > 0){
+          toast.warning("Mininum volumn reached")
+        }
         newVolume -= 0.1;
       }
 
@@ -253,10 +261,12 @@ export function HlsPlayer({
 
         <div className="absolute top-0 right-0 flex items-center justify-center size-full space-x-3">
           <Button
+            size={"sm"}
+            style={{ opacity: loading ? "0%" : "" }}
             onClick={() => timelineControl("backward")}
-            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-16 group-hover:opacity-100 opacity-0 transition-all"
+            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-12 group-hover:opacity-100 opacity-0 transition-all"
           >
-            <StepBackIcon color="black" size={30} />
+            <RotateCcwIcon color="black" size={20} />
           </Button>
           <Button
             style={{ opacity: loading ? "0%" : "" }}
@@ -270,10 +280,12 @@ export function HlsPlayer({
             )}
           </Button>
           <Button
+            size={"sm"}
+            style={{ opacity: loading ? "0%" : "" }}
             onClick={() => timelineControl("foreward")}
-            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-16 group-hover:opacity-100 opacity-0 transition-all"
+            className="rounded-full hover:bg-white bg-white/60 aspect-square p-1 size-12 group-hover:opacity-100 opacity-0 transition-all"
           >
-            <StepForwardIcon color="black" size={30} />
+            <RotateCwIcon color="black" size={20} />
           </Button>
         </div>
 
