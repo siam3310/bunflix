@@ -2,14 +2,8 @@ import { fetchAniwatchSearch } from "@/data/fetch-data";
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
-export async function AniwatchSearch({
-  searchTerm,
-  page,
-}: {
-  searchTerm: string;
-  page: string | number;
-}) {
-  const data: aniwatchSearch = await fetchAniwatchSearch(searchTerm, page);
+export async function AniwatchSearch({ searchTerm }: { searchTerm: string }) {
+  const data: aniwatchSearch = await fetchAniwatchSearch(searchTerm);
 
   return (
     <>

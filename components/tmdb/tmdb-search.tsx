@@ -1,45 +1,54 @@
-import Link from "next/link";
+"use client";
 import MovieItem from "../movie-item";
 import { fetchTmdbMultiSearch } from "@/data/fetch-data";
-import { CircleArrowLeft, CircleArrowRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useInView } from "react-intersection-observer";
 
-export default async function TmdbSearch({page,type,search}:{type:string,page:number,search:string}){
+export default function TmdbSearch({ search }: { search: string }) {
+  const [data, setData] = useState<tmdbMultiSearch>({
+    page: 1,
+    results: [],
+    total_pages: 2,
+    total_results: 12,
+  });
+  const [results, setResults] = useState<MovieResults[] | null>();
+  const [page, setPage] = useState(1);
 
-  const data:tmdbMultiSearch = await fetchTmdbMultiSearch(search,page) 
-  
-  let currentPage = page 
-  
-    return(
-      <div className=" m-2 pb-24">
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
+
+  useEffect(() => {
+    if (inView && data?.page !== data?.total_pages) {
+      setPage((prePage) => (prePage += 1));
+      fetchTmdbMultiSearch(search, page).then((res: tmdbMultiSearch) => {
+        setData(res);
+        if (results) {
+          const combinedResults = [...results, ...res.results];
+          setResults(combinedResults);
+        } else {
+          setResults(res.results);
+        }
+      });
+    }
+  }, [inView]);
+
+  return (
+    <div className=" m-2 pb-24">
       <h1 className=" ml-2 mb-2 text-3xl xl:text-5xl font-semibold">Search</h1>
-      
-        <div className=" grid grid-cols-2 lg:grid-cols-3  xl:grid-cols-5 2xl:grid-cols-6 gap-y-4 ">
-          {data.results.map((e)=>(
-            <MovieItem key={e.id} grid type={e.media_type} movie={e}/>
-          ))}
-        </div>
 
-        {page && (
-         <div className=" mt-4 w-full items-center text-5xl  justify-center flex gap-2">
-         {page > 1 && (
-           <>
-             <Link
-               href={`/search/${type}/${search}/${--page}`}
-             >
-               <CircleArrowLeft/>
-             </Link>
-           </>
-         )}
-         <div>
-           <p className="text-lg">{currentPage}</p>
-         </div>
-         <Link
-           href={`/search/${type}/${search}/${++currentPage}`}
-         >
-           <CircleArrowRight/>
-         </Link>
-       </div>
-       )}
+      <div className=" grid grid-cols-2 lg:grid-cols-3  xl:grid-cols-5 2xl:grid-cols-6 gap-y-4 ">
+        {results?.map((e) => (
+          <MovieItem key={e.id} grid type={e.media_type} movie={e} />
+        ))}
       </div>
-    )
+      <div ref={ref} className="text-2xl p-3 font-semibold">
+        {data?.page !== data?.total_pages ? (
+          <p>Loading...</p>
+        ) : (
+          <p>You&apos;ve Reached the End of the road</p>
+        )}
+      </div>
+    </div>
+  );
 }

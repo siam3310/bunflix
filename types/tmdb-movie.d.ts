@@ -72,7 +72,7 @@ type tmdbMultiSearch = {
       season_number: string;
       vote_average: number;
     }[];
-    media_type: "movie" | "tv";
+    media_type: "movie" | "tv"|"person"
   }[];
   total_pages: number;
   total_results: number;

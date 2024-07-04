@@ -1,24 +1,17 @@
 import {
   fetchAniwatchEpisode,
-  fetchAniwatchEpisodeSrcDub,
   fetchAniwatchId,
 } from "@/data/fetch-data";
-import { BadgePlus, SquareArrowOutUpRight } from "lucide-react";
+import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
 export async function AniwatchInfo({
   id,
-  ep,
 }: {
   id: string;
-  ep: string;
 }) {
   const data: aniwatchInfo = await fetchAniwatchId(id);
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
-  const src: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
-    ep ? id : episode.episodes[0].episodeId,
-    ep
-  );
 
   return (
     <div className="bg-black/60 min-h-screen p-4">

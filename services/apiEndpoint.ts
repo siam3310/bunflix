@@ -1,4 +1,4 @@
-const key = process.env.TMDB_KEY
+const key = process.env.NEXT_PUBLIC_TMDB_KEY
 
 export const baseUrl = "https://api.themoviedb.org/3"
 const endpoint = {

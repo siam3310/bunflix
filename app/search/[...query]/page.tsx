@@ -30,14 +30,14 @@ export default async function Query({
   if (type === "anime") {
     return (
       <Suspense fallback={<SearchSkeleton />}>
-        <AniwatchSearch searchTerm={searchTerm} page={pageNo} />
+        <AniwatchSearch searchTerm={searchTerm} />
       </Suspense>
     );
   }
 
   return (
     <Suspense fallback={<SearchSkeleton />}>
-      <TmdbSearch type={type} page={pageNo} search={searchTerm} />
+      <TmdbSearch search={searchTerm} />
     </Suspense>
   );
 }

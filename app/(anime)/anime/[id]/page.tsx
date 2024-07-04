@@ -23,7 +23,6 @@ export default async function Anime({
       <Suspense fallback={<AniwatchInfoSkeleton />}>
         <AniwatchInfo
           id={params.id}
-          ep={searchParams.ep}
         />
       </Suspense>
     </>

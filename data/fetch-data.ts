@@ -1,4 +1,4 @@
-const key = process.env.TMDB_KEY;
+const key = process.env.NEXT_PUBLIC_TMDB_KEY;
 
 
 export async function fetchSeasonData(series_id:number|string,season_number:number|string) { 
@@ -12,7 +12,7 @@ export async function fetchSeasonData(series_id:number|string,season_number:numb
 export async function fetchTmdbInfo(type: string, id: number | string) {
   const data = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`);
   if (!data.ok) {
-    throw new Error(`Failed To Fetch ${type.toUpperCase()} Data from TheMovieDatabase`);
+    throw new Error(`Failed To Fetch Data from TheMovieDatabase`);
   }
   return data.json();
 }
@@ -129,11 +129,9 @@ export async function fetchAniwatchEpisodeSrcDub(
 }
 
 export async function fetchAniwatchSearch(
-  searchTerm: string,
-  page?: number | string
-) {
+  searchTerm: string,) {
   const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/search?q=${searchTerm}&page=${page}`
+    `https://animax-topaz.vercel.app/anime/search?q=${searchTerm}&page=1`
   );
   if (!data.ok) {
     throw new Error(`Anime Failed To Search '${searchTerm}' `);
