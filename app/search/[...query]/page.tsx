@@ -21,11 +21,10 @@ export async function generateMetadata({
 export default async function Query({
   params,
 }: {
-  params: { query: [string, string, number] };
+  params: { query: [string, string] };
 }) {
   const type = params.query[0];
   const searchTerm = params.query[1];
-  const pageNo = params.query[2];
 
   if (type === "anime") {
     return (

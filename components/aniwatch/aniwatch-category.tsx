@@ -44,7 +44,7 @@ export default function AniwatchCategory({ anime }: { anime: aniwatchApi }) {
                 {episode.type}
               </span>
             </div>
-            <p className="font-semibold text-xl px-2">{episode.name}</p>
+            <p className="font-semibold text-xl px-3 pb-3">{episode.name}</p>
           </Link>
         ))}
       </div>

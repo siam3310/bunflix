@@ -12,16 +12,14 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
   const [IsEmpty, setIsEmpty] = useState(false);
   const [type, setType] = useState("multi");
   const [result, setResult] = useState<tmdbMultiSearch | null>();
-  const [anime, setAnime] = useState<aniwatchSearch|null>();
+  const [anime, setAnime] = useState<aniwatchSearch | null>();
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
   const search = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    setTerm("");
-    setResult(null)
-    setAnime(null)
-    onClick()
+    clearAndClose();
+    onClick();
     if (!term) {
       setIsEmpty(true);
     } else {
@@ -42,14 +40,30 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
         setAnime(res);
       });
     }
-  }, [term]);
+  }, [debounceSearch]);
 
-  const clearAndClose =()=>{
-    setResult(null)
-    setAnime(null)
+  const clearAndClose = () => {
+    setResult(null);
+    setAnime(null);
     setTerm("");
-    onClick()
-  }
+    onClick();
+  };
+
+  const highlightSearchText = (text: string, highlight: string) => {
+    const parts = text.split(new RegExp(`(${highlight})`, "gi"));
+
+    return (
+      <span>
+        {parts.map((part, index) => {
+          return part.toLowerCase() === highlight.toLowerCase() ? (
+            <b key={index} className="bg-red-500/70">{part}</b>
+          ) : (
+            <span key={index}>{part}</span>
+          );
+        })}
+      </span>
+    );
+  };
 
   return (
     <div className="flex mx-4 pt-4 flex-col  h-full">
@@ -88,29 +102,35 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
       </div>
       <div
         style={{ padding: term.length > 0 ? "8px" : "0px" }}
-        className="my-4 rounded-md transition-all font-semibold text-lg w-full bg-gray-500 "
+        className="my-4 rounded-md transition-all text-lg w-full bg-gray-500 "
       >
         {term.length > 0 &&
           type === "multi" &&
-          result?.results.slice(0, 5).map((res) => (
+          result?.results.slice(0, 3).map((res) => (
             <Link
               key={res.id}
+              target="_blank"
               style={{ display: res.media_type === "person" ? "none" : "flex" }}
               href={`/info/${res.media_type}/${res.id}`}
               className=" w-full "
             >
               <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
-                {res.title || res.name}
+                {highlightSearchText(res.title || res.name,term)}
+
+                <span className="line-clamp-1 text-sm">{res.overview || res.synopsis}</span>
+                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">{res.media_type === "tv" ? "TV Show":"Movie"}</span>
               </button>
             </Link>
           ))}
 
         {term.length > 0 &&
           type === "anime" &&
-          anime?.animes.slice(0, 5).map((res) => (
-            <Link href={`/anime/${res.id}`} className=" w-full " key={res.id}>
+          anime?.animes.slice(0, 3).map((res) => (
+            <Link href={`/anime/${res.id}`} target="_blank" className=" w-full " key={res.id}>
               <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
-                {res.name}
+                {highlightSearchText(res.name,term)}
+                <span className="line-clamp-1 text-sm">Episodes :{res.episodes.dub}</span>
+                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">{res.type}</span>
               </button>
             </Link>
           ))}

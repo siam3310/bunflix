@@ -32,15 +32,14 @@ export default async function Page({
     }
   });
 
-  const newPage = movieEndpoint + `&page=${params.id[2]}`;
+  const newPage = movieEndpoint
 
   return (
     <>
-      <div className="mb-24 bg-black/80">
+      <div className="pb-24 bg-black/80 min-h-screen">
         <Suspense fallback={<CategoriesSkeleton/>}>
         <MovieRow
           grid
-          page={params.id[2]}
           endpoint={newPage}
           type={params.id[1]}
           title={params.id[0]}
