@@ -1,20 +1,19 @@
-import {
-  fetchAniwatchEpisode,
-  fetchAniwatchId,
-} from "@/data/fetch-data";
+import { fetchAniwatchEpisode, fetchAniwatchId } from "@/data/fetch-data";
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
 export async function AniwatchInfo({
   id,
+  currentEpisode,
 }: {
   id: string;
+  currentEpisode: number;
 }) {
   const data: aniwatchInfo = await fetchAniwatchId(id);
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
 
   return (
-    <div className="bg-black/60 min-h-screen p-4">
+    <div className="p-4">
       <div>
         <img
           className="-z-10 fixed top-0 size-full object-cover blur-2xl "
@@ -22,11 +21,34 @@ export async function AniwatchInfo({
           alt={data.anime.info.name}
         />
         <div className=" lg:flex ">
-          <img
-            className="w-full lg:w-fit rounded-md h-[400px] object-cover"
-            src={data.anime.info.poster}
-            alt={data.anime.info.name}
-          />
+          <div className="mr-4">
+            <h1 className="text-3xl font-semibold pb-4">Episode </h1>
+            <div className="flex items-center mb-6">
+              <ul className="max-h-[400px] w-full lg:w-[300px] bg-slate-500 overflow-y-scroll rounded-lg scrollbar-hide">
+                {episode.episodes.map((episode, index) => (
+                  <Link
+                    key={episode.episodeId}
+                    href={`/anime/${episode.episodeId}&episode=${episode.number}`}
+                  >
+                    <li
+                      style={{
+                        backgroundColor:
+                          currentEpisode == episode.number
+                            ? "#b91c1c"
+                            : index % 2 === 0
+                            ? "#334155"
+                            : "#1e293b",
+                      }}
+                      className="px-4 py-2"
+                    >
+                      {episode.number}. {episode.title}
+                    </li>
+                  </Link>
+                ))}
+              </ul>
+            </div>
+          </div>
+        
           <div className=" lg:mt-0 mt-6 lg:px-4">
             <h1 className=" my-2 text-4xl font-semibold">
               {data.anime.info.name}
@@ -60,39 +82,13 @@ export async function AniwatchInfo({
                 <span className=" hidden xl:block">|</span>
               </p>
             </div>
-          
-          </div>
-
-          <div>
-            <h1 className="text-3xl font-semibold py-4">Episode </h1>
-            <div className="flex items-center mb-6">
-              <ul className="max-h-[500px] w-full lg:w-[300px] bg-slate-500 overflow-y-scroll rounded-lg scrollbar-hide">
-                {episode.episodes.map((episode, index) => (
-                  <Link
-                    key={episode.episodeId}
-                    href={`/animeWatch/en/${episode.episodeId}&episode=${episode.number}`}
-                    >
-                    <li
-                    
-                      style={{
-                        backgroundColor:
-                          index % 2 === 0 ? "#334155" : "#1e293b",
-                      }}
-                      className="px-4 py-2"
-                    >
-                      {episode.number}. {episode.title}
-                    </li>
-                  </Link>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
       </div>
 
-      <div id="season">
-        <h1 className="font-semibold my-4 text-4xl">Seasons</h1>
-        <div className=" mt-4 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+      <div>
+        <h1 className="font-semibold my-4 text-4xl">Related Content</h1>
+        <div className=" mt-4 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
           {data.seasons.map((e) => (
             <div
               key={e.id}
@@ -100,7 +96,7 @@ export async function AniwatchInfo({
             >
               <div>
                 <img
-                  className=" h-[250px] rounded-l w-full object-cover "
+                  className="  rounded-l w-full object-cover "
                   src={e.poster}
                   alt={e.title}
                 />
@@ -117,7 +113,7 @@ export async function AniwatchInfo({
             </div>
           ))}
         </div>
-        {data.seasons.length == 0 && <p>No Seasons Found !</p>}
+        {data.seasons.length == 0 && <p>Related Content Found !</p>}
       </div>
     </div>
   );
