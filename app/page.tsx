@@ -14,7 +14,7 @@ export default async function Home() {
   const data: TmdbMovie = await fetchHeroData();
 
   return (
-   <div className=" pb-24">
+   <div className=" pb-24 bg-black/80">
     <Hero data={data} />
     <Suspense fallback={<TmdbHomeSkeleton/>}>
     <MovieRow title="Trending Movies" endpoint={endpoint.trendingMovies} type="movie" />

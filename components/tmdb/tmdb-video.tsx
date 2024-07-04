@@ -22,22 +22,22 @@ export function TmdbVideo({
   epNo?: number | string;
 }) {
   return (
-    <div className="p-4 pb-24 bg-black/60">
+    <div className=" pb-24 bg-black/60">
       <img
         className="-z-10 fixed top-0 size-full object-cover blur-2xl "
         src={createImageUrl(data.backdrop_path, "original")}
         alt={data.name}
       />
-      <div className="h-[300px] sm:h-[400px] md:h-[500px] xl:h-[600px]">
+      <div className="h-[300px] md:p-4 sm:h-[400px] md:h-[500px] xl:h-[600px]">
         <iframe
           allowFullScreen={true}
-          className="w-full rounded-lg h-full bg-black overflow-hidden"
+          className="w-full md:rounded-lg h-full overflow-hidden"
           src={url}
         ></iframe>
       </div>
 
       <div>
-        <div className=" mt-4">
+        <div className=" p-4">
           <div className="p-4 bg-black/20 rounded-xl flex-col  xl:flex-row flex">
             <div className={` ${seasonData ? "xl:w-[400px]" : "w-full"} `}>
               <h1 className="text-5xl font-semibold lg:mb-4">

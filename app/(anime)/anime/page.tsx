@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default async function Anime() {
   return (
-    <div className="pb-24">
+    <div className="pb-24 bg-black/80">
       <AniwatchHome />
     </div>
   );

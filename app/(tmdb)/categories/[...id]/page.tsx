@@ -36,7 +36,7 @@ export default async function Page({
 
   return (
     <>
-      <div className="mb-24">
+      <div className="mb-24 bg-black/80">
         <Suspense fallback={<CategoriesSkeleton/>}>
         <MovieRow
           grid

@@ -88,7 +88,7 @@ export default async function Page({
   }
 
   return (
-    <div className="mb-24">
+    <div >
       <TmdbVideo
         type={type}
         id={id}

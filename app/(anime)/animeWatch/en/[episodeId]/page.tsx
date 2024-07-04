@@ -28,7 +28,7 @@ export default async function AnimeWatch({
   );
 
   return (
-    <>
+    <div className="bg-black/70">
       <HlsPlayer
         track={data.tracks}
         videoSrc={data.sources[0].url}
@@ -39,6 +39,6 @@ export default async function AnimeWatch({
           episode={searchParams.episode}
         />
       </Suspense>
-    </>
+    </div>
   );
 }

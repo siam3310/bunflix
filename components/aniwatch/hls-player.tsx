@@ -220,8 +220,8 @@ export function HlsPlayer({
   }, []);
 
   return (
-    <div className="p-4 bg-black/50 ">
-      <div className="group md:h-[450px] mb-4 lg:h-[600px] relative overflow-hidden">
+    <div className=" md:p-4 ">
+      <div className="group md:h-[450px]  lg:h-[600px] relative overflow-hidden">
         {hasInteracted && (
           <div
             style={{ opacity: loading ? "100%" : "0%" }}
@@ -254,9 +254,9 @@ export function HlsPlayer({
             ))}
           </video>
         ) : (
-          <span className="flex items-center gap-2">
+          <div className="flex items-center gap-2 p-4 text-2xl">
             <HandIcon color="white" size={18} /> Waiting for user input{" "}
-          </span>
+          </div>
         )}
 
         <div className="absolute top-0 right-0 flex items-center justify-center size-full space-x-3">

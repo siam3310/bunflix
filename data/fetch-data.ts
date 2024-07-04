@@ -1,8 +1,12 @@
 const key = process.env.NEXT_PUBLIC_TMDB_KEY;
 
-
-export async function fetchSeasonData(series_id:number|string,season_number:number|string) { 
-  const data = await fetch(`https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`);
+export async function fetchSeasonData(
+  series_id: number | string,
+  season_number: number | string
+) {
+  const data = await fetch(
+    `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`
+  );
   if (!data.ok) {
     throw new Error("Failed To Fetch Season Data");
   }
@@ -10,7 +14,9 @@ export async function fetchSeasonData(series_id:number|string,season_number:numb
 }
 
 export async function fetchTmdbInfo(type: string, id: number | string) {
-  const data = await fetch(`https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`);
+  const data = await fetch(
+    `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
+  );
   if (!data.ok) {
     throw new Error(`Failed To Fetch Data from TheMovieDatabase`);
   }
@@ -27,18 +33,15 @@ export async function fetchHeroData() {
   return data.json();
 }
 
-
-export async function fetchTmdbMultiSearch(
-  searchTerm: string,
-  page: number 
-) {
-  const data = await fetch(`https://api.themoviedb.org/3/search/multi?query=${searchTerm}&page=${page}&api_key=${key}`);
+export async function fetchTmdbMultiSearch(searchTerm: string, page: number) {
+  const data = await fetch(
+    `https://api.themoviedb.org/3/search/multi?query=${searchTerm}&page=${page}&api_key=${key}`
+  );
   if (!data.ok) {
     throw new Error(`Failed To Search '${searchTerm}' `);
   }
   return data.json();
 }
-
 
 export async function aniwatchHomeApi() {
   const data = await fetch("https://animax-topaz.vercel.app/anime/home");
@@ -103,10 +106,9 @@ export async function fetchAniwatchEpisodeSrcDub(
   episodeId: string | number,
   episode?: string
 ) {
+  let data;
 
-  let data
-  
-  if(!episode){
+  if (!episode) {
     data = await fetch(
       `https://animax-topaz.vercel.app/anime/episode-srcs?id=${episodeId}&server=vidstreaming&category=dub`
     );
@@ -114,7 +116,7 @@ export async function fetchAniwatchEpisodeSrcDub(
     if (!data.ok) {
       throw new Error("Episode Source Fetch Failed");
     }
-  
+
     return data.json();
   }
 
@@ -128,8 +130,7 @@ export async function fetchAniwatchEpisodeSrcDub(
   return data.json();
 }
 
-export async function fetchAniwatchSearch(
-  searchTerm: string,) {
+export async function fetchAniwatchSearch(searchTerm: string) {
   const data = await fetch(
     `https://animax-topaz.vercel.app/anime/search?q=${searchTerm}&page=1`
   );

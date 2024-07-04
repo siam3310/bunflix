@@ -11,15 +11,17 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
   const [term, setTerm] = useState("");
   const [IsEmpty, setIsEmpty] = useState(false);
   const [type, setType] = useState("multi");
-  const [result, setResult] = useState<tmdbMultiSearch>();
-  const [anime, setAnime] = useState<aniwatchSearch>();
+  const [result, setResult] = useState<tmdbMultiSearch | null>();
+  const [anime, setAnime] = useState<aniwatchSearch|null>();
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
   const search = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setTerm("");
-    onClick();
+    setResult(null)
+    setAnime(null)
+    onClick()
     if (!term) {
       setIsEmpty(true);
     } else {
@@ -42,6 +44,13 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
     }
   }, [term]);
 
+  const clearAndClose =()=>{
+    setResult(null)
+    setAnime(null)
+    setTerm("");
+    onClick()
+  }
+
   return (
     <div className="flex mx-4 pt-4 flex-col  h-full">
       <div className="mb-2 flex items-center justify-between">
@@ -49,7 +58,7 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
           <h1 className=" text-start  text-4xl font-semibold">Search</h1>
         </div>
         <button
-          onClick={onClick}
+          onClick={clearAndClose}
           className=" transition-all  hover:bg-red-600 items-center rounded-full p-2 size-10 aspect-square"
         >
           <X />
