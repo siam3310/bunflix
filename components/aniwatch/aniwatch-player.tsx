@@ -1,21 +1,28 @@
-import { fetchAniwatchEpisodeSrcDub } from "@/data/fetch-data";
+import { fetchAniwatchEpisodeServer, fetchAniwatchEpisodeSrc, fetchAniwatchEpisodeSrcDub } from "@/data/fetch-data";
 import { HlsPlayer } from "./hls-player";
 
 export default async function AniwatchPlayer({
   episodeId,
   ep,
+  lang
 }: {
   episodeId: string;
   ep: string;
+  lang: "english" | "japanesse"
 }) {
-  const data: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
+  const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
     episodeId,
-    ep
+    ep,
   );
 
-  return (
-    <>
-      <HlsPlayer track={data.tracks} videoSrc={data.sources[0].url} />
-    </>
-  );
+  const sub:aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
+    episodeId,
+    ep 
+  )
+  
+  if(lang==="english") {
+     return <HlsPlayer track={dub.tracks} videoSrc={dub.sources[0].url} />
+  } else {
+    return <HlsPlayer track={sub.tracks} videoSrc={sub.sources[0].url} />
+  }
 }

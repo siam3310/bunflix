@@ -35,17 +35,19 @@ export function HlsPlayer({
   const [isMuted, setIsMuted] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
+  const hls = new Hls();
+
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
-      const hls = new Hls();
 
-      hls.loadSource(videoSrc);
+      hls.loadSource(`http://127.0.0.1:3000/api/${videoSrc}`);
       hls.attachMedia(player.current);
 
       player.current.addEventListener("canplaythrough", () => {
         setLoading(false);
       });
 
+      updateCurrentTime()
       return () => {
         if (player.current) {
           player.current.addEventListener("canplaythrough", () => {
@@ -122,25 +124,20 @@ export function HlsPlayer({
   }, [isPlaying, player]);
 
   useEffect(() => {
-    setTimeout(() => {
       updateCurrentTime();
-      updateCurrentTime();
-      updateCurrentTime();
-    }, 1000);
-   
-  }, []);
+  }, [currentTimeSec]);
 
   const volumnControl = (control: "increase" | "decrease") => {
     if (player.current) {
       let newVolume = player.current.volume;
       if (control === "increase") {
-        if(player.current.volume===1){
-          toast.warning("Max volumn reached")
+        if (player.current.volume === 1) {
+          toast.warning("Max volumn reached");
         }
         newVolume += 0.1;
       } else if (control === "decrease") {
-        if(player.current.volume > 0){
-          toast.warning("Mininum volumn reached")
+        if (player.current.volume > 0) {
+          toast.warning("Mininum volumn reached");
         }
         newVolume -= 0.1;
       }
@@ -158,6 +155,7 @@ export function HlsPlayer({
       }
     }
   };
+
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -332,6 +330,7 @@ export function HlsPlayer({
             }}
             className="w-full ml-2 cursor-pointer opacity-60 hover:opacity-100 transition-all"
           />
+
           <Button
             className="rounded-full hover:bg-white bg-white/60 aspect-square p-2 "
             size={"sm"}

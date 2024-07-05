@@ -1,7 +1,5 @@
 import { AniwatchHome } from "@/components/aniwatch/aniwatch-home";
-import AniwatchHomeSkeleton from "@/components/fallback-ui/aniwatch-home-skeleton";
 import { Metadata } from "next";
-import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Anime - Nextflix",

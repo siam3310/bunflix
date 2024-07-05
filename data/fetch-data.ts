@@ -104,23 +104,10 @@ export async function fetchAniwatchEpisodeSrc(
 
 export async function fetchAniwatchEpisodeSrcDub(
   episodeId: string | number,
-  episode?: string
+  episode: string,
 ) {
-  let data;
 
-  if (!episode) {
-    data = await fetch(
-      `https://animax-topaz.vercel.app/anime/episode-srcs?id=${episodeId}&server=vidstreaming&category=dub`
-    );
-
-    if (!data.ok) {
-      throw new Error("Episode Source Fetch Failed");
-    }
-
-    return data.json();
-  }
-
-  data = await fetch(
+  const data = await fetch(
     `https://animax-topaz.vercel.app/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
   );
   if (!data.ok) {
