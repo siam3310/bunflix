@@ -1,4 +1,5 @@
-'use client'
+"use client";
+import cache from "@/lib/cache";
 import MovieItem from "./movie-item";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
@@ -30,23 +31,25 @@ export default function MovieRow({
   useEffect(() => {
     if (inView && data?.page !== data?.total_pages) {
       setPage((prePage) => (prePage += 1));
-      fetchData(`${endpoint}&page=${page}`).then((res: tmdbMultiSearch) => {
-        setData(res);
-        if (results) {
-          const combinedResults = [...results, ...res.results];
-          setResults(combinedResults);
-        } else {
-          setResults(res.results);
+      fetchData(`${endpoint}&page=${page}`, title.split(" ").join("")).then(
+        (res: tmdbMultiSearch) => {
+          setData(res);
+          if (results) {
+            const combinedResults = [...results, ...res.results];
+            setResults(combinedResults);
+          } else {
+            setResults(res.results);
+          }
         }
-      });
-    }
-    else {
-      fetchData(`${endpoint}&page=${page}`).then((res)=>{
-        setData(res);
-      })
+      );
+    } else {
+      fetchData(`${endpoint}&page=${page}`, title.split(" ").join("")).then(
+        (res) => {
+          setData(res);
+        }
+      );
     }
   }, [inView]);
-
 
   return (
     <div className=" mb-4">
@@ -68,16 +71,26 @@ export default function MovieRow({
           ))}
         </div>
       </div>
-      <div ref={ref} className="text-2xl p-3 font-semibold">
-      </div>
+      <div ref={ref} className="text-2xl p-3 font-semibold"></div>
     </div>
   );
 }
 
-export async function fetchData(endpoint: string) {
-  const data = await fetch(endpoint);
-  if (!data.ok) {
-    throw new Error("fetch failed");
+export async function fetchData(endpoint: string, title: string) {
+  const cacheKey = `${title}${endpoint}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(endpoint);
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    console.log(response);
+    return data;
+  } catch (error) {
+    throw new Error(`Failed to fetch data for ${title}`);
   }
-  return data.json();
 }

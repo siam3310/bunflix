@@ -1,4 +1,4 @@
-import { fetchAniwatchEpisodeServer, fetchAniwatchEpisodeSrc, fetchAniwatchEpisodeSrcDub } from "@/data/fetch-data";
+import { fetchAniwatchEpisodeSrc, fetchAniwatchEpisodeSrcDub } from "@/data/fetch-data";
 import { HlsPlayer } from "./hls-player";
 
 export default async function AniwatchPlayer({

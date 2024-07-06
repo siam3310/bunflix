@@ -123,7 +123,7 @@ export default function Navbar() {
         >
           <div
             style={{ translate: `${52 * navIndex}px` }}
-            className="group-hover:bg-white duration-[5000ms] h-2 w-[40px] bottom-0 left-4 absolute transition-all  ease-in-out"
+            className="group-hover:bg-white duration-&lsqb;5000ms&rsqb; h-2 w-[40px] bottom-0 left-4 absolute transition-all  ease-in-out"
           />
 
           {navLinks.map((link) => (

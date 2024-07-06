@@ -46,7 +46,7 @@ export function AniwatchInfo({
               <Label htmlFor="audio">Japanesse</Label>
             </div>
             <div className="flex items-center mb-6">
-              <ul className="max-h-[400px] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg scrollbar-hide">
+              <ul className="max-h-[400px] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg">
                 {episode.episodes.map((episode, index) => (
                   <Link
                     key={episode.episodeId}

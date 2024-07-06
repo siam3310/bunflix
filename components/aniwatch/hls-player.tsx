@@ -40,7 +40,7 @@ export function HlsPlayer({
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
 
-      hls.loadSource(`http://127.0.0.1:3000/api/${videoSrc}`);
+      hls.loadSource(`${process.env.NEXT_PUBLIC_APP_URL}/api/${videoSrc}`);
       hls.attachMedia(player.current);
 
       player.current.addEventListener("canplaythrough", () => {
@@ -228,7 +228,7 @@ export function HlsPlayer({
             <LoaderIcon
               color="black"
               size={18}
-              className=" animate-spin transition-all duration-[2000ms]"
+              className=" animate-spin transition-all 2000ms]"
             />
             Loading ...
           </div>

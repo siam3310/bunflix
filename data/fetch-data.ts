@@ -1,129 +1,248 @@
+import cache from "@/lib/cache";
+
 const key = process.env.NEXT_PUBLIC_TMDB_KEY;
 
 export async function fetchSeasonData(
   series_id: number | string,
   season_number: number | string
 ) {
-  const data = await fetch(
-    `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`
-  );
-  if (!data.ok) {
-    throw new Error("Failed To Fetch Season Data");
+  const cacheKey = `tmdbSeasonData${series_id}${season_number}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Failed to fetch data for ${series_id}`);
   }
-  return data.json();
 }
 
 export async function fetchTmdbInfo(type: string, id: number | string) {
-  const data = await fetch(
-    `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
-  );
-  if (!data.ok) {
-    throw new Error(`Failed To Fetch Data from TheMovieDatabase`);
+  const cacheKey = `tmdbInfo${type}-${id}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Failed to fetch data for ${id}`);
   }
-  return data.json();
 }
 
 export async function fetchHeroData() {
-  const data = await fetch(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${key}`
-  );
-  if (!data.ok) {
-    throw new Error(`Failed to Fetch Movie Slider Data from TheMovieDatabase`);
+  const cacheKey = "tmdbHero";
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/popular?api_key=${key}`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch Slider data");
   }
-  return data.json();
 }
 
 export async function fetchTmdbMultiSearch(searchTerm: string, page: number) {
-  const data = await fetch(
-    `https://api.themoviedb.org/3/search/multi?query=${searchTerm}&page=${page}&api_key=${key}`
-  );
-  if (!data.ok) {
-    throw new Error(`Failed To Search '${searchTerm}' `);
+  const cacheKey = `tmdbMultiSeacrh${searchTerm}${page}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/multi?query=${searchTerm}&page=${page}&api_key=${key}`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Search failed for ${searchTerm}`);
   }
-  return data.json();
 }
 
 export async function aniwatchHomeApi() {
-  const data = await fetch("https://animax-topaz.vercel.app/anime/home");
-  if (!data.ok) {
-    throw new Error("Home data Fetch Failed");
-  }
+  const cacheKey = `animeHome`;
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/home`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
 
-  return data.json();
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed at Anime Slider`);
+  }
 }
 
 export async function fetchAniwatchId(id: string) {
-  const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/info?id=${id}`
-  );
-  if (!data.ok) {
-    throw new Error("Anime data Failed To Fetch");
-  }
+  const cacheKey = `aniwatchId${id}`;
 
-  return data.json();
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/info?id=${id}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed for AnimeID ${id}`);
+  }
 }
 
 export async function fetchAniwatchEpisode(seasonId: string) {
-  const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/episodes/${seasonId}`
-  );
-  if (!data.ok) {
-    throw new Error("Anime Episode Fetch Failed");
-  }
+  const cacheKey = `aniwatchEpisode${seasonId}`;
 
-  return data.json();
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/episodes/${seasonId}`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed for SeasonID ${seasonId}`);
+  }
 }
 
 export async function fetchAniwatchEpisodeServer(
   episodeId: string,
   episode: string
 ) {
-  const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/servers?episodeId=${episodeId}?ep=${episode}`
-  );
-  if (!data.ok) {
-    throw new Error("Server Fetch Failed");
-  }
+  const cacheKey = `aniwatchEpisodeServer${episodeId}${episode}`;
 
-  return data.json();
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed Episode Server for ${episodeId + episode}`);
+  }
 }
 
 export async function fetchAniwatchEpisodeSrc(
   episodeId: string,
   episode: string
 ) {
-  const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
-  );
-  if (!data.ok) {
-    throw new Error("Episode Source Fetch Failed");
-  }
+  const cacheKey = `aniwatchEpisodeSourceJp${episodeId}${episode}`;
 
-  return data.json();
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(
+      `Fetch failed Episode Sources japanesse for ${episodeId + episode}`
+    );
+  }
 }
 
 export async function fetchAniwatchEpisodeSrcDub(
   episodeId: string | number,
-  episode: string,
+  episode: string
 ) {
+  const cacheKey = `aniwatchEpisodeSourceEn${episodeId}${episode}`;
 
-  const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
-  );
-  if (!data.ok) {
-    throw new Error("Source Fetch Failed");
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(
+      `Fetch failed Episode Sources english for ${episodeId + episode}`
+    );
   }
-
-  return data.json();
 }
 
 export async function fetchAniwatchSearch(searchTerm: string) {
-  const data = await fetch(
-    `https://animax-topaz.vercel.app/anime/search?q=${searchTerm}&page=1`
-  );
-  if (!data.ok) {
-    throw new Error(`Anime Failed To Search '${searchTerm}' `);
-  }
+  const cacheKey = `aniwatchSearch${searchTerm}`;
 
-  return data.json();
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/search?q=${searchTerm}&page=1`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error(
+      `Search failed in Anime for ${searchTerm}`
+    );
+  }
 }

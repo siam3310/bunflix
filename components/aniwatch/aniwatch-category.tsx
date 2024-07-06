@@ -1,19 +1,17 @@
 "use client";
 import { CaptionsIcon, MicIcon, TvIcon } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function AniwatchCategory({ anime }: { anime: aniwatchApi }) {
   
   const [date, setDate] = useState(anime.top10Animes.today);
-  const router = useRouter();
 
   
   return (
     <>
       <h1 className="text-3xl py-2 font-semibold px-4">Newly Added</h1>
-      <div className="grid gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+      <div className="grid gap-4 p-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
         {anime.latestEpisodeAnimes.map((episode) => (
           <Link
             key={episode.id}

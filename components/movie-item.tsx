@@ -47,7 +47,7 @@ export default function MovieItem({
       <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full focus:hover:bg-red-700 transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100  p-3 group">
         <div>
           <p
-            className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-[300ms]  group-hover:leading-[26px] text-xl xl:text-[24px] `}
+            className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-&lsqb;300ms&rsqb;  group-hover:leading-[26px] text-xl xl:text-[24px] `}
           >
             {title ? title : name}
           </p>
