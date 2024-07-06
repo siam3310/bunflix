@@ -15,13 +15,7 @@ export async function GET(request: NextRequest) {
     return;
   }
 
-  return new Response(await result.arrayBuffer(),{
-    status:200,
-    headers:{
-      'Access-Control-Allow-Origin': '127.0.0.1:3000, localhost:3000',
-      'Access-Control-Allow-Methods': 'GET',
-      'Access-Control-Allow-Headers': 'Content-Type, application/octet-stream',
-
-    }
+  return new Response(await result.arrayBuffer(), {
+    status: 200,
   });
 }
