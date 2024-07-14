@@ -15,6 +15,7 @@ import {
 import { Button } from "../ui/button";
 import { Slider } from "../ui/slider";
 import { toast } from "sonner";
+import { useSearchBarFocus } from "@/context/searchContext";
 
 export function HlsPlayer({
   videoSrc,
@@ -39,15 +40,14 @@ export function HlsPlayer({
 
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
-
-      hls.loadSource(`${process.env.NEXT_PUBLIC_APP_URL}/api/${videoSrc}`);
+      hls.loadSource(videoSrc);
       hls.attachMedia(player.current);
 
       player.current.addEventListener("canplaythrough", () => {
         setLoading(false);
       });
 
-      updateCurrentTime()
+      updateCurrentTime();
       return () => {
         if (player.current) {
           player.current.addEventListener("canplaythrough", () => {
@@ -124,7 +124,7 @@ export function HlsPlayer({
   }, [isPlaying, player]);
 
   useEffect(() => {
-      updateCurrentTime();
+    updateCurrentTime();
   }, [currentTimeSec]);
 
   const volumnControl = (control: "increase" | "decrease") => {
@@ -156,36 +156,39 @@ export function HlsPlayer({
     }
   };
 
+  const { isSearchBarFocused } = useSearchBarFocus();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      switch (event.code) {
-        case "Space":
-          event.preventDefault();
-          tooglePlayPause();
-          break;
-        case "KeyF":
-          toggleFullscreen();
-          break;
-        case "KeyM":
-          toogleMute();
-          break;
-        case "ArrowUp":
-          event.preventDefault();
-          volumnControl("increase");
-          break;
-        case "ArrowDown":
-          event.preventDefault();
-          volumnControl("decrease");
-          break;
-        case "ArrowLeft":
-          event.preventDefault();
-          timelineControl("backward");
-          break;
-        case "ArrowRight":
-          event.preventDefault();
-          timelineControl("foreward");
-          break;
+      if (!isSearchBarFocused) {
+        switch (event.code) {
+          case "Space":
+            event.preventDefault();
+            tooglePlayPause();
+            break;
+          case "KeyF":
+            toggleFullscreen();
+            break;
+          case "KeyM":
+            toogleMute();
+            break;
+          case "ArrowUp":
+            event.preventDefault();
+            volumnControl("increase");
+            break;
+          case "ArrowDown":
+            event.preventDefault();
+            volumnControl("decrease");
+            break;
+          case "ArrowLeft":
+            event.preventDefault();
+            timelineControl("backward");
+            break;
+          case "ArrowRight":
+            event.preventDefault();
+            timelineControl("foreward");
+            break;
+        }
       }
     };
     updateCurrentTime();

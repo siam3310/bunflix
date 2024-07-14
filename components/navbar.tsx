@@ -1,21 +1,18 @@
 "use client";
 
 import {
-  BookmarkPlusIcon,
   CrownIcon,
   Home,
-  List,
   PopcornIcon,
   Search,
-  Star,
   TrendingUpIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useScroll } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import SearchInput from "./search-input";
 import { usePathname } from "next/navigation";
 import NavLink from "./nav-link";
+import { useSearchBarFocus } from "@/context/searchContext";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -26,7 +23,9 @@ export default function Navbar() {
   const isTopRated = pathname.split("/")[1]==="categories" && pathname.split("/")[2]==="top%20Rated%20Movies"
 
   const [navIndex, setNavIndex] = useState(2);
-  const [openSearch, setOpenSearch] = useState(false);
+
+  const { setIsSearchBarFocused,isSearchBarFocused } = useSearchBarFocus();
+
 
   const navLinks = [
     {
@@ -100,15 +99,17 @@ export default function Navbar() {
     };
   }, []);
 
+
+
   return (
     <>
       <motion.div
-        initial={{ y: 250 }}
-        animate={{ y: openSearch ? 20 : 250 }}
+        initial={{ y: 300 }}
+        animate={{ y: isSearchBarFocused ? 20 : 300 }}
         className=" w-full px-4 fixed bottom-0  flex items-center justify-center z-[51]"
       >
         <div className="  bg-gray-700 h-full pb-8 rounded-t-xl overflow-hidden w-[700px]">
-          <SearchInput onClick={() => setOpenSearch(!openSearch)} />
+          <SearchInput onClick={() => setIsSearchBarFocused(!isSearchBarFocused)} />
         </div>
       </motion.div>
 
@@ -140,7 +141,7 @@ export default function Navbar() {
 
           <motion.button
             onClick={() => {
-              setNavIndex(3), setOpenSearch(!openSearch);
+              setNavIndex(3), setIsSearchBarFocused(!isSearchBarFocused);
             }}
             onMouseEnter={() => {
               setNavIndex(2);

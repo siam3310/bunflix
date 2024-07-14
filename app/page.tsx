@@ -2,7 +2,7 @@ import  TmdbHomeSkeleton  from "@/components/fallback-ui/tmdb-home-row";
 import Hero from "@/components/tmdb/tmdb-slider";
 import MovieRow from "@/components/movie-row";
 import { fetchHeroData } from "@/data/fetch-data";
-import endpoint from "@/services/apiEndpoint";
+import endpoint from "@/data/apiEndpoint";
 import { Suspense } from "react";
 import { Metadata } from "next";
 

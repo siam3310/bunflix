@@ -1,6 +1,6 @@
 import MovieRow from "@/components/movie-row";
 import  CategoriesSkeleton  from "@/components/fallback-ui/categories-skeleton";
-import endpoint from "@/services/apiEndpoint";
+import endpoint from "@/data/apiEndpoint";
 import { Suspense } from "react";
 
 

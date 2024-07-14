@@ -3,6 +3,7 @@ import Navbar from "@/components/navbar";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SearchBarFocusProvider } from "@/context/searchContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,12 +14,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-        {children}
-        <SpeedInsights />
-        <Toaster closeButton richColors />
-      </body>
+      <SearchBarFocusProvider>
+        <body className={inter.className}>
+          <Navbar />
+          {children}
+          <SpeedInsights />
+          <Toaster closeButton richColors />
+        </body>
+      </SearchBarFocusProvider>
     </html>
   );
 }

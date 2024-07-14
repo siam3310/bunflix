@@ -28,15 +28,19 @@ export default async function Query({
 
   if (type === "anime") {
     return (
+      <div className=" bg-black/80 h-screen">
       <Suspense fallback={<SearchSkeleton />}>
         <AniwatchSearch searchTerm={searchTerm} />
       </Suspense>
+      </div>
     );
   }
 
   return (
+    <div className=" bg-black/80 h-screen">
     <Suspense fallback={<SearchSkeleton />}>
       <TmdbSearch search={searchTerm} />
     </Suspense>
+    </div>
   );
 }

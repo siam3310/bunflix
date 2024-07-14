@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { fetchAniwatchSearch, fetchTmdbMultiSearch } from "@/data/fetch-data";
 import Link from "next/link";
 import useDebounce from "@/hooks/useDebounce";
+import { useSearchBarFocus } from "@/context/searchContext";
 
 export default function SearchInput({ onClick }: { onClick: () => void }) {
   const [term, setTerm] = useState("");
@@ -13,19 +14,15 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
   const [type, setType] = useState("multi");
   const [result, setResult] = useState<tmdbMultiSearch | null>();
   const [anime, setAnime] = useState<aniwatchSearch | null>();
+  const [preSearched, setPreSearched] = useState<
+    { type: string; term: string }[]
+  >([]);
+
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
-  const search = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    clearAndClose();
-    onClick();
-    if (!term) {
-      setIsEmpty(true);
-    } else {
-      router.push(`/search/${type}/${term}`);
-    }
-  };
+  const { setIsSearchBarFocused,isSearchBarFocused } = useSearchBarFocus();
+
 
   useEffect(() => {
     if (!term) {
@@ -49,21 +46,34 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
     onClick();
   };
 
-  const highlightSearchText = (text: string, highlight: string) => {
-    const parts = text.split(new RegExp(`(${highlight})`, "gi"));
-
-    return (
-      <span>
-        {parts.map((part, index) => {
-          return part.toLowerCase() === highlight.toLowerCase() ? (
-            <b key={index} className="bg-red-500/70">{part}</b>
-          ) : (
-            <span key={index}>{part}</span>
-          );
-        })}
-      </span>
-    );
+  const search = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    // onClick();
+    if (!term) {
+      setIsEmpty(true);
+    } else {
+      clearAndClose();
+      setPreSearched([...preSearched, { type: type, term: term }]);
+      router.push(`/search/${type}/${term}`);
+    }
   };
+
+  
+  // useEffect(() => {
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //       switch (event.code) {
+  //         case "Slash":
+  //           event.preventDefault();
+  //           setIsSearchBarFocused(!isSearchBarFocused)
+  //           break;
+  //       }
+  //   };
+  //   window.addEventListener("keydown", handleKeyDown);
+
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
 
   return (
     <div className="flex mx-4 pt-4 flex-col  h-full">
@@ -115,10 +125,14 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
               className=" w-full "
             >
               <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
-                {highlightSearchText(res.title || res.name,term)}
+                {highlightSearchText(res.title || res.name, term)}
 
-                <span className="line-clamp-1 text-sm">{res.overview || res.synopsis}</span>
-                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">{res.media_type === "tv" ? "TV Show":"Movie"}</span>
+                <span className="line-clamp-1 text-sm">
+                  {res.overview || res.synopsis}
+                </span>
+                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
+                  {res.media_type === "tv" ? "TV Show" : "Movie"}
+                </span>
               </button>
             </Link>
           ))}
@@ -126,11 +140,20 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
         {term.length > 0 &&
           type === "anime" &&
           anime?.animes.slice(0, 3).map((res) => (
-            <Link href={`/anime/${res.id}`} target="_blank" className=" w-full " key={res.id}>
+            <Link
+              href={`/anime/${res.id}`}
+              target="_blank"
+              className=" w-full "
+              key={res.id}
+            >
               <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
-                {highlightSearchText(res.name,term)}
-                <span className="line-clamp-1 text-sm">Episodes :{res.episodes.dub}</span>
-                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">{res.type}</span>
+                {highlightSearchText(res.name, term)}
+                <span className="line-clamp-1 text-sm">
+                  Episodes :{res.episodes.dub}
+                </span>
+                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
+                  {res.type}
+                </span>
               </button>
             </Link>
           ))}
@@ -144,6 +167,8 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
           className=" w-full placeholder:text-white/50 focus:outline-none bg-transparent  h-full px-2 "
           placeholder="Search..."
           value={term}
+          onFocus={() => setIsSearchBarFocused(true)}
+          onBlur={() => setIsSearchBarFocused(false)}
           onChange={(e) => {
             setTerm(e.target.value);
             setIsEmpty(false);
@@ -153,6 +178,20 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
           <Search size={20} opacity={0.5} />
         </button>
       </form>
+
+      <div className="flex items-center gap-2 my-2">
+        {preSearched.slice(0, 5).map((value,index) => (
+          <p key={index}
+            onClick={() => {
+              router.push(`/search/${value.type}/${value.term}`);
+            }}
+            className="bg-gray-100 text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+          >
+            {value.term}
+          </p>
+        ))}
+      </div>
+
       <motion.p
         initial={{ y: 100 }}
         onClick={() => setIsEmpty(false)}
@@ -165,3 +204,21 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
     </div>
   );
 }
+
+const highlightSearchText = (text: string, highlight: string) => {
+  const parts = text.split(new RegExp(`(${highlight})`, "gi"));
+
+  return (
+    <span>
+      {parts.map((part, index) => {
+        return part.toLowerCase() === highlight.toLowerCase() ? (
+          <b key={index} className="bg-red-500/70">
+            {part}
+          </b>
+        ) : (
+          <span key={index}>{part}</span>
+        );
+      })}
+    </span>
+  );
+};
