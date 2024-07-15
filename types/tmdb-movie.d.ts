@@ -19,7 +19,7 @@ type MovieResults = {
   image: string;
   known_for?:any[];
   profile_path?:string;
-  media_type: "movie" | "tv"|"person"
+  media_type: "movie" | "tv"|"person" | "collection"
   seasons: {
     air_date: string;
     episode_count: number;
