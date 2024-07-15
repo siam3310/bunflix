@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const [navIndex, setNavIndex] = useState(2);
 
-  const { setIsSearchBarFocused,isSearchBarFocused } = useSearchBarFocus();
+  const { isSearchOpen,setIsSearchOpen } = useSearchBarFocus();
 
 
   const navLinks = [
@@ -103,15 +103,7 @@ export default function Navbar() {
 
   return (
     <>
-      <motion.div
-        initial={{ y: 300 }}
-        animate={{ y: isSearchBarFocused ? 20 : 300 }}
-        className=" w-full px-4 fixed bottom-0  flex items-center justify-center z-[51]"
-      >
-        <div className="  bg-gray-700 h-full pb-8 rounded-t-xl overflow-hidden w-[700px]">
-          <SearchInput onClick={() => setIsSearchBarFocused(!isSearchBarFocused)} />
-        </div>
-      </motion.div>
+     
 
       <nav className="outline-none group focus:outline-none z-20 fixed bottom-4 left-1/2 transform -translate-x-1/2 ">
         <motion.div
@@ -139,12 +131,9 @@ export default function Navbar() {
             />
           ))}
 
-          <motion.button
-            onClick={() => {
-              setNavIndex(3), setIsSearchBarFocused(!isSearchBarFocused);
-            }}
+          <button
+            onClick={() => {setIsSearchOpen(!isSearchOpen)}}
             onMouseEnter={() => {
-              setNavIndex(2);
               setisSearchHovered(true);
             }}
             onMouseLeave={() => setisSearchHovered(false)}
@@ -169,9 +158,10 @@ export default function Navbar() {
                 Search
               </h1>
             </div>
-          </motion.button>
+          </button>
         </motion.div>
       </nav>
+          <SearchInput />
     </>
   );
 }

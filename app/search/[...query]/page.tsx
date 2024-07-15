@@ -28,7 +28,7 @@ export default async function Query({
 
   if (type === "anime") {
     return (
-      <div className=" bg-black/80 h-screen">
+      <div className=" bg-black/80 min-h-screen">
       <Suspense fallback={<SearchSkeleton />}>
         <AniwatchSearch searchTerm={searchTerm} />
       </Suspense>
@@ -37,7 +37,7 @@ export default async function Query({
   }
 
   return (
-    <div className=" bg-black/80 h-screen">
+    <div className=" bg-black/80 min-h-screen">
     <Suspense fallback={<SearchSkeleton />}>
       <TmdbSearch search={searchTerm} />
     </Suspense>

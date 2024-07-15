@@ -40,7 +40,7 @@ export function HlsPlayer({
 
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
-      hls.loadSource(videoSrc);
+      hls.loadSource(`${process.env.NEXT_PUBLIC_APP_URL}/api/${videoSrc}`);
       hls.attachMedia(player.current);
 
       player.current.addEventListener("canplaythrough", () => {
@@ -160,7 +160,9 @@ export function HlsPlayer({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (!isSearchBarFocused) {
+      if (isSearchBarFocused) {
+        return
+      }
         switch (event.code) {
           case "Space":
             event.preventDefault();
@@ -189,7 +191,6 @@ export function HlsPlayer({
             timelineControl("foreward");
             break;
         }
-      }
     };
     updateCurrentTime();
     window.addEventListener("keydown", handleKeyDown);
@@ -205,6 +206,7 @@ export function HlsPlayer({
     toogleMute,
     tooglePlayPause,
     toggleFullscreen,
+    isSearchBarFocused
   ]);
 
   useEffect(() => {
@@ -222,7 +224,7 @@ export function HlsPlayer({
 
   return (
     <div className=" md:p-4 ">
-      <div className="group md:h-[450px]  lg:h-[600px] relative overflow-hidden">
+      <div className="group md:max-h-[450px]  lg:max-h-[600px] relative overflow-hidden">
         {hasInteracted && (
           <div
             style={{ opacity: loading ? "100%" : "0%" }}
@@ -238,7 +240,7 @@ export function HlsPlayer({
         )}
         {hasInteracted ? (
           <video
-            className="h-full w-full md:rounded-lg"
+            className="h-full w-full md:rounded-lg bg-black/60"
             crossOrigin="anonymous"
             controlsList="nodownload"
             autoPlay

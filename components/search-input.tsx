@@ -1,5 +1,5 @@
 "use client";
-import { Search, X, CircleX } from "lucide-react";
+import { Search, CircleX, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -8,7 +8,7 @@ import Link from "next/link";
 import useDebounce from "@/hooks/useDebounce";
 import { useSearchBarFocus } from "@/context/searchContext";
 
-export default function SearchInput({ onClick }: { onClick: () => void }) {
+export default function SearchInput() {
   const [term, setTerm] = useState("");
   const [IsEmpty, setIsEmpty] = useState(false);
   const [type, setType] = useState("multi");
@@ -21,8 +21,12 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
-  const { setIsSearchBarFocused,isSearchBarFocused } = useSearchBarFocus();
-
+  const {
+    setIsSearchBarFocused,
+    isSearchBarFocused,
+    isSearchOpen,
+    setIsSearchOpen,
+  } = useSearchBarFocus();
 
   useEffect(() => {
     if (!term) {
@@ -43,7 +47,7 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
     setResult(null);
     setAnime(null);
     setTerm("");
-    onClick();
+    setIsSearchOpen(!isSearchOpen);
   };
 
   const search = (e: { preventDefault: () => void }) => {
@@ -58,31 +62,38 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
     }
   };
 
-  
-  // useEffect(() => {
-  //   const handleKeyDown = (event: KeyboardEvent) => {
-  //       switch (event.code) {
-  //         case "Slash":
-  //           event.preventDefault();
-  //           setIsSearchBarFocused(!isSearchBarFocused)
-  //           break;
-  //       }
-  //   };
-  //   window.addEventListener("keydown", handleKeyDown);
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case "Slash":
+          event.preventDefault();
+          setIsSearchOpen(!isSearchOpen);
+          break;
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
 
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isSearchOpen]);
+
 
   return (
-    <div className="flex mx-4 pt-4 flex-col  h-full">
+    <div
+      style={{
+        bottom: "0px",
+        left: "0px",
+        transform: isSearchOpen ? "translateY(0px)" : "translateY(300px)",
+      }}
+      className="flex px-12 pt-4 w-full flex-col duration-500 fixed z-50  h-fit p-4 transition-all bg-gray-400"
+    >
       <div className="mb-2 flex items-center justify-between">
         <div className=" flex-col flex justify-center gap-2">
           <h1 className=" text-start  text-4xl font-semibold">Search</h1>
         </div>
         <button
-          onClick={clearAndClose}
+          onClick={() => clearAndClose()}
           className=" transition-all  hover:bg-red-600 items-center rounded-full p-2 size-10 aspect-square"
         >
           <X />
@@ -120,7 +131,9 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
             <Link
               key={res.id}
               target="_blank"
-              style={{ display: res.media_type === "person" ? "none" : "flex" }}
+              style={{
+                display: res.media_type === "movie" || "tv" ? "flex" : "none",
+              }}
               href={`/info/${res.media_type}/${res.id}`}
               className=" w-full "
             >
@@ -180,8 +193,9 @@ export default function SearchInput({ onClick }: { onClick: () => void }) {
       </form>
 
       <div className="flex items-center gap-2 my-2">
-        {preSearched.slice(0, 5).map((value,index) => (
-          <p key={index}
+        {preSearched.slice(0, 5).map((value, index) => (
+          <p
+            key={index}
             onClick={() => {
               router.push(`/search/${value.type}/${value.term}`);
             }}
