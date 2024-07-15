@@ -78,7 +78,6 @@ export default function SearchInput() {
     };
   }, [isSearchOpen]);
 
-
   return (
     <div
       style={{
@@ -86,135 +85,137 @@ export default function SearchInput() {
         left: "0px",
         transform: isSearchOpen ? "translateY(0px)" : "translateY(300px)",
       }}
-      className="flex px-12 pt-4 w-full flex-col duration-500 fixed z-50  h-fit p-4 transition-all bg-gray-400"
+      className="flex w-full flex-col duration-500 fixed z-50  h-fit transition-all px-8 "
     >
-      <div className="mb-2 flex items-center justify-between">
-        <div className=" flex-col flex justify-center gap-2">
-          <h1 className=" text-start  text-4xl font-semibold">Search</h1>
-        </div>
-        <button
-          onClick={() => clearAndClose()}
-          className=" transition-all  hover:bg-red-600 items-center rounded-full p-2 size-10 aspect-square"
-        >
-          <X />
-        </button>
-      </div>
-      <div className=" flex items-center gap-2 ">
-        <p
-          style={{
-            backgroundColor: type === "multi" ? "lightgreen" : "",
-            color: type === "multi" ? "green" : "",
-          }}
-          onClick={() => setType("multi")}
-          className=" px-2 py-.5 rounded bg-gray-500 cursor-pointer"
-        >
-          Movie/TV
-        </p>
-        <p
-          style={{
-            backgroundColor: type === "anime" ? "lightgreen" : "",
-            color: type === "anime" ? "green" : "",
-          }}
-          onClick={() => setType("anime")}
-          className=" px-2 py-.5 rounded bg-gray-500 cursor-pointer"
-        >
-          Anime
-        </p>
-      </div>
-      <div
-        style={{ padding: term.length > 0 ? "8px" : "0px" }}
-        className="my-4 rounded-md transition-all text-lg w-full bg-gray-500 "
-      >
-        {term.length > 0 &&
-          type === "multi" &&
-          result?.results.slice(0, 3).map((res) => (
-            <Link
-              key={res.id}
-              target="_blank"
-              style={{
-                display: res.media_type === "movie" || "tv" ? "flex" : "none",
-              }}
-              href={`/info/${res.media_type}/${res.id}`}
-              className=" w-full "
-            >
-              <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
-                {highlightSearchText(res.title || res.name, term)}
-
-                <span className="line-clamp-1 text-sm">
-                  {res.overview || res.synopsis}
-                </span>
-                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
-                  {res.media_type === "tv" ? "TV Show" : "Movie"}
-                </span>
-              </button>
-            </Link>
-          ))}
-
-        {term.length > 0 &&
-          type === "anime" &&
-          anime?.animes.slice(0, 3).map((res) => (
-            <Link
-              href={`/anime/${res.id}`}
-              target="_blank"
-              className=" w-full "
-              key={res.id}
-            >
-              <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
-                {highlightSearchText(res.name, term)}
-                <span className="line-clamp-1 text-sm">
-                  Episodes :{res.episodes.dub}
-                </span>
-                <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
-                  {res.type}
-                </span>
-              </button>
-            </Link>
-          ))}
-      </div>
-      <form
-        onSubmit={search}
-        className="flex flex-row-reverse rounded-md overflow-hidden px-2 w-full bg-gray-600 h-[40px]"
-      >
-        <input
-          type="text"
-          className=" w-full placeholder:text-white/50 focus:outline-none bg-transparent  h-full px-2 "
-          placeholder="Search..."
-          value={term}
-          onFocus={() => setIsSearchBarFocused(true)}
-          onBlur={() => setIsSearchBarFocused(false)}
-          onChange={(e) => {
-            setTerm(e.target.value);
-            setIsEmpty(false);
-          }}
-        />
-        <button>
-          <Search size={20} opacity={0.5} />
-        </button>
-      </form>
-
-      <div className="flex items-center gap-2 my-2">
-        {preSearched.slice(0, 5).map((value, index) => (
-          <p
-            key={index}
-            onClick={() => {
-              router.push(`/search/${value.type}/${value.term}`);
-            }}
-            className="bg-gray-100 text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+      <div className=" bg-gray-700 p-4 rounded-t-xl">
+        <div className="mb-2 flex items-center justify-between ">
+          <div className=" flex-col flex justify-center gap-2">
+            <h1 className=" text-start  text-4xl font-semibold">Search</h1>
+          </div>
+          <button
+            onClick={() => clearAndClose()}
+            className=" transition-all  hover:bg-red-600 items-center rounded-full p-2 size-10 aspect-square"
           >
-            {value.term}
+            <X />
+          </button>
+        </div>
+        <div className=" flex items-center gap-2 ">
+          <p
+            style={{
+              backgroundColor: type === "multi" ? "lightgreen" : "",
+              color: type === "multi" ? "green" : "",
+            }}
+            onClick={() => setType("multi")}
+            className=" px-2 py-.5 rounded bg-gray-500 cursor-pointer"
+          >
+            Movie/TV
           </p>
-        ))}
-      </div>
+          <p
+            style={{
+              backgroundColor: type === "anime" ? "lightgreen" : "",
+              color: type === "anime" ? "green" : "",
+            }}
+            onClick={() => setType("anime")}
+            className=" px-2 py-.5 rounded bg-gray-500 cursor-pointer"
+          >
+            Anime
+          </p>
+        </div>
+        <div
+          style={{ padding: term.length > 0 ? "8px" : "0px" }}
+          className="my-4 rounded-md transition-all text-lg w-full bg-gray-500 "
+        >
+          {term.length > 0 &&
+            type === "multi" &&
+            result?.results.slice(0, 3).map((res) => (
+              <Link
+                key={res.id}
+                target="_blank"
+                style={{
+                  display: res.media_type === "movie" || "tv" ? "flex" : "none",
+                }}
+                href={`/info/${res.media_type}/${res.id}`}
+                className=" w-full "
+              >
+                <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
+                  {highlightSearchText(res.title || res.name, term)}
 
-      <motion.p
-        initial={{ y: 100 }}
-        onClick={() => setIsEmpty(false)}
-        animate={{ y: IsEmpty ? 0 : 100 }}
-        className="mt-2 text-red-500 text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
-      >
-        <CircleX className=" mr-2 cursor-pointer " size={20} />
-        Empty Search are Not Allowed !
-      </motion.p>
+                  <span className="line-clamp-1 text-sm">
+                    {res.overview || res.synopsis}
+                  </span>
+                  <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
+                    {res.media_type === "tv" ? "TV Show" : "Movie"}
+                  </span>
+                </button>
+              </Link>
+            ))}
+
+          {term.length > 0 &&
+            type === "anime" &&
+            anime?.animes.slice(0, 3).map((res) => (
+              <Link
+                href={`/anime/${res.id}`}
+                target="_blank"
+                className=" w-full "
+                key={res.id}
+              >
+                <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700">
+                  {highlightSearchText(res.name, term)}
+                  <span className="line-clamp-1 text-sm">
+                    Episodes :{res.episodes.dub}
+                  </span>
+                  <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
+                    {res.type}
+                  </span>
+                </button>
+              </Link>
+            ))}
+        </div>
+        <form
+          onSubmit={search}
+          className="flex flex-row-reverse rounded-md overflow-hidden px-2 w-full bg-gray-600 h-[40px]"
+        >
+          <input
+            type="text"
+            className=" w-full placeholder:text-white/50 focus:outline-none bg-transparent  h-full px-2 "
+            placeholder="Press '/' to open Search anywhere"
+            value={term}
+            onFocus={() => setIsSearchBarFocused(true)}
+            onBlur={() => setIsSearchBarFocused(false)}
+            onChange={(e) => {
+              setTerm(e.target.value);
+              setIsEmpty(false);
+            }}
+          />
+          <button>
+            <Search size={20} opacity={0.5} />
+          </button>
+        </form>
+
+        <div className="flex items-center gap-2 my-2">
+          {preSearched.slice(0, 5).map((value, index) => (
+            <p
+              key={index}
+              onClick={() => {
+                router.push(`/search/${value.type}/${value.term}`);
+              }}
+              className="bg-gray-100 text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+            >
+              {value.term}
+            </p>
+          ))}
+        </div>
+
+        <motion.p
+          initial={{ y: 100 }}
+          onClick={() => setIsEmpty(false)}
+          animate={{ y: IsEmpty ? 0 : 100 }}
+          className="mt-2 text-red-500 text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
+        >
+          <CircleX className=" mr-2 cursor-pointer " size={20} />
+          Empty Search are Not Allowed !
+        </motion.p>
+      </div>
     </div>
   );
 }
