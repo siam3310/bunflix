@@ -1,6 +1,5 @@
 "use server";
 
-import cache from "@/lib/cache";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -12,15 +11,6 @@ export async function GET(request: NextRequest) {
   .join("");
 
 
-  const cachedValue:any = cache.get(reqUrl)
-
-  if(cachedValue){
-    console.log("returned cached data");
-    
-    return new Response(cachedValue, {
-      status: 200,
-    });
-  }
 
   const result = await fetch(reqUrl, { method: "GET" });
 
@@ -28,10 +18,7 @@ export async function GET(request: NextRequest) {
     return;
   }
 
-  const blobData = result.arrayBuffer()
-  cache.set(reqUrl, blobData)
-
-  return new Response(await blobData, {
+  return new Response(await result.arrayBuffer(), {
     status: 200,
   });
 }
