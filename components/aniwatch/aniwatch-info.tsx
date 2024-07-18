@@ -74,7 +74,7 @@ export function AniwatchInfo({
                           <MicIcon size={15} />
                           {data.anime.info.stats.episodes.dub < episode.number
                             ? "Dub not available"
-                            : `Episode ${episode.number}`}
+                            : `EN ${episode.number}`}
                         </span>
                       )}
                       {audioToogle === "japanesse" && (
@@ -82,7 +82,7 @@ export function AniwatchInfo({
                           <CaptionsIcon size={15} />
                           {data.anime.info.stats.episodes.sub < episode.number
                             ? "Sub not available"
-                            : `Episode ${episode.number}`}
+                            : `JP ${episode.number}`}
                         </span>
                       )}
                     </button>

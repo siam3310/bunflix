@@ -40,7 +40,7 @@ export function HlsPlayer({
 
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
-      hls.loadSource(`${process.env.NEXT_PUBLIC_APP_URL}/api/${videoSrc}`);
+      hls.loadSource(videoSrc);
       hls.attachMedia(player.current);
 
       player.current.addEventListener("canplaythrough", () => {
