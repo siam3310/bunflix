@@ -25,7 +25,7 @@ export async function generateMetadata({
       searchParams.episode
         ? `Episode No. ${searchParams.episode} ${currentEpisodeName}`
         : "Select a Episode"
-    } for ${data.anime.info.name} - Nextflix`,
+    } from "${data.anime.info.name}" - Nextflix`,
   };
 }
 
