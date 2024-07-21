@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Nextflix clone built with Next.js and Tailwind CSS',
 }
 
-export default function notFound () {
+export default function NotFound () {
   return (
     <div className='h-screen text-center w-full flex item-center justify-center flex-col'>
       <h1 className=' text-2xl lg:text-8xl'>404 Not Found</h1>

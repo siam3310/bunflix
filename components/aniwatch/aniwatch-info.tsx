@@ -74,7 +74,7 @@ export function AniwatchInfo({
                           <MicIcon size={15} />
                           {data.anime.info.stats.episodes.dub < episode.number
                             ? "Dub not available"
-                            : `EN ${episode.number}`}
+                            : `ENG ${episode.number}`}
                         </span>
                       )}
                       {audioToogle === "japanesse" && (
@@ -131,29 +131,28 @@ export function AniwatchInfo({
 
       <div>
         <h1 className="font-semibold my-4 text-4xl">Related Content</h1>
-        <div className=" mt-4 grid grid-cols-2 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
+        <div className=" mt-4 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-4">
           {data.seasons.map((e) => (
-            <div
+            <Link
+            href={`/anime/${e.id}`}
               key={e.id}
-              className=" p-4 rounded-lg bg-black/30 flex flex-col items-center justify-between"
+              className=" p-2 rounded-lg bg-black/50 flex flex-col "
             >
-              <div>
                 <img
-                  className="  rounded-l w-full object-cover "
+                  className="h-[200px] w-full rounded object-cover "
                   src={e.poster}
                   alt={e.title}
                 />
-                <p className=" opacity-65 leading-6 my-2 font-bold text-2xl">
-                  {e.title}
+                <p className=" opacity-65 my-1 text-sm">{e.title}</p>
+                <p className=" opacity-65 leading-tight font-bold ">
+                  {e.name}
                 </p>
-                <p className=" opacity-65">{e.name}</p>
-              </div>
-              <Link className=" w-full" href={`/anime/${e.id}`}>
+              {/* <Link className=" w-full" href={`/anime/${e.id}`}>
                 <button className=" rounded-lg py-1 bg-white/90 flex items-center justify-center gap-2 transition-all  text-black font-semibold w-full mt-8">
                   More Info <SquareArrowOutUpRight size={15} />
                 </button>
-              </Link>
-            </div>
+              </Link> */}
+            </Link>
           ))}
         </div>
         {data.seasons.length == 0 && <p>Related Content Found !</p>}
