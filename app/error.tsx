@@ -1,7 +1,6 @@
 "use client";
 
 import { RefreshCcw } from "lucide-react";
-import { useEffect } from "react";
 
 export default function Error({
   error,
@@ -10,9 +9,6 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
 
   return (
     <div className="flex flex-col h-full items-center justify-center bg-black/80">

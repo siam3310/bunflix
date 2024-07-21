@@ -29,7 +29,21 @@ export default function MovieRow({
   });
 
   useEffect(() => {
-    if (inView && data?.page !== data?.total_pages) {
+    if(page===1){
+      fetchData(`${endpoint}&page=1`, title.split(" ").join("")).then(
+        (res: tmdbMultiSearch) => {
+          setData(res);
+          if (results) {
+            const combinedResults = [...results, ...res.results];
+            setResults(combinedResults);
+          } else {
+            setResults(res.results);
+          }
+        }
+      );
+    }
+    if (inView && data?.page !== data?.total_pages && page>1) {
+     
       setPage((prePage) => (prePage += 1));
       fetchData(`${endpoint}&page=${page}`, title.split(" ").join("")).then(
         (res: tmdbMultiSearch) => {

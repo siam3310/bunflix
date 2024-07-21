@@ -114,14 +114,21 @@ export function HlsPlayer({
   }, [isMuted, player]);
 
 
-  const toggleFullscreen = () => {
-    if (container?.requestFullscreen && isFullscreen === false) {
-      container.requestFullscreen();
-    } else if (document.exitFullscreen && isFullscreen === true) {
+  const toggleFullscreen = async () => {
+    if (isFullscreen) {
       document.exitFullscreen();
+      if (screen.orientation) {
+        screen.orientation.unlock();
+      }
+    } else {
+      containerRef?.current?.requestFullscreen();
+      if ((screen.orientation as any) && typeof (screen.orientation as any).lock === 'function') {
+        (screen.orientation as any).lock("landscape");
+      }
     }
     setIsFullscreen(!isFullscreen);
   };
+
 
   const sec2Min = (sec: number) => {
     const min = Math.floor(sec / 60);
