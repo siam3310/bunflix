@@ -3,6 +3,7 @@ import cache from "@/lib/cache";
 import MovieItem from "./movie-item";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { usePathname } from "next/navigation";
 
 export default function MovieRow({
   title,
@@ -28,24 +29,12 @@ export default function MovieRow({
     threshold: 0,
   });
 
+  const pathname = usePathname();
+
   useEffect(() => {
-    if(page===1){
-      fetchData(`${endpoint}&page=1`, title.split(" ").join("")).then(
-        (res: tmdbMultiSearch) => {
-          setData(res);
-          if (results) {
-            const combinedResults = [...results, ...res.results];
-            setResults(combinedResults);
-          } else {
-            setResults(res.results);
-          }
-        }
-      );
-    }
-    if (inView && data?.page !== data?.total_pages && page>1) {
-     
+    if (data?.page !== data?.total_pages) {
       setPage((prePage) => (prePage += 1));
-      fetchData(`${endpoint}&page=${page}`, title.split(" ").join("")).then(
+      fetchData(`${endpoint}&page=${page}`).then(
         (res: tmdbMultiSearch) => {
           setData(res);
           if (results) {
@@ -54,12 +43,6 @@ export default function MovieRow({
           } else {
             setResults(res.results);
           }
-        }
-      );
-    } else {
-      fetchData(`${endpoint}&page=${page}`, title.split(" ").join("")).then(
-        (res) => {
-          setData(res);
         }
       );
     }
@@ -83,15 +66,20 @@ export default function MovieRow({
           {results?.map((movie: MovieResults) => (
             <MovieItem grid={grid} type={type} key={movie.id} movie={movie} />
           ))}
+          {(pathname === "/") === false && (
+            <div
+              ref={ref}
+              className="text-2xl p-3 font-semibold"
+            ></div>
+          )}
         </div>
       </div>
-      <div ref={ref} className="text-2xl p-3 font-semibold"></div>
     </div>
   );
 }
 
-export async function fetchData(endpoint: string, title: string) {
-  const cacheKey = `${title}${endpoint}`;
+export async function fetchData(endpoint: string) {
+  const cacheKey = `${endpoint}`;
 
   try {
     const cachedData = cache.get(cacheKey);
@@ -103,6 +91,6 @@ export async function fetchData(endpoint: string, title: string) {
     cache.set(cacheKey, data);
     return data;
   } catch (error) {
-    throw new Error(`Failed to fetch data for ${title}`);
+    throw new Error(`Failed to fetch data `);
   }
 }

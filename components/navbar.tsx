@@ -8,7 +8,6 @@ import {
   TrendingUpIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { motion, useMotionValue } from "framer-motion";
 import SearchInput from "./search-input";
 import { usePathname } from "next/navigation";
 import NavLink from "./nav-link";
@@ -17,15 +16,20 @@ import { useSearchBarFocus } from "@/context/searchContext";
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const isAnime = pathname === "/anime"
-  const isPopular = pathname.split("/")[1]==="categories" && pathname.split("/")[2]==="popular%20Movies"
-  const isTrending = pathname.split("/")[1]==="categories" && pathname.split("/")[2]==="trending%20Movies"
-  const isTopRated = pathname.split("/")[1]==="categories" && pathname.split("/")[2]==="top%20Rated%20Movies"
+  const isAnime = pathname === "/anime";
+  const isPopular =
+    pathname.split("/")[1] === "categories" &&
+    pathname.split("/")[2] === "popular%20Movies";
+  const isTrending =
+    pathname.split("/")[1] === "categories" &&
+    pathname.split("/")[2] === "trending%20Movies";
+  const isTopRated =
+    pathname.split("/")[1] === "categories" &&
+    pathname.split("/")[2] === "top%20Rated%20Movies";
 
   const [navIndex, setNavIndex] = useState(2);
 
-  const { isSearchOpen,setIsSearchOpen } = useSearchBarFocus();
-
+  const { isSearchOpen, setIsSearchOpen } = useSearchBarFocus();
 
   const navLinks = [
     {
@@ -77,41 +81,16 @@ export default function Navbar() {
       currentRoute: isTopRated,
       onMouseEnter: () => setNavIndex(4),
       onClick: () => setNavIndex(4),
-    },   
+    },
   ];
 
-
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchHovered, setisSearchHovered] = useState(false);
-
-  const scrollY = useMotionValue(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      scrollY.set(window.scrollY);
-      setIsScrolled(true);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
 
 
   return (
     <>
-     
-
       <nav className="outline-none group focus:outline-none z-20 fixed bottom-4 left-1/2 transform -translate-x-1/2 ">
-        <motion.div
-          style={{ y: isHome ? "300px" : "0px" }}
-          animate={
-            isHome ? (isScrolled ? { y: "0px" } : { y: "100px" }) : { y: "0px" }
-          }
-          transition={{ duration: 0.5 }}
+        <div        
           className="flex gap-3 items-center w-fit relative justify-evenly py-3 px-4  rounded-full bg-white/30 border border-white/40 backdrop-blur-sm"
         >
           <div
@@ -132,7 +111,9 @@ export default function Navbar() {
           ))}
 
           <button
-            onClick={() => {setIsSearchOpen(!isSearchOpen)}}
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+            }}
             onMouseEnter={() => {
               setisSearchHovered(true);
             }}
@@ -159,9 +140,9 @@ export default function Navbar() {
               </h1>
             </div>
           </button>
-        </motion.div>
+        </div>
       </nav>
-          <SearchInput />
+      <SearchInput />
     </>
   );
 }

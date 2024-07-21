@@ -33,7 +33,7 @@ export function HlsPlayer({
 }) {
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const container = containerRef.current;
+  // const container = containerRef.current;
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -59,6 +59,7 @@ export function HlsPlayer({
   const [volume, setVolume] = useState<number>(1);
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
+  const [isPlayerHovered, setIsPlayerHovered] = useState(false);
 
   const { isSearchBarFocused } = useSearchBarFocus();
 
@@ -113,22 +114,24 @@ export function HlsPlayer({
     }
   }, [isMuted, player]);
 
-
   const toggleFullscreen = async () => {
     if (isFullscreen) {
       document.exitFullscreen();
       if (screen.orientation) {
         screen.orientation.unlock();
+        setIsFullscreen(false);
       }
     } else {
       containerRef?.current?.requestFullscreen();
-      if ((screen.orientation as any) && typeof (screen.orientation as any).lock === 'function') {
+      if (
+        (screen.orientation as any) &&
+        typeof (screen.orientation as any).lock === "function"
+      ) {
         (screen.orientation as any).lock("landscape");
+        setIsFullscreen(true);
       }
     }
-    setIsFullscreen(!isFullscreen);
   };
-
 
   const sec2Min = (sec: number) => {
     const min = Math.floor(sec / 60);
@@ -303,6 +306,8 @@ export function HlsPlayer({
       timeoutId = setTimeout(() => {
         setIsMoving(false);
       }, 150);
+
+      
     };
 
     containerRef?.current?.addEventListener("mousemove", handleControls);
@@ -316,20 +321,23 @@ export function HlsPlayer({
 
   //show controls based on mouse movement
   useEffect(() => {
-    if (isMoving) {
+    if (!isFullscreen) {
+      isPlayerHovered ? setShowControl(true) : setShowControl(false);
+    } else if (isMoving && isFullscreen) {
       setShowControl(true);
     } else {
       setTimeout(() => {
         setShowControl((preValue) => {
-          if (isMoving || isSettingOpen) {
+          if (isMoving || isSettingOpen || !isFullscreen) {
             return preValue;
           } else {
             return false;
           }
         });
-      }, 1500);
+      }, 3000);
     }
-  }, [isMoving]);
+
+  }, [isMoving, isPlayerHovered, isFullscreen]);
 
   const handleLevelChange = (levelIndex: number) => {
     if (hlsInstance) {
@@ -342,9 +350,16 @@ export function HlsPlayer({
   return (
     <div className=" md:p-4 focus:outline-none">
       <div
+        onMouseEnter={() => setIsPlayerHovered(true)}
+        onMouseLeave={() => setIsPlayerHovered(false)}
+        onClick={()=>setShowControl(!showControl)}
         ref={containerRef}
         style={{
-          cursor: hasInteracted ? (showControl ? "default" : "none") : "default",
+          cursor: hasInteracted
+            ? showControl
+              ? "default"
+              : "none"
+            : "default",
         }}
         className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden "
       >

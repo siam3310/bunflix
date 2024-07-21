@@ -112,7 +112,7 @@ export default function Hero({ data }: { data: TmdbMovie }) {
             {data.results.map((_, i) => (
               <span
                 key={_.id}
-                className={`hidden z-50 py-1 px-3 opacity-80 cursor-pointer transition-all duration-150 rounded-full xl:flex items-center justify-center aspect-square`}
+                className={`hidden py-1 px-3 opacity-80 cursor-pointer transition-all duration-150 rounded-full xl:flex items-center justify-center aspect-square`}
                 style={{ backgroundColor: i == imageindex ? "red" : "" }}
                 onClick={() => setImageindex(i)}
               >
