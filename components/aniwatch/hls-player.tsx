@@ -1,5 +1,5 @@
 "use client";
-import Hls from "hls.js";
+import Hls, { Level } from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ChevronsDownIcon,
@@ -33,6 +33,7 @@ export function HlsPlayer({
 }) {
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const container = containerRef.current;
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -56,12 +57,15 @@ export function HlsPlayer({
   >(null);
   const [isMoving, setIsMoving] = useState(false);
   const [volume, setVolume] = useState<number>(1);
+  const [levels, setLevels] = useState<Level[]>([]);
+  const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
 
-  const hls = new Hls();
   const { isSearchBarFocused } = useSearchBarFocus();
 
+  // hls initialization and attaching soucres
   useEffect(() => {
     if (Hls.isSupported() && player.current) {
+      const hls = new Hls();
       hls.loadSource(videoSrc);
       hls.attachMedia(player.current);
 
@@ -69,7 +73,12 @@ export function HlsPlayer({
         setLoading(false);
       });
 
+      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        setLevels(data.levels);
+      });
+      setHlsInstance(hls);
       updateCurrentTime();
+
       return () => {
         if (player.current) {
           player.current.addEventListener("canplaythrough", () => {
@@ -104,7 +113,6 @@ export function HlsPlayer({
     }
   }, [isMuted, player]);
 
-  const container = containerRef.current;
 
   const toggleFullscreen = () => {
     if (container?.requestFullscreen && isFullscreen === false) {
@@ -152,7 +160,6 @@ export function HlsPlayer({
         } else player.current.volume += 0.1;
       } else if (control === "decrease") {
         if (player.current.volume > 0.1) {
-          console.log(player.current.volume);
           player.current.volume -= 0.1;
         } else {
           toast.warning("Minimum volumn reached");
@@ -204,6 +211,7 @@ export function HlsPlayer({
     }, 1000);
   };
 
+  // keyboard shortcut for play,pause,etc
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (isSearchBarFocused) {
@@ -229,7 +237,6 @@ export function HlsPlayer({
           break;
         case "ArrowDown":
           event.preventDefault();
-
           shortcutPopups("decrease");
           break;
         case "ArrowLeft":
@@ -240,6 +247,11 @@ export function HlsPlayer({
           event.preventDefault();
           shortcutPopups("forward");
           break;
+        case "Escape":
+          event.preventDefault();
+          if (isFullscreen) {
+            toggleFullscreen();
+          }
       }
     };
     updateCurrentTime();
@@ -257,6 +269,8 @@ export function HlsPlayer({
     isSearchBarFocused,
   ]);
 
+  // checking user interactions(click,buttonClick) to start auto play
+  // special note : fuck google and autoplay policies
   useEffect(() => {
     const handleUserInteraction = () => {
       setHasInteracted(true);
@@ -281,7 +295,7 @@ export function HlsPlayer({
       }
       timeoutId = setTimeout(() => {
         setIsMoving(false);
-      }, 100);
+      }, 150);
     };
 
     containerRef?.current?.addEventListener("mousemove", handleControls);
@@ -293,15 +307,28 @@ export function HlsPlayer({
     };
   }, []);
 
+  //show controls based on mouse movement
   useEffect(() => {
     if (isMoving) {
       setShowControl(true);
-    } else if (!isMoving && showControl) {
+    } else {
       setTimeout(() => {
-        setShowControl(false);
-      }, 3000);
+        setShowControl((preValue) => {
+          if (isMoving || isSettingOpen) {
+            return preValue;
+          } else {
+            return false;
+          }
+        });
+      }, 1500);
     }
-  }, [isMoving,showControl]);
+  }, [isMoving]);
+
+  const handleLevelChange = (levelIndex: number) => {
+    if (hlsInstance) {
+      hlsInstance.currentLevel = levelIndex;
+    }
+  };
 
   const iconSize: number = 20;
 
@@ -309,9 +336,10 @@ export function HlsPlayer({
     <div className=" md:p-4 focus:outline-none">
       <div
         ref={containerRef}
-        onMouseEnter={()=>setShowControl(true)}
-        onMouseLeave={()=>setShowControl(false)}
-        className="group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden "
+        style={{
+          cursor: hasInteracted ? (showControl ? "default" : "none") : "default",
+        }}
+        className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden "
       >
         {hasInteracted && (
           <div
@@ -360,7 +388,10 @@ export function HlsPlayer({
             className="absolute duration-500 text-[16px] top-0  right-0"
             style={{
               opacity: animation === "backward" ? "100%" : "0%",
-              transform:animation === "backward"?"translateX(-50px)":"translateX(00px)"
+              transform:
+                animation === "backward"
+                  ? "translateX(-50px)"
+                  : "translateX(00px)",
             }}
           >
             {/* lucide doesn't have a go backward button of such style */}
@@ -370,7 +401,10 @@ export function HlsPlayer({
             className="absolute duration-500 text-[16px] top-0  right-0"
             style={{
               opacity: animation === "forward" ? "100%" : "0%",
-              transform:animation === "forward"?"translateX(50px)":"translateX(00px)"
+              transform:
+                animation === "forward"
+                  ? "translateX(50px)"
+                  : "translateX(00px)",
             }}
           >
             <FastForwardIcon size={iconSize} />
@@ -381,16 +415,16 @@ export function HlsPlayer({
               opacity: animation === "decrease" ? "100%" : "0%",
             }}
           >
-            {(volume*100).toFixed()} %
-            </div>
+            {(volume * 100).toFixed()} %
+          </div>
           <div
             className="text-nowrap w-fit absolute top-0 right-0"
             style={{
               opacity: animation === "increase" ? "100%" : "0%",
             }}
           >
-            {(volume*100).toFixed()} %
-            </div>
+            {(volume * 100).toFixed()} %
+          </div>
           <div
             className="  absolute top-0 right-0"
             style={{
@@ -460,11 +494,13 @@ export function HlsPlayer({
             )}
           </button>
           <button
-            style={{ backgroundColor: isMuted || volume <= 0.1 ? " #ef4444" : "" }}
+            style={{
+              backgroundColor: isMuted || volume <= 0.1 ? " #ef4444" : "",
+            }}
             className="rounded-full aspect-square p-2 transition-all hover:scale-110"
             onClick={toogleMute}
           >
-             {isMuted || volume <= 0.1 ? (
+            {isMuted || volume <= 0.1 ? (
               <VolumeXIcon size={iconSize} />
             ) : volume > 0.5 ? (
               <Volume2Icon size={iconSize} />
@@ -504,27 +540,14 @@ export function HlsPlayer({
           >
             <div
               style={{
-                height: showControl && isSettingOpen ? "200px" : "00px",
+                height: showControl && isSettingOpen ? "300px" : "00px",
                 width: showControl && isSettingOpen ? "180px" : "0px",
                 opacity: showControl && isSettingOpen ? "100%" : "0%",
                 pointerEvents: showControl && isSettingOpen ? "auto" : "none",
               }}
               className="absolute bottom-12 transition-all duration-500 rounded-lg right-0 bg-black/40 backdrop-blur-md"
             >
-              <div className="py-2 px-3 text-start">
-                <p className="text-sm font-semibold opacity-60">Subtitle</p>
-                <div>
-                  {track?.map((caption, i) => (
-                    <p key={i} className=" hover:underline">
-                      {caption.label}
-                    </p>
-                  ))}
-                  {track && (
-                    <p className="text-sm opacity-60">No Subtitles Found !</p>
-                  )}
-                </div>
-              </div>
-              <div className="py-2 px-3 text-start ">
+              <div className="py-4 px-3 text-start flex items-center justify-between">
                 <p className="text-sm font-semibold opacity-60 text-nowrap">
                   Playback Speed
                 </p>
@@ -540,6 +563,40 @@ export function HlsPlayer({
                     <option value="2">2</option>
                   </select>
                 </div>
+              </div>
+              <div className="py-2 px-3 text-start">
+                <p className="text-sm font-semibold opacity-60">Subtitle</p>
+                <div>
+                  {track?.map((caption, i) => (
+                    <p key={i} className=" hover:underline">
+                      {caption.label}
+                    </p>
+                  ))}
+                  {track && (
+                    <p className="text-sm opacity-60">No Subtitles Found !</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="py-2 px-3 text-start ">
+                <p className="text-sm font-semibold opacity-60 text-nowrap">
+                  Video Resolutions
+                </p>
+                {levels.map((level, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      textDecorationLine:
+                        index === hlsInstance?.currentLevel
+                          ? "underline"
+                          : "none",
+                    }}
+                    className="underline"
+                    onClick={() => handleLevelChange(index)}
+                  >
+                    {level.height}p
+                  </p>
+                ))}
               </div>
             </div>
             <CogIcon
