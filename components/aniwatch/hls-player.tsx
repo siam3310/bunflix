@@ -33,7 +33,6 @@ export function HlsPlayer({
 }) {
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  // const container = containerRef.current;
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -60,6 +59,7 @@ export function HlsPlayer({
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
   const [isPlayerHovered, setIsPlayerHovered] = useState(false);
+  const [lastTap, setLastTap] = useState(0);
 
   const { isSearchBarFocused } = useSearchBarFocus();
 
@@ -79,6 +79,27 @@ export function HlsPlayer({
       });
       setHlsInstance(hls);
       updateCurrentTime();
+
+      hls.on(Hls.Events.ERROR, function (event, data) {
+        if (data.fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              toast.warning("fatal network error encountered, try to recover");
+              hls.startLoad();
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              toast.warning("fatal media error encountered, try to recover");
+              hls.recoverMediaError();
+              break;
+            case Hls.ErrorTypes.OTHER_ERROR:
+              toast.error("fatal error encountered");
+              break;
+            default:
+              hls.destroy();
+              break;
+          }
+        }
+      });
 
       return () => {
         if (player.current) {
@@ -218,7 +239,7 @@ export function HlsPlayer({
     }
     setTimeout(() => {
       setAnimation(null);
-    }, 1000);
+    }, 500);
   };
 
   // keyboard shortcut for play,pause,etc
@@ -279,7 +300,7 @@ export function HlsPlayer({
     isSearchBarFocused,
   ]);
 
-  // checking user interactions(click,buttonClick) to start auto play
+  // checking user interactions(click,keyboard presses) to start auto play
   // special note : fuck google and autoplay policies
   useEffect(() => {
     const handleUserInteraction = () => {
@@ -306,8 +327,6 @@ export function HlsPlayer({
       timeoutId = setTimeout(() => {
         setIsMoving(false);
       }, 150);
-
-      
     };
 
     containerRef?.current?.addEventListener("mousemove", handleControls);
@@ -321,23 +340,20 @@ export function HlsPlayer({
 
   //show controls based on mouse movement
   useEffect(() => {
-    if (!isFullscreen) {
-      isPlayerHovered ? setShowControl(true) : setShowControl(false);
-    } else if (isMoving && isFullscreen) {
-      setShowControl(true);
-    } else {
-      setTimeout(() => {
-        setShowControl((preValue) => {
-          if (isMoving || isSettingOpen || !isFullscreen) {
-            return preValue;
-          } else {
-            return false;
-          }
-        });
-      }, 3000);
-    }
-
-  }, [isMoving, isPlayerHovered, isFullscreen]);
+    setShowControl(() =>
+      isPlayerHovered ? true : isSettingOpen ? true : false
+    );
+    setTimeout(() => {
+      if (!isFullscreen) return;
+      setShowControl(() => {
+        return isFullscreen
+          ? isMoving
+            ? true
+            : false
+          : false;
+      });
+    }, 2000);
+  }, [isMoving, isPlayerHovered, isFullscreen, isSettingOpen, isPlaying]);
 
   const handleLevelChange = (levelIndex: number) => {
     if (hlsInstance) {
@@ -352,7 +368,7 @@ export function HlsPlayer({
       <div
         onMouseEnter={() => setIsPlayerHovered(true)}
         onMouseLeave={() => setIsPlayerHovered(false)}
-        onClick={()=>setShowControl(!showControl)}
+        onClick={() => setShowControl(!showControl)}
         ref={containerRef}
         style={{
           cursor: hasInteracted
@@ -361,12 +377,12 @@ export function HlsPlayer({
               : "none"
             : "default",
         }}
-        className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden "
+        className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden md:rounded-lg"
       >
         {hasInteracted && (
           <div
             style={{ opacity: loading ? "100%" : "0%" }}
-            className="pointer-events-none cursor-default absolute -translate-y-1/2 -translate-x-1/2 text-xl left-1/2 top-1/2 rounded-lg p-3 flex items-center gap-2 z-50"
+            className="pointer-events-none cursor-default absolute -translate-y-1/2 -translate-x-1/2 text-xl left-1/2 top-1/2 rounded-lg p-3 flex items-center gap-2 z-50 "
           >
             <LoaderIcon
               color="white"
@@ -380,23 +396,25 @@ export function HlsPlayer({
           </div>
         )}
         {hasInteracted ? (
-          <video
-            className="w-full h-full md:rounded-lg bg-black/60 relative"
-            crossOrigin="anonymous"
-            controlsList="nodownload"
-            autoPlay
-            ref={player}
-          >
-            {track.map((e) => (
-              <track
-                key={e.file}
-                kind={e.kind}
-                src={e.file}
-                default={e.default}
-                label={e.label}
-              ></track>
-            ))}
-          </video>
+          <>
+            <video
+              className="w-full h-full  bg-black/60 relative"
+              crossOrigin="anonymous"
+              controlsList="nodownload"
+              autoPlay
+              ref={player}
+            >
+              {track.map((e) => (
+                <track
+                  key={e.file}
+                  kind={e.kind}
+                  src={e.file}
+                  default={e.default}
+                  label={e.label}
+                ></track>
+              ))}
+            </video>
+          </>
         ) : (
           <div className="flex items-center gap-2 p-4 md:p-0 text-2xl">
             <HandIcon color="white" size={18} /> Waiting for user input
@@ -412,7 +430,7 @@ export function HlsPlayer({
               opacity: animation === "backward" ? "100%" : "0%",
               transform:
                 animation === "backward"
-                  ? "translateX(-50px)"
+                  ? "translateX(-25px)"
                   : "translateX(00px)",
             }}
           >
@@ -425,7 +443,7 @@ export function HlsPlayer({
               opacity: animation === "forward" ? "100%" : "0%",
               transform:
                 animation === "forward"
-                  ? "translateX(50px)"
+                  ? "translateX(25px)"
                   : "translateX(00px)",
             }}
           >
@@ -471,17 +489,21 @@ export function HlsPlayer({
           </div>
         </div>
 
-        <div className="absolute top-0  right-0 flex items-center justify-center size-full space-x-3">
+        <div
+          style={{
+            opacity: loading ? "0%" : showControl ? "100%" : "0%",
+            pointerEvents: loading ? "none" : showControl ? "all" : "none",
+          }}
+          className="absolute top-0  right-0 flex items-center justify-center size-full space-x-3"
+        >
           <button
-            style={{ opacity: loading ? "0%" : showControl ? "100%" : "" }}
             onClick={() => shortcutPopups("backward")}
-            className="rounded-full hover:scale-110  hover:bg-black bg-black/60 aspect-square p-1 size-12  flex items-center justify-center opacity-0 transition-all"
+            className="rounded-full hover:scale-110  hover:bg-black bg-black/60 aspect-square p-1 size-12  flex items-center justify-center  transition-all"
           >
             <RotateCcwIcon color="white" size={20} />
           </button>
           <button
-            style={{ opacity: loading ? "0%" : showControl ? "100%" : "" }}
-            className="rounded-full hover:bg-black hover:scale-110 bg-black/60 aspect-square p-1 size-16  flex items-center justify-center opacity-0 transition-all"
+            className="rounded-full hover:bg-black hover:scale-110 bg-black/60 aspect-square p-1 size-16  flex items-center justify-center  transition-all"
             onClick={tooglePlayPause}
           >
             {isPlaying ? (
@@ -491,9 +513,8 @@ export function HlsPlayer({
             )}
           </button>
           <button
-            style={{ opacity: loading ? "0%" : showControl ? "100%" : "" }}
             onClick={() => shortcutPopups("forward")}
-            className="rounded-full hover:bg-black hover:scale-110 bg-black/60 aspect-square p-1 size-12 flex items-center justify-center  opacity-0 transition-all"
+            className="rounded-full hover:bg-black hover:scale-110 bg-black/60 aspect-square p-1 size-12 flex items-center justify-center   transition-all"
           >
             <RotateCwIcon color="white" size={20} />
           </button>
@@ -574,11 +595,21 @@ export function HlsPlayer({
                   Playback Speed
                 </p>
                 <div>
-                  <select className="appearance-none bg-black/20 p-1 rounded-lg">
-                    <option value="0.25">0.25</option>
-                    <option value="0.05">0.5</option>
+                  <select
+                    className="appearance-none bg-black/20 p-1 rounded-lg"
+                    onChange={(value) => {
+                      if (player.current) {
+                        player.current.playbackRate = Number(
+                          value.target.value
+                        );
+                      }
+                    }}
+                  >
+                    <option value="0.50">0.5</option>
                     <option value="0.75">0.75</option>
-                    <option value="1">1</option>
+                    <option value="1" defaultValue={1} selected>
+                      1
+                    </option>
                     <option value="1.25">1.25</option>
                     <option value="1.50">1.5</option>
                     <option value="1.75">1.75</option>

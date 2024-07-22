@@ -4,6 +4,7 @@ import MovieItem from "./movie-item";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { usePathname } from "next/navigation";
+import TmdbHomeSkeleton from "./fallback-ui/tmdb-home-row";
 
 export default function MovieRow({
   title,
@@ -22,7 +23,7 @@ export default function MovieRow({
     total_pages: 2,
     total_results: 12,
   });
-  const [results, setResults] = useState<MovieResults[] | null>();
+  const [results, setResults] = useState<MovieResults[]>([]);
   const [page, setPage] = useState(1);
 
   const { ref, inView } = useInView({
@@ -66,6 +67,11 @@ export default function MovieRow({
           {results?.map((movie: MovieResults) => (
             <MovieItem grid={grid} type={type} key={movie.id} movie={movie} />
           ))}
+          {
+            results?.length === 0 && (
+              <TmdbHomeSkeleton />
+            )
+          }
           {(pathname === "/") === false && (
             <div
               ref={ref}

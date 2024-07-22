@@ -24,7 +24,6 @@ export default function SearchInput() {
 
   const {
     setIsSearchBarFocused,
-    isSearchBarFocused,
     isSearchOpen,
     setIsSearchOpen,
   } = useSearchBarFocus();
@@ -50,6 +49,7 @@ export default function SearchInput() {
     setTerm("");
     setIsSearchOpen(!isSearchOpen);
   };
+ 
 
   const search = (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -134,7 +134,7 @@ export default function SearchInput() {
         >
           {term.length > 0 &&
             type === "multi" &&
-            result?.results.map((res) => (
+            result?.results?.map((res) => (
               <Link
                 key={res.id}
                 target="_blank"

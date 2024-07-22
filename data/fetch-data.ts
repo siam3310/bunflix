@@ -1,6 +1,28 @@
+"use server";
 import cache from "@/lib/cache";
 
-const key = process.env.NEXT_PUBLIC_TMDB_KEY;
+const key = process.env.TMDB_KEY;
+
+export async function fetchHeroData() {
+  const cacheKey = "tmdbHero";
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/popular?api_key=${key}`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data);
+
+    return data;
+  } catch (error) {
+    throw new Error("Failed to fetch Slider data");
+  }
+}
 
 export async function fetchSeasonData(
   series_id: number | string,
@@ -48,27 +70,6 @@ export async function fetchTmdbInfo(type: string, id: number | string) {
   }
 }
 
-export async function fetchHeroData() {
-  const cacheKey = "tmdbHero";
-
-  try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-
-    const response = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${key}`
-    );
-    const data = await response.json();
-    cache.set(cacheKey, data);
-
-    return data;
-  } catch (error) {
-    throw new Error("Failed to fetch Slider data");
-  }
-}
-
 export async function fetchTmdbMultiSearch(searchTerm: string, page: number) {
   const cacheKey = `tmdbMultiSeacrh${searchTerm}${page}`;
 
@@ -96,9 +97,7 @@ export async function aniwatchHomeApi() {
     if (cachedData) {
       return cachedData;
     }
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/home`
-    );
+    const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`);
     const data = await response.json();
     cache.set(cacheKey, data);
 
@@ -118,7 +117,7 @@ export async function fetchAniwatchId(id: string) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/info?id=${id}`
+      `${process.env.ANIWATCH_API}/anime/info?id=${id}`
     );
 
     const data = await response.json();
@@ -139,7 +138,7 @@ export async function fetchAniwatchEpisode(seasonId: string) {
       return cachedData;
     }
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/episodes/${seasonId}`
+      `${process.env.ANIWATCH_API}/anime/episodes/${seasonId}`
     );
     const data = await response.json();
     cache.set(cacheKey, data);
@@ -163,7 +162,7 @@ export async function fetchAniwatchEpisodeServer(
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`
+      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`
     );
 
     const data = await response.json();
@@ -187,7 +186,7 @@ export async function fetchAniwatchEpisodeSrc(
       return cachedData;
     }
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
+      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
     );
     const data = await response.json();
     cache.set(cacheKey, data);
@@ -212,7 +211,7 @@ export async function fetchAniwatchEpisodeSrcDub(
       return cachedData;
     }
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
+      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
     );
     const data = await response.json();
     cache.set(cacheKey, data);
@@ -234,15 +233,13 @@ export async function fetchAniwatchSearch(searchTerm: string) {
       return cachedData;
     }
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_ANIME_API}/anime/search?q=${searchTerm}&page=1`
+      `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=1`
     );
     const data = await response.json();
     cache.set(cacheKey, data);
 
     return data;
   } catch (error) {
-    throw new Error(
-      `Search failed in Anime for ${searchTerm}`
-    );
+    throw new Error(`Search failed in Anime for ${searchTerm}`);
   }
 }
