@@ -1,7 +1,10 @@
-import MovieRow from "@/components/movie-row";
 import  CategoriesSkeleton  from "@/components/fallback-ui/categories-skeleton";
+import TmdbShowGrid from "@/components/tmdb/tmdb-shows-grid";
 import endpoint from "@/data/apiEndpoint";
 import { Suspense } from "react";
+import cache from "@/lib/cache";
+import { notFound } from "next/navigation";
+
 
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
@@ -23,7 +26,7 @@ export default async function Page({
   const encodedString = params.id[0];
   const decodedString = encodedString.replace(/%20/g, "");
 
-  let movieEndpoint: string = "";
+  let movieEndpoint: string='';
   type EndpointKey = keyof typeof endpoint;
 
   Object.keys(endpoint).forEach((thisEndpointName: string) => {
@@ -32,15 +35,14 @@ export default async function Page({
     }
   });
 
-  const newPage = movieEndpoint
 
+ 
   return (
     <>
       <div className="pb-24 bg-black/80 min-h-screen">
         <Suspense fallback={<CategoriesSkeleton/>}>
-        <MovieRow
-          grid
-          endpoint={newPage}
+        <TmdbShowGrid
+          endpoint={movieEndpoint}
           type={params.id[1]}
           title={params.id[0]}
         />
@@ -49,3 +51,6 @@ export default async function Page({
     </>
   );
 }
+
+
+

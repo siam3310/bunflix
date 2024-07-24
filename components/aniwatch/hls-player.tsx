@@ -338,22 +338,6 @@ export function HlsPlayer({
     };
   }, []);
 
-  //show controls based on mouse movement
-  useEffect(() => {
-    setShowControl(() =>
-      isPlayerHovered ? true : isSettingOpen ? true : false
-    );
-    setTimeout(() => {
-      if (!isFullscreen) return;
-      setShowControl(() => {
-        return isFullscreen
-          ? isMoving
-            ? true
-            : false
-          : false;
-      });
-    }, 2000);
-  }, [isMoving, isPlayerHovered, isFullscreen, isSettingOpen, isPlaying]);
 
   const handleLevelChange = (levelIndex: number) => {
     if (hlsInstance) {
@@ -366,8 +350,8 @@ export function HlsPlayer({
   return (
     <div className=" md:p-4 focus:outline-none">
       <div
-        onMouseEnter={() => setIsPlayerHovered(true)}
-        onMouseLeave={() => setIsPlayerHovered(false)}
+        onMouseEnter={() => setShowControl(true)}
+        onMouseLeave={() => setShowControl(false)}
         onClick={() => setShowControl(!showControl)}
         ref={containerRef}
         style={{
@@ -607,7 +591,7 @@ export function HlsPlayer({
                   >
                     <option value="0.50">0.5</option>
                     <option value="0.75">0.75</option>
-                    <option value="1" defaultValue={1} selected>
+                    <option value="1" defaultValue={1}>
                       1
                     </option>
                     <option value="1.25">1.25</option>

@@ -9,11 +9,11 @@ export async function AniwatchSearch({ searchTerm }: { searchTerm: string }) {
     <>
       <div className="pb-24 p-2">
         <h1 className=" ml-2 mb-2 text-3xl font-semibold">Search</h1>
-        <div className="grid grid-cols-2 md:grid-cols-3  lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2  ">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6  gap-3  ">
           {data.animes.map((e) => (
             <div
               key={e.id}
-              className={`relative inline-block text-white rounded-lg overflow-hidden m-2 w-fit transition-all duration-200 h-[400px] `}
+              className={`relative inline-block text-white rounded-lg overflow-hidden  w-full transition-all duration-200 h-[280px] min-[300px]:h-[320px]  lg:h-[400px] `}
             >
               <img
                 className={` size-full object-cover object-center`}
@@ -23,7 +23,7 @@ export async function AniwatchSearch({ searchTerm }: { searchTerm: string }) {
               <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100  p-3 group">
                 <div>
                   <p
-                    className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-&lsqb;300&rsqb;  group-hover:leading-[28px] text-2xl xl:text-[32px] `}
+                    className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-&lsqb;300&rsqb;  group-hover:leading-[28px] text-xl xl:text-[32px] `}
                   >
                     {e.name}
                   </p>

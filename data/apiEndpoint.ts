@@ -10,11 +10,9 @@ const endpoint = {
     topRatedMovies:`${baseUrl}/movie/top_rated?api_key=${key}`,
     nowPlayingMovies:`${baseUrl}/movie/now_playing?api_key=${key}`,
 
-    //anime keyword
-    animeMovies:`${baseUrl}/discover/movie?api_key=${key}&with_keywords=210024|222243`,
-    
-    // tv endpoints
 
+    // tv endpoints
+    animeMovies:`${baseUrl}/discover/movie?api_key=${key}&with_keywords=210024|222243`,
     netflix:`${baseUrl}/discover/tv?api_key=${key}&with_networks=213`,
     amazon:`${baseUrl}/discover/tv?api_key=${key}&with_networks=1024`,
     disneyPlus:`${baseUrl}/discover/tv?api_key=${key}&with_networks=2739`,
@@ -24,7 +22,6 @@ const endpoint = {
     paramountPlus:`${baseUrl}/discover/tv?api_key=${key}&with_networks=4330`,
     peacock:`${baseUrl}/discover/tv?api_key=${key}&with_networks=3353`,
     topRatedTvShows:`${baseUrl}/tv/top_rated?api_key=${key}&region=US`,
-    //anime keyword
     anime:`${baseUrl}/discover/tv?api_key=${key}&with_keywords=210024|222243`,
 }
 

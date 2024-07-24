@@ -1,13 +1,14 @@
 "use client";
-import { Search, CircleX, X } from "lucide-react";
+import { Search, CircleX, X, FileWarningIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 import { fetchAniwatchSearch, fetchTmdbMultiSearch } from "@/data/fetch-data";
 import Link from "next/link";
 import useDebounce from "@/hooks/useDebounce";
 import { useSearchBarFocus } from "@/context/searchContext";
 import { createImageUrl } from "@/utils/create-image-url";
+import Dexie, { EntityTable } from "dexie";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export default function SearchInput() {
   const [term, setTerm] = useState("");
@@ -15,18 +16,15 @@ export default function SearchInput() {
   const [type, setType] = useState("multi");
   const [result, setResult] = useState<tmdbMultiSearch | null>();
   const [anime, setAnime] = useState<aniwatchSearch | null>();
-  const [preSearched, setPreSearched] = useState<
-    { type: string; term: string }[]
-  >([]);
+  // const [preSearched, setPreSearched] = useState<
+  //   { type: string; term: string }[]
+  // >([]);
 
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
-  const {
-    setIsSearchBarFocused,
-    isSearchOpen,
-    setIsSearchOpen,
-  } = useSearchBarFocus();
+  const { setIsSearchBarFocused, isSearchOpen, setIsSearchOpen } =
+    useSearchBarFocus();
 
   useEffect(() => {
     if (!term) {
@@ -49,20 +47,20 @@ export default function SearchInput() {
     setTerm("");
     setIsSearchOpen(!isSearchOpen);
   };
- 
 
   const search = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    // onClick();
     if (!term) {
       setIsEmpty(true);
     } else {
+      searchHistory.searches.add({ term: term, type: type });
       clearAndClose();
-      setPreSearched([...preSearched, { type: type, term: term }]);
+      // setPreSearched([...preSearched, { type: type, term: term }]);
       router.push(`/search/${type}/${term}`);
     }
   };
 
+  // allows the search to be opened from anywhere when '/' is pressed
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.code) {
@@ -78,6 +76,21 @@ export default function SearchInput() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isSearchOpen]);
+
+  interface SearchHistory {
+    id: number;
+    type: string;
+    term: string;
+  }
+
+  const searchHistory = new Dexie("SearchHistory") as Dexie & {
+    searches: EntityTable<SearchHistory, "id">;
+  };
+  searchHistory.version(1).stores({
+    searches: "++id, term, type",
+  });
+
+  const history = useLiveQuery(() => searchHistory.searches.toArray());
 
   return (
     <div
@@ -108,7 +121,7 @@ export default function SearchInput() {
             }}
             onClick={() => {
               setType("multi");
-              setResult(null);
+              setAnime(null);
             }}
             className=" px-2 py-.5 rounded bg-gray-500 cursor-pointer"
           >
@@ -135,64 +148,13 @@ export default function SearchInput() {
           {term.length > 0 &&
             type === "multi" &&
             result?.results?.map((res) => (
-              <Link
-                key={res.id}
-                target="_blank"
-                style={{
-                  display: res.media_type === "movie" || "tv" ? "flex" : "none",
-                }}
-                href={`/info/${res.media_type}/${res.id}`}
-                className=" w-full "
-              >
-                <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
-                  <img
-                    className="h-[80px] rounded-md"
-                    src={createImageUrl(
-                      res.poster_path || res.image || res.backdrop_path,
-                      "w500"
-                    )}
-                    alt={res.title || res.name}
-                  />
-                  <span>
-                    {highlightSearchText(res.title || res.name, term)}
-
-                    <span className="line-clamp-1 text-sm">
-                      {res.overview || res.synopsis}
-                    </span>
-                    <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
-                      {res.media_type === "tv" ? "TV Show" : "Movie"}
-                    </span>
-                  </span>
-                </button>
-              </Link>
+              <TmdbInSearchArray show={res} term={term} key={res.id} />
             ))}
 
           {term.length > 0 &&
             type === "anime" &&
             anime?.animes.map((res) => (
-              <Link
-                href={`/anime/${res.id}`}
-                target="_blank"
-                className=" w-full "
-                key={res.id}
-              >
-                <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
-                  <img
-                    className="h-[80px] rounded-md"
-                    src={res.poster}
-                    alt={res.name}
-                  />
-                  <span>
-                    {highlightSearchText(res.name, term)}
-                    <span className="line-clamp-1 text-sm">
-                      Episodes :{res.episodes.dub}
-                    </span>
-                    <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
-                      {res.type}
-                    </span>
-                  </span>
-                </button>
-              </Link>
+              <AnimeInSearchArray anime={res} term={term} key={res.id} />
             ))}
         </div>
         <form
@@ -217,7 +179,7 @@ export default function SearchInput() {
         </form>
 
         <div className="flex items-center gap-2 my-2">
-          {preSearched.slice(0, 5).map((value, index) => (
+          {history?.slice(0, 5).map((value, index) => (
             <p
               key={index}
               onClick={() => {
@@ -230,19 +192,154 @@ export default function SearchInput() {
           ))}
         </div>
 
-        <motion.p
-          initial={{ y: 100 }}
+        <p
           onClick={() => setIsEmpty(false)}
-          animate={{ y: IsEmpty ? 0 : 100 }}
-          className="mt-2 text-red-500 text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
+          style={{
+            transform: IsEmpty ? "translateY(0px)" : "translateY(75px)",
+          }}
+          className="mt-2 text-red-500 transition-all text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
         >
           <CircleX className=" mr-2 cursor-pointer " size={20} />
           Empty Search are Not Allowed !
-        </motion.p>
+        </p>
       </div>
     </div>
   );
 }
+
+const TmdbInSearchArray = ({
+  show,
+  term,
+}: {
+  show: tmdbMultiResult;
+  term: string;
+}) => {
+  const [isloaded, setIsloaded] = useState(false);
+  const [error, setError] = useState(false);
+  return (
+    <Link
+      key={show.id}
+      target="_blank"
+      style={{
+        display: show.media_type === "movie" || "tv" ? "flex" : "none",
+      }}
+      href={`/info/${show.media_type}/${show.id}`}
+      className=" w-full "
+    >
+      <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
+        <div className="relative h-[100px] w-[80px]">
+          {!isloaded && !error && (
+            <div className="h-[100px]  w-[80px] absolute top-0 rounded-md bg-gray-400 animate-pulse"></div>
+          )}
+          {!error ? (
+            <img
+              onLoad={() => setIsloaded(true)}
+              onError={() => setError(true)}
+              style={{
+                opacity: isloaded ? "100%" : "0%",
+                scale: isloaded ? "100%" : "0%",
+              }}
+              className="h-[100px]  w-[80px] absolute top-0 rounded-sm"
+              src={createImageUrl(
+                show.poster_path || show.image || show.backdrop_path,
+                "w500"
+              )}
+              alt={show.title || show.name}
+            />
+          ) : (
+            <div className="h-[100px]  w-[80px] absolute top-0 rounded-md bg-black/60 flex items-center justify-center flex-col">
+              <FileWarningIcon />
+              <span className="text-sm leading-none text-center">
+                Image Error
+              </span>
+            </div>
+          )}
+        </div>
+        <span>
+          {highlightSearchText(show.title || show.name, term)}
+
+          <span className="line-clamp-1 text-sm">
+            {show.overview || show.synopsis}
+          </span>
+          <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
+            {show.media_type === "tv" ? "TV Show" : "Movie"}
+          </span>
+        </span>
+      </button>
+    </Link>
+  );
+};
+
+const AnimeInSearchArray = ({
+  anime,
+  term,
+}: {
+  anime: {
+    id: string;
+    name: string;
+    poster: string;
+    duration: string;
+    type: string;
+    rating: string;
+    episodes: {
+      sub: number;
+      dub: number;
+    };
+  };
+  term: string;
+}) => {
+  const [isloaded, setIsloaded] = useState(false);
+  const [error, setError] = useState(false);
+
+  return (
+    <Link
+      href={`/anime/${anime.id}`}
+      target="_blank"
+      className=" w-full "
+      key={anime.id}
+    >
+      <button className="p-2 w-full rounded-md text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
+        <div className="relative h-[100px] w-[80px]">
+          {!isloaded &&  !error &&(
+            <div className="h-[100px]  min-w-[80px] absolute top-0 rounded-md bg-gray-400 animate-pulse"></div>
+          )}
+          {!error ? (
+            <img
+              onLoad={() => setIsloaded(true)}
+              onError={() => setError(true)}
+              style={{
+                opacity: isloaded ? "100%" : "0%",
+                scale: isloaded ? "100%" : "0%",
+              }}
+              className="h-[100px]  w-[80px] absolute object-cover top-0 rounded-sm"
+              src={anime.poster}
+              alt={anime.name}
+            />
+          ) : (
+            <div className="h-[100px]  w-[80px] absolute top-0 rounded-md bg-black/60 flex items-center justify-center flex-col">
+              <FileWarningIcon />
+              <span className="text-sm leading-none text-center">
+                Image Error
+              </span>
+            </div>
+          )}
+        </div>
+        <span>
+          {highlightSearchText(anime.name, term)}
+          <span className="line-clamp-1 text-sm ">
+            Dubbed :{anime.episodes.dub || 0}
+          </span>
+          <span className="line-clamp-1 text-sm ">
+            Subbed :{anime.episodes.sub || 0}
+          </span>
+          <span className=" text-sm bg-gray-700 rounded-md px-3 py-1">
+            {anime.type}
+          </span>
+        </span>
+      </button>
+    </Link>
+  );
+};
 
 const highlightSearchText = (text: string, highlight: string) => {
   const parts = text.split(new RegExp(`(${highlight})`, "gi"));

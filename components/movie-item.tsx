@@ -1,15 +1,22 @@
+"use client";
 import { createImageUrl } from "@/utils/create-image-url";
-import { Info, Play, SquareArrowOutUpRight } from "lucide-react";
+import {
+  FileWarningIcon,
+  Info,
+  Play,
+  SquareArrowOutUpRight,
+} from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function MovieItem({
   type,
   movie,
-  grid,
+  size
 }: {
   type: string;
-  grid?: boolean;
   movie: MovieResults;
+  size?:String
 }) {
   const {
     id,
@@ -24,35 +31,52 @@ export default function MovieItem({
     name,
     media_type,
     profile_path,
-    known_for
+    known_for,
   } = movie;
 
-  
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+
   return (
     <div
-      style={{display:media_type==='person'? 'none':'flex'}}
-      className={`relative inline-block text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 h-[300px] ${
-        grid ? "" : "w-[200px]"
-      }`}
+      style={{ display: media_type === "person" || media_type === "collection" ? "none" : "flex" }}
+      className={`relative inline-block text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 ${size ? size : "h-[300px] w-[200px]"} `}
     >
-      <img
-        className={` size-full object-cover object-center`}
-        src={
-          image
-            ? image
-            : createImageUrl(profile_path || poster_path || backdrop_path, "w500")
-        }
-        alt={title}
-      />
+      {!loaded && (
+        <div className="absolute top-0 size-full animate-pulse bg-gray-400">
+        </div>
+      )}
+      {!error ? (
+        <img
+          onLoad={() => setLoaded(true)}
+          onError={() => setError(true)}
+          loading="lazy"
+          className={`absolute top-0 size-full object-cover object-center`}
+          src={
+            image
+              ? image
+              : createImageUrl(
+                  profile_path || poster_path || backdrop_path,
+                  "w500"
+                )
+          }
+          alt={title}
+        />
+      ) : (
+        <div className="size-full bg-gray-400  flex items-center justify-center flex-col">
+          <FileWarningIcon />
+          <span className="text-sm leading-none text-center">Image Error</span>
+        </div>
+      )}
       <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full focus:hover:bg-red-700 transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100  p-3 group">
         <div>
           <p
-            className={` whitespace-normal font-semibold mb-2 leading-[16px] transition-all duration-&lsqb;300ms&rsqb;  group-hover:leading-[26px] text-xl xl:text-[24px] `}
+            className={` whitespace-normal font-semibold mb-2 leading-[12px] transition-all duration-&lsqb;300ms&rsqb;  group-hover:leading-[22px] text-md md:text-xl `}
           >
             {title ? title : name}
           </p>
           <div className=" flex gap-2">
-            <p className="text-[13px] md:text-md opacity-10  duration-500 group-hover:opacity-70 ">
+            <p className="text-[13px] md:text-md opacity-10 text-nowrap  duration-500 group-hover:opacity-70 ">
               {release_date ? release_date : first_air_date}
             </p>
             <p className=" opacity-70">|</p>
@@ -69,18 +93,19 @@ export default function MovieItem({
         </div>
         <div className="flex gap-2 w-full">
           <Link
-            href={`/video/${
-              type || media_type
-            }/${id}/${type==='tv'||media_type==='tv'?'?season=1&episode=1&provider=vidsrc':'?provider=vidsrc'}`}
+            href={`/video/${type || media_type}/${id}/${
+              type === "tv" || media_type === "tv"
+                ? "?season=1&episode=1&provider=vidsrc"
+                : "?provider=vidsrc"
+            }`}
           >
             <div className=" rounded-full w-full p-4 transition-all text-xl flex items-center justify-start gap-2 hover:bg-red-700 ">
-              <Play  size={20}/>
+              <Play size={20} />
             </div>
           </Link>
-          <Link target='_blank' href={`/info/${type || media_type}/${id}`}>
+          <Link target="_blank" href={`/info/${type || media_type}/${id}`}>
             <div className=" rounded-full w-full p-4 transition-all text-xl flex items-center justify-start gap-4 hover:bg-gray-400/30">
-              <SquareArrowOutUpRight
-                 size={20}/>
+              <SquareArrowOutUpRight size={20} />
             </div>
           </Link>
         </div>
