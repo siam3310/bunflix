@@ -2,8 +2,6 @@ import  CategoriesSkeleton  from "@/components/fallback-ui/categories-skeleton";
 import TmdbShowGrid from "@/components/tmdb/tmdb-shows-grid";
 import endpoint from "@/data/apiEndpoint";
 import { Suspense } from "react";
-import cache from "@/lib/cache";
-import { notFound } from "next/navigation";
 
 
 
