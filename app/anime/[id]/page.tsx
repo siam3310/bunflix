@@ -25,7 +25,7 @@ export async function generateMetadata({
       searchParams.episode
         ? `${searchParams.episode} ${currentEpisodeName}`
         : "Select a Episode"
-    }  - "${data.anime.info.name}"`,
+    }  - ${data.anime.info.name}`,
   };
 }
 
