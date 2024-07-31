@@ -2,48 +2,54 @@
 import Hls, { Level } from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  ChevronsDownIcon,
-  ChevronsLeftIcon,
-  ChevronsRightIcon,
-  ChevronsUpIcon,
-  CogIcon,
   FastForwardIcon,
   FullscreenIcon,
   HandIcon,
   LoaderIcon,
   PauseIcon,
-  PictureInPictureIcon,
   PlayIcon,
   RotateCcwIcon,
   RotateCwIcon,
-  SkipForwardIcon,
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSearchBarFocus } from "@/context/searchContext";
+import Dexie, { EntityTable } from "dexie";
+import { useLiveQuery } from "dexie-react-hooks";
+import { pendingShows } from "@/lib/pending-show";
+import { useSearchParams } from "next/navigation";
 
 export function HlsPlayer({
   videoSrc,
+  data,
   track,
+  lang,
+  episode,
+  ep,
+  episodeId,
 }: {
   videoSrc: string;
+  data: aniwatchInfo;
   track: { file: string; kind: string; label: string; default: boolean }[];
+  lang: string;
+  episode: number;
+  ep: string;
+  episodeId: string;
 }) {
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [currentTime, setCurrentTime] = useState([0, 0]);
+  const [currentTime, setCurrentTime] = useState<[number, number]>([0, 0]);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
   const [duration, setDuration] = useState<[number, number]>([0, 0]);
   const [durationSec, setDurationSec] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [isSettingOpen, setIsSettingOpen] = useState(false);
   const [showControl, setShowControl] = useState(false);
   const [animation, setAnimation] = useState<
     | "backward"
@@ -54,14 +60,15 @@ export function HlsPlayer({
     | "mute"
     | null
   >(null);
-  const [isMoving, setIsMoving] = useState(false);
   const [volume, setVolume] = useState<number>(1);
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
-  const [isPlayerHovered, setIsPlayerHovered] = useState(false);
-  const [lastTap, setLastTap] = useState(0);
 
   const { isSearchBarFocused } = useSearchBarFocus();
+  const searchParams = useSearchParams()
+
+  const time = searchParams.get('time')
+
 
   // hls initialization and attaching soucres
   useEffect(() => {
@@ -100,6 +107,10 @@ export function HlsPlayer({
           }
         }
       });
+
+      if(time){
+        player.current.currentTime = parseInt(time)
+      }
 
       return () => {
         if (player.current) {
@@ -175,7 +186,7 @@ export function HlsPlayer({
         const { min, sec } = sec2Min(player.current.currentTime);
         setCurrentTimeSec(player.current.currentTime);
         setCurrentTime([min, sec]);
-      }, 500);
+      }, 1000);
 
       return () => clearInterval(interval);
     }
@@ -301,7 +312,7 @@ export function HlsPlayer({
   ]);
 
   // checking user interactions(click,keyboard presses) to start auto play
-  // special note : fuck google and autoplay policies
+  // special note : fuck autoplay policies
   useEffect(() => {
     const handleUserInteraction = () => {
       setHasInteracted(true);
@@ -315,37 +326,33 @@ export function HlsPlayer({
     };
   }, []);
 
-  // bulshit code to see if mouse is moving or not
-  useEffect(() => {
-    let timeoutId: null | NodeJS.Timeout = null;
-
-    const handleControls = () => {
-      setIsMoving(true);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      timeoutId = setTimeout(() => {
-        setIsMoving(false);
-      }, 150);
-    };
-
-    containerRef?.current?.addEventListener("mousemove", handleControls);
-    return () => {
-      containerRef?.current?.addEventListener("mousemove", handleControls);
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, []);
-
-
-  const handleLevelChange = (levelIndex: number) => {
-    if (hlsInstance) {
-      hlsInstance.currentLevel = levelIndex;
-    }
-  };
-
   const iconSize: number = 20;
+
+
+  const existingShow = useLiveQuery(() => pendingShows.shows?.where("id").equals(`${episodeId}?ep=${ep}`).count());  
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (existingShow){    
+        console.log(existingShow);
+        
+        pendingShows.shows.update(`${episodeId}?ep=${ep}`, {
+          time: player.current?.currentTime || 0,
+        });
+      } else {
+        pendingShows.shows.add({
+          lang,
+          name:data.anime.info.name,
+          image:data.anime.info.poster,
+          episode,
+          id: `${episodeId}?ep=${ep}`,
+          time: player.current?.currentTime||0,
+        });
+      }
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, [existingShow]);
 
   return (
     <div className=" md:p-4 focus:outline-none">
@@ -354,16 +361,9 @@ export function HlsPlayer({
         onMouseLeave={() => setShowControl(false)}
         onClick={() => setShowControl(!showControl)}
         ref={containerRef}
-        style={{
-          cursor: hasInteracted
-            ? showControl
-              ? "default"
-              : "none"
-            : "default",
-        }}
         className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden md:rounded-lg"
       >
-        {hasInteracted && (
+         {hasInteracted && (
           <div
             style={{ opacity: loading ? "100%" : "0%" }}
             className="pointer-events-none cursor-default absolute -translate-y-1/2 -translate-x-1/2 text-xl left-1/2 top-1/2 rounded-lg p-3 flex items-center gap-2 z-50 "
@@ -404,7 +404,6 @@ export function HlsPlayer({
             <HandIcon color="white" size={18} /> Waiting for user input
           </div>
         )}
-
         <div
           className={`absolute  bottom-16 right-1/2 -translate-x-1/2 text-white text-2xl pointer-events-none `}
         >
@@ -552,98 +551,24 @@ export function HlsPlayer({
               }
             }}
           />
-          <button
-            className="rounded-full aspect-square p-2 "
-            onClick={() => player?.current?.requestPictureInPicture()}
-          >
-            <PictureInPictureIcon
-              size={iconSize}
-              className="hover:scale-125 transition-all"
-            />
-          </button>
-          <button
-            className="rounded-full aspect-square p-2 relative"
-            onClick={() => setIsSettingOpen(!isSettingOpen)}
-          >
-            <div
-              style={{
-                height: showControl && isSettingOpen ? "300px" : "00px",
-                width: showControl && isSettingOpen ? "180px" : "0px",
-                opacity: showControl && isSettingOpen ? "100%" : "0%",
-                pointerEvents: showControl && isSettingOpen ? "auto" : "none",
-              }}
-              className="absolute bottom-12 transition-all duration-500 rounded-lg right-0 bg-black/40 backdrop-blur-md"
-            >
-              <div className="py-4 px-3 text-start flex items-center justify-between">
-                <p className="text-sm font-semibold opacity-60 text-nowrap">
-                  Playback Speed
-                </p>
-                <div>
-                  <select
-                    className="appearance-none bg-black/20 p-1 rounded-lg"
-                    onChange={(value) => {
-                      if (player.current) {
-                        player.current.playbackRate = Number(
-                          value.target.value
-                        );
-                      }
-                    }}
-                  >
-                    <option value="0.50">0.5</option>
-                    <option value="0.75">0.75</option>
-                    <option value="1" defaultValue={1}>
-                      1
-                    </option>
-                    <option value="1.25">1.25</option>
-                    <option value="1.50">1.5</option>
-                    <option value="1.75">1.75</option>
-                    <option value="2">2</option>
-                  </select>
-                </div>
-              </div>
-              <div className="py-2 px-3 text-start">
-                <p className="text-sm font-semibold opacity-60">Subtitle</p>
-                <div>
-                  {track?.map((caption, i) => (
-                    <p key={i} className=" hover:underline">
-                      {caption.label}
-                    </p>
-                  ))}
-                  {track && (
-                    <p className="text-sm opacity-60">No Subtitles Found !</p>
-                  )}
-                </div>
-              </div>
+          <div className="py-2 px-3 text-start flex gap-2">
+            {levels.map((level, index) => (
+              <p
+                key={index}
+                style={{
+                  textDecorationLine:
+                    index === hlsInstance?.currentLevel ? "underline" : "none",
+                }}
+                className="underline cursor-pointer"
+                onClick={() =>
+                  hlsInstance ? (hlsInstance.currentLevel = index) : null
+                }
+              >
+                {level.height}p
+              </p>
+            ))}
+          </div>
 
-              <div className="py-2 px-3 text-start ">
-                <p className="text-sm font-semibold opacity-60 text-nowrap">
-                  Video Resolutions
-                </p>
-                {levels.map((level, index) => (
-                  <p
-                    key={index}
-                    style={{
-                      textDecorationLine:
-                        index === hlsInstance?.currentLevel
-                          ? "underline"
-                          : "none",
-                    }}
-                    className="underline"
-                    onClick={() => handleLevelChange(index)}
-                  >
-                    {level.height}p
-                  </p>
-                ))}
-              </div>
-            </div>
-            <CogIcon
-              size={iconSize}
-              style={{
-                animation: isSettingOpen ? "spin 3s linear" : "unset",
-              }}
-              className="hover:scale-125 transition-all "
-            />
-          </button>
           <button
             className="rounded-full aspect-square p-2 "
             onClick={toggleFullscreen}

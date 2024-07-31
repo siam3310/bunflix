@@ -3,7 +3,7 @@ type aniwatchApi = {
   trendingAnimes: trendingAnimes[];
   latestEpisodeAnimes: latestEpisodeAnimes[];
   topUpcomingAnimes: topUpcomingAnimes[];
-  top10Animes: top10Animes
+  top10Animes: top10Animes;
   topAiringAnimes: topAiringAnimes[];
   genres: string[];
 };
@@ -11,6 +11,8 @@ type aniwatchApi = {
 type topAiringAnimes = {
   id: string;
   name: string;
+  jname?: string;
+  type?: string;
   description: string;
   poster: string;
   otherInfo: string[];
@@ -80,7 +82,7 @@ type aniwatchInfo = {
       stats: {
         rating: string;
         quality: string;
-        episodes: { sub: string|number; dub: string|number };
+        episodes: { sub: string | number; dub: string | number };
         type: string;
         duration: string;
       };
@@ -145,22 +147,14 @@ type aniwatchEpisodeData = {
   totalEpisodes: number;
   episodes: {
     title: string;
-    episodeId: string|number
-    number: number|string
+    episodeId: string | number;
+    number: number | string;
     isFiller: boolean;
   }[];
 };
 
 type aniwatchSearch = {
-  animes: {
-    id: string;
-    name: string;
-    poster: string;
-    duration: string;
-    type: string;
-    rating: string;
-    episodes: { sub: number; dub: number };
-  }[];
+  animes: Anime[];
   mostPopularAnimes: {
     id: string;
     name: string;
@@ -176,11 +170,67 @@ type aniwatchSearch = {
   searchFilters: {};
 };
 
+type Anime = {
+  id: string;
+  name: string;
+  poster: string;
+  duration: string;
+  type: string;
+  rating: string;
+  episodes: { sub: number; dub: number };
+};
+
 type aniwatchEpisodeSrc = {
-  tracks: { file: string; kind: string,label:string,default:boolean }[];
+  tracks: { file: string; kind: string; label: string; default: boolean }[];
   intro: { start: number; end: number };
   outro: { start: number; end: number };
   sources: { url: string; type: string }[];
   anilistID: [];
   malID: [];
 };
+
+type aniwatchGenre = {
+  genreName: string;
+  animes: Anime[];
+  genres: string[];
+  topAiringAnimes: topAiringAnimes[];
+  totalPages: number;
+  hasNextPage: boolean;
+  currentPage: number;
+};
+
+type aniwatchStudio = {
+  producerName: string;
+  animes: Anime[];
+  genres: string[];
+  topAiringAnimes: topAiringAnimes[];
+  totalPages: number;
+  hasNextPage: boolean;
+  currentPage: number;
+};
+
+type aniwatchCategories = {
+  genres: string[];
+  animes: Anime[];
+  top10Animes: top10Animes;
+  category: string;
+  totalPages: number;
+  hasNextPage: boolean;
+  currentPage: number;
+};
+
+type aniwatchCategoriesName =
+  | "most-favorite"
+  | "most-popular"
+  | "subbed-anime"
+  | "dubbed-anime"
+  | "recently-updated"
+  | "recently-added"
+  | "top-upcoming"
+  | "top-airing"
+  | "movie"
+  | "special"
+  | "ova"
+  | "ona"
+  | "tv"
+  | "completed";

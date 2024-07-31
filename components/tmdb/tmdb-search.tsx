@@ -39,7 +39,7 @@ export default function TmdbSearch({ search }: { search: string }) {
 
       <div className=" grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 ">
         {results?.map((e) => (
-          <MovieItem key={e.id}  type={e.media_type} movie={e} />
+          <MovieItem key={e.id} size={"w-full h-[300px]"} type={e.media_type} movie={e} />
         ))}
       </div>
       <div ref={ref} className="text-2xl p-3 font-semibold">

@@ -243,3 +243,17 @@ export async function fetchAniwatchSearch(searchTerm: string) {
     throw new Error(`Search failed in Anime for ${searchTerm}`);
   }
 }
+
+export async function fetchAniwatchCategories(
+  category:aniwatchCategoriesName,
+  page?: number | string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`
+    );
+    const data = await response.json();
+
+    return data
+  } catch (error) {}
+}

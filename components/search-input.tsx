@@ -9,6 +9,7 @@ import { useSearchBarFocus } from "@/context/searchContext";
 import { createImageUrl } from "@/utils/create-image-url";
 import Dexie, { EntityTable } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
+import { searchHistory } from "@/lib/search-history";
 
 export default function SearchInput() {
   const [term, setTerm] = useState("");
@@ -77,18 +78,6 @@ export default function SearchInput() {
     };
   }, [isSearchOpen]);
 
-  interface SearchHistory {
-    id: number;
-    type: string;
-    term: string;
-  }
-
-  const searchHistory = new Dexie("SearchHistory") as Dexie & {
-    searches: EntityTable<SearchHistory, "id">;
-  };
-  searchHistory.version(1).stores({
-    searches: "++id, term, type",
-  });
 
   const history = useLiveQuery(() => searchHistory.searches.toArray());
 
@@ -178,17 +167,26 @@ export default function SearchInput() {
           </button>
         </form>
 
-        <div className="flex items-center gap-2 my-2">
-          {history?.slice(0, 5).map((value, index) => (
-            <p
-              key={index}
-              onClick={() => {
-                router.push(`/search/${value.type}/${value.term}`);
-              }}
-              className="bg-gray-100 text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+        <div className="flex flex-wrap items-center gap-2 my-2">
+          {history && history.length > 0 && (
+            <button
+              className=" text-red-500 transition-all text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
+              onClick={() => searchHistory.searches.clear()}
             >
-              {value.term}
-            </p>
+              <CircleX className=" mr-2 cursor-pointer " size={15} />
+              Clear
+            </button>
+          )}
+          {history?.slice(0, 10).map((value, index) => (
+              <p
+                key={index}
+                onClick={() => {
+                  router.push(`/search/${value.type}/${value.term}`);
+                }}
+                className="bg-gray-100 text-nowrap text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+              >
+                {value.term}
+              </p>
           ))}
         </div>
 
@@ -199,7 +197,7 @@ export default function SearchInput() {
           }}
           className="mt-2 text-red-500 transition-all text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
         >
-          <CircleX className=" mr-2 cursor-pointer " size={20} />
+          <CircleX className=" mr-2 cursor-pointer " size={15} />
           Empty Search are Not Allowed !
         </p>
       </div>
@@ -300,7 +298,7 @@ const AnimeInSearchArray = ({
     >
       <button className="p-2 w-full rounded-md text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
         <div className="relative h-[100px] w-[80px]">
-          {!isloaded &&  !error &&(
+          {!isloaded && !error && (
             <div className="h-[100px]  min-w-[80px] absolute top-0 rounded-md bg-gray-400 animate-pulse"></div>
           )}
           {!error ? (

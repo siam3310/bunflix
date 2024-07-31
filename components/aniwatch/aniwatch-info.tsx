@@ -1,5 +1,5 @@
 "use client";
-import { CaptionsIcon, MicIcon, SquareArrowOutUpRight } from "lucide-react";
+import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
@@ -9,15 +9,15 @@ export function AniwatchInfo({
   currentEpisode,
   data,
   episode,
-  lang
+  lang,
 }: {
   currentEpisode: number;
   data: aniwatchInfo;
   episode: aniwatchEpisodeData;
-  lang: "english" | "japanesse" 
+  lang: "english" | "japanesse";
 }) {
   const [audioToogle, setAudioToogle] = useState<"english" | "japanesse">(
-    "english"
+    lang ? lang : "english"
   );
 
   return (
@@ -30,12 +30,16 @@ export function AniwatchInfo({
         />
         <div className=" lg:flex ">
           <div className="lg:mr-4">
-            <h1 className="text-3xl font-semibold ">Episode </h1>
-            <Label className="capitalize">You&apos;re currently watching in {lang}</Label>
+            <h1 className="text-3xl font-semibold ">Episodes</h1>
+            <Label className="capitalize">
+              You&apos;re currently watching in {lang}
+            </Label>
             <div className="flex items-center py-4 space-x-2">
               <Label htmlFor="audio">English</Label>
               <Switch
-                defaultChecked={false}
+                defaultChecked={
+                  lang ? (lang === "english" ? false : true) : false
+                }
                 onCheckedChange={() =>
                   setAudioToogle(
                     audioToogle === "english" ? "japanesse" : "english"
@@ -60,7 +64,8 @@ export function AniwatchInfo({
                       }
                       style={{
                         backgroundColor:
-                          currentEpisode == episode.number && audioToogle===lang
+                          currentEpisode == episode.number &&
+                          audioToogle === lang
                             ? "#b91c1c"
                             : index % 2 === 0
                             ? "#334155"
@@ -96,26 +101,45 @@ export function AniwatchInfo({
             <h1 className=" my-2 text-4xl font-semibold">
               {data.anime.info.name}
             </h1>
+            <h2 className=" italic text-xl opacity-70 my-2 flex gap-2">
+              {data.anime.moreInfo.japanese}
+              <span className=" hidden xl:block">|</span>
+            </h2>
             <p className=" leading-6 text-[18px]">
               {data.anime.info.description}
             </p>
-            <div className=" my-4 flex flex-col xl:flex-row gap-2 opacity-70">
+            <div className=" my-4 flex flex-col gap-2 opacity-70">
+              <div className="flex items-center gap-2">
+                Genres :
+                {data.anime.moreInfo.genres.map((e) => (
+                  <Link
+                    href={`/genre/${e.toLowerCase()}`}
+                    className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
+                    key={e}
+                  >
+                    <span className=" flex gap-2">{e}</span>
+                  </Link>
+                ))}
+              </div>
+              {data.anime.moreInfo.studios&&<p className=" flex gap-2">
+                Studio :
+                <Link
+                  className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
+                  href={`/anime-studio/${data.anime.moreInfo.studios.toLowerCase()}`}
+                >
+                  {data.anime.moreInfo.studios}
+                </Link>
+                <span className=" hidden xl:block">|</span>
+              </p>}
               <p className=" flex gap-2">
-                {data.anime.moreInfo.studios}
+                Duration : {data.anime.moreInfo.duration}
                 <span className=" hidden xl:block">|</span>
               </p>
               <p className=" flex gap-2">
-                {data.anime.moreInfo.duration}
+                Status : {data.anime.moreInfo.status}
                 <span className=" hidden xl:block">|</span>
               </p>
-              <p className=" flex gap-2">
-                {data.anime.moreInfo.status}
-                <span className=" hidden xl:block">|</span>
-              </p>
-              <p className=" flex gap-2">
-                {data.anime.moreInfo.japanese}
-                <span className=" hidden xl:block">|</span>
-              </p>
+
               <p className=" flex gap-2">
                 Sub : {data.anime.info.stats.episodes.sub}
                 <span className=" hidden xl:block">|</span>
@@ -134,24 +158,17 @@ export function AniwatchInfo({
         <div className=" mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-4">
           {data.seasons.map((e) => (
             <Link
-            href={`/anime/${e.id}`}
+              href={`/anime/${e.id}`}
               key={e.id}
               className=" p-2 rounded-lg bg-black/50 flex flex-col "
             >
-                <img
-                  className="h-[200px] w-full rounded object-cover "
-                  src={e.poster}
-                  alt={e.title}
-                />
-                <p className=" opacity-65 my-1 text-sm">{e.title}</p>
-                <p className=" opacity-65 leading-tight font-bold ">
-                  {e.name}
-                </p>
-              {/* <Link className=" w-full" href={`/anime/${e.id}`}>
-                <button className=" rounded-lg py-1 bg-white/90 flex items-center justify-center gap-2 transition-all  text-black font-semibold w-full mt-8">
-                  More Info <SquareArrowOutUpRight size={15} />
-                </button>
-              </Link> */}
+              <img
+                className="h-[200px] w-full rounded object-cover "
+                src={e.poster}
+                alt={e.title}
+              />
+              <p className=" opacity-65 my-1 text-sm">{e.title}</p>
+              <p className=" opacity-65 leading-tight font-bold ">{e.name}</p>
             </Link>
           ))}
         </div>

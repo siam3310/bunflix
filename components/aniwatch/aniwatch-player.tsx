@@ -1,28 +1,55 @@
-import { fetchAniwatchEpisodeSrc, fetchAniwatchEpisodeSrcDub } from "@/data/fetch-data";
+import {
+  fetchAniwatchEpisodeSrc,
+  fetchAniwatchEpisodeSrcDub,
+} from "@/data/fetch-data";
 import { HlsPlayer } from "./hls-player";
 
 export default async function AniwatchPlayer({
   episodeId,
   ep,
-  lang
+  lang,
+  data,
+  episode,
 }: {
   episodeId: string;
+  data: aniwatchInfo;
   ep: string;
-  lang: "english" | "japanesse"
+  episode: number;
+  lang: "english" | "japanesse";
 }) {
-  const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
-    episodeId,
-    ep,
-  );
+  if (lang === "english") {
+    const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
+      episodeId,
+      ep
+    );
 
-  const sub:aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
-    episodeId,
-    ep 
-  )
-  
-  if(lang==="english") {
-     return <HlsPlayer track={dub.tracks} videoSrc={dub.sources[0].url} />
+    return (
+      <HlsPlayer
+        data={data}
+        lang={lang}
+        episode={episode}
+        ep={ep}
+        episodeId={episodeId}
+        track={dub.tracks}
+        videoSrc={dub.sources[0].url}
+      />
+    );
   } else {
-    return <HlsPlayer track={sub.tracks} videoSrc={sub.sources[0].url} />
+    const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
+      episodeId,
+      ep
+    );
+
+    return (
+      <HlsPlayer
+        data={data}
+        lang={lang}
+        episode={episode}
+        ep={ep}
+        episodeId={episodeId}
+        track={sub.tracks}
+        videoSrc={sub.sources[0].url}
+      />
+    );
   }
 }

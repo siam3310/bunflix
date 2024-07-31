@@ -15,7 +15,6 @@ export async function generateMetadata({
     title: `'${decodeURIComponent(searchTerm)}' in ${
       type == "movie" ? "Movie" : type==='anime'? 'Anime' : 'TV Shows'
     } - Nextflix`,
-    description: "Nextflix clone built with Next.js and Tailwind CSS",
   };
 }
 export default async function Query({
