@@ -2,6 +2,7 @@
 
 import { pendingShows } from "@/lib/pending-show";
 import { useLiveQuery } from "dexie-react-hooks";
+import { XIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function AniwatchContinueWatching() {
@@ -15,7 +16,7 @@ export default function AniwatchContinueWatching() {
       <div className="flex overflow-x-scroll scrollbar-hide gap-2 items-center text-end mt-4">
         {data.map((show) => (
           <div
-            className="min-w-[200px] h-[300px] rounded-md overflow-hidden group   relative"
+            className="min-w-[200px] h-[300px] rounded-md overflow-hidden group relative"
             key={show.id}
           >
             <Link
@@ -34,6 +35,12 @@ export default function AniwatchContinueWatching() {
                 <p>{Math.floor(show.time / 60)} Minutes Watched</p>
               </div>
             </Link>
+            <button
+              onClick={() => pendingShows.shows.delete(`${show.id}`)}
+              className="absolute top-2 right-2 z-50 hidden group-hover:block p-2 bg-red-500/80 rounded-full"
+            >
+              <XIcon />
+            </button>
           </div>
         ))}
       </div>

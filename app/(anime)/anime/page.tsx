@@ -13,7 +13,7 @@ export default async function Anime() {
 
   return (
     <div className="pb-24 bg-black/80">
-       <AniwatchSlider anime={data} />
+      <AniwatchSlider anime={data} />
       <AniwatchContinueWatching />
       <AniwatchHome anime={data} />
     </div>
