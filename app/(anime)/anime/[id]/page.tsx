@@ -1,6 +1,6 @@
 import { AniwatchInfo } from "@/components/aniwatch/aniwatch-info";
 import AniwatchPlayer from "@/components/aniwatch/aniwatch-player";
-import { fetchAniwatchEpisode, fetchAniwatchId } from "@/data/fetch-data";
+import cache from "@/lib/cache";
 import { CircleArrowDownIcon } from "lucide-react";
 
 export async function generateMetadata({
@@ -64,3 +64,48 @@ export default async function Anime({
     </div>
   );
 }
+
+async function fetchAniwatchEpisode(seasonId: string) {
+  const cacheKey = `aniwatchEpisode${seasonId}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/episodes/${seasonId}`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed for SeasonID ${seasonId}`);
+  }
+}
+
+
+
+async function fetchAniwatchId(id: string) {
+  const cacheKey = `aniwatchId${id}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/info?id=${id}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed for AnimeID ${id}`);
+  }
+}
+

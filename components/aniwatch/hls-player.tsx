@@ -334,8 +334,6 @@ export function HlsPlayer({
   useEffect(() => {
     const interval = setInterval(() => {
       if (existingShow){    
-        console.log(existingShow);
-        
         pendingShows.shows.update(`${episodeId}?ep=${ep}`, {
           time: player.current?.currentTime || 0,
         });
@@ -556,8 +554,8 @@ export function HlsPlayer({
               <p
                 key={index}
                 style={{
-                  textDecorationLine:
-                    index === hlsInstance?.currentLevel ? "underline" : "none",
+                  display:
+                    index === hlsInstance?.currentLevel ? "node" : "block",
                 }}
                 className="underline cursor-pointer"
                 onClick={() =>

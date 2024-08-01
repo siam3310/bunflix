@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function Hero({ data }: { data: TmdbMovie }) {
+export default function TmdbSlider({ data }: { data: TmdbMovie }) {
   const [imageindex, setImageindex] = useState(0);
   const [preferAnimation, setPreferAnimation] = useState(false);
 
@@ -21,11 +21,6 @@ export default function Hero({ data }: { data: TmdbMovie }) {
     if (imageindex >= 19) {
       setImageindex(0);
     } else setImageindex(imageindex + 1);
-  };
-  const showpre = () => {
-    if (imageindex <= 1) {
-      setImageindex(19);
-    } else setImageindex(imageindex - 1);
   };
 
   useEffect(() => {

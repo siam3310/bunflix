@@ -1,7 +1,7 @@
 import { createImageUrl } from "@/utils/create-image-url";
-import { fetchTmdbInfo } from "@/data/fetch-data";
 import {  Play, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
+import cache from "@/lib/cache";
 
 export async function TmdbTvInfo({ id }: { id: number }) {
   const data: tmdbTvInfo = await fetchTmdbInfo("tv", id);
@@ -83,4 +83,28 @@ export async function TmdbTvInfo({ id }: { id: number }) {
       </div>
     </div>
   );
+}
+
+
+async function fetchTmdbInfo(type: string, id: number | string) {
+  
+  const key = process.env.TMDB_KEY;
+  const cacheKey = `tmdbInfo${type}-${id}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Failed to fetch data for ${id}`);
+  }
 }

@@ -2,24 +2,20 @@
 import { Search, CircleX, X, FileWarningIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { fetchAniwatchSearch, fetchTmdbMultiSearch } from "@/data/fetch-data";
 import Link from "next/link";
 import useDebounce from "@/hooks/useDebounce";
 import { useSearchBarFocus } from "@/context/searchContext";
 import { createImageUrl } from "@/utils/create-image-url";
-import Dexie, { EntityTable } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { searchHistory } from "@/lib/search-history";
+import { toast } from "sonner";
 
 export default function SearchInput() {
   const [term, setTerm] = useState("");
   const [IsEmpty, setIsEmpty] = useState(false);
-  const [type, setType] = useState("multi");
+  const [type, setType] = useState<"multi" | "anime">("multi");
   const [result, setResult] = useState<tmdbMultiSearch | null>();
   const [anime, setAnime] = useState<aniwatchSearch | null>();
-  // const [preSearched, setPreSearched] = useState<
-  //   { type: string; term: string }[]
-  // >([]);
 
   const debounceSearch = useDebounce(term);
   const router = useRouter();
@@ -31,14 +27,23 @@ export default function SearchInput() {
     if (!term) {
       setTerm("");
       return;
-    } else if (type === "multi") {
-      fetchTmdbMultiSearch(debounceSearch, 1).then((res: tmdbMultiSearch) => {
-        setResult(res);
-      });
-    } else if (type === "anime") {
-      fetchAniwatchSearch(debounceSearch).then((res: aniwatchSearch) => {
-        setAnime(res);
-      });
+    } else {
+      fetch(`/api/search?q=${debounceSearch}&type=${type}`)
+        .then((response) => {
+          if (!response.ok) {
+            toast.error("Error please try again");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          type==="anime" ? setAnime(data) : setResult(data);
+        })
+        .catch((error) => {
+          console.error(
+            "There has been a problem with your fetch operation:",
+            error
+          );
+        });
     }
   }, [debounceSearch]);
 
@@ -56,7 +61,6 @@ export default function SearchInput() {
     } else {
       searchHistory.searches.add({ term: term, type: type });
       clearAndClose();
-      // setPreSearched([...preSearched, { type: type, term: term }]);
       router.push(`/search/${type}/${term}`);
     }
   };
@@ -78,7 +82,6 @@ export default function SearchInput() {
     };
   }, [isSearchOpen]);
 
-
   const history = useLiveQuery(() => searchHistory.searches.toArray());
 
   return (
@@ -86,7 +89,7 @@ export default function SearchInput() {
       style={{
         bottom: "0px",
         left: "0px",
-        transform: isSearchOpen ? "translateY(0px)" : "translateY(300px)",
+        transform: isSearchOpen ? "translateY(0px)" : "translateY(600px)",
       }}
       className="flex w-full flex-col duration-500 fixed z-50  h-fit transition-all px-2 md:px-4 items-center justify-center"
     >
@@ -142,7 +145,7 @@ export default function SearchInput() {
 
           {term.length > 0 &&
             type === "anime" &&
-            anime?.animes.map((res) => (
+            anime?.animes?.map((res) => (
               <AnimeInSearchArray anime={res} term={term} key={res.id} />
             ))}
         </div>
@@ -178,15 +181,15 @@ export default function SearchInput() {
             </button>
           )}
           {history?.slice(0, 10).map((value, index) => (
-              <p
-                key={index}
-                onClick={() => {
-                  router.push(`/search/${value.type}/${value.term}`);
-                }}
-                className="bg-gray-100 text-nowrap text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
-              >
-                {value.term}
-              </p>
+            <p
+              key={index}
+              onClick={() => {
+                router.push(`/search/${value.type}/${value.term}`);
+              }}
+              className="bg-gray-100 text-nowrap text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+            >
+              {value.term}
+            </p>
           ))}
         </div>
 
@@ -225,9 +228,9 @@ const TmdbInSearchArray = ({
       className=" w-full "
     >
       <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
-        <div className="relative h-[100px] w-[80px]">
+      <div className="relative h-[100px] min-w-[80px]">
           {!isloaded && !error && (
-            <div className="h-[100px]  w-[80px] absolute top-0 rounded-md bg-gray-400 animate-pulse"></div>
+            <div className="h-[100px]  min-w-[80px] absolute top-0 rounded-md bg-gray-400 animate-pulse"></div>
           )}
           {!error ? (
             <img
@@ -237,12 +240,9 @@ const TmdbInSearchArray = ({
                 opacity: isloaded ? "100%" : "0%",
                 scale: isloaded ? "100%" : "0%",
               }}
-              className="h-[100px]  w-[80px] absolute top-0 rounded-sm"
-              src={createImageUrl(
-                show.poster_path || show.image || show.backdrop_path,
-                "w500"
-              )}
-              alt={show.title || show.name}
+              className="h-[100px]  min-w-[80px] absolute object-cover top-0 rounded-sm"
+              src={createImageUrl(show.backdrop_path||show.backdrop_path,"w500")}
+              alt={show.name||show.title}
             />
           ) : (
             <div className="h-[100px]  w-[80px] absolute top-0 rounded-md bg-black/60 flex items-center justify-center flex-col">

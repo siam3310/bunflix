@@ -1,6 +1,6 @@
 export default async function CategoriesSkeleton(){
     return(
-        <div className=" overflow-hidden m-4 ">
+        <div className=" overflow-hidden p-4 ">
             <div className=" animate-pulse w-96 rounded-lg bg-gray-500 h-16 mb-4"></div>
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 w-full gap-4">
             {[...Array.from(Array(10).keys())].map((i)=>(

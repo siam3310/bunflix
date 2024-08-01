@@ -5,20 +5,35 @@ import { useState } from "react";
 
 export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
   const [date, setDate] = useState(anime.top10Animes.today);
-
+  const categories = [
+    "most-favorite",
+    "most-popular",
+    "subbed-anime",
+    "dubbed-anime",
+    "recently-updated",
+    "recently-added",
+    "top-upcoming",
+    "top-airing",
+    "movie",
+    "special",
+    "ova",
+    "ona",
+    "tv",
+    "completed",
+  ];
   return (
     <>
       <h1 className="text-3xl py-2 font-semibold px-4">Newly Added</h1>
       <div className="lg:flex">
-        <div className="grid gap-3 p-4 grid-cols-2 md:grid-cols-3  xl:grid-cols-5">
+        <div className="grid align-top self-start gap-1 md:gap-3 p-4 grid-cols-2 md:grid-cols-3  xl:grid-cols-6">
           {anime.latestEpisodeAnimes.map((episode) => (
             <Link
               key={episode.id}
               href={`/anime/${episode.id}`}
-              className="w-full h-[350px] rounded-md overflow-hidden group  relative text-end"
+              className="min-w-[150px] md:w-[200px] h-[250px] rounded-md overflow-hidden group  relative text-end"
             >
               <img
-                className="size-full object-cover group-hover:scale-105 transition-all"
+                className="w-full h-full object-cover absolute top-0 group-hover:scale-105 transition-all"
                 src={episode.poster}
                 alt={episode.name}
               />
@@ -78,8 +93,8 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
             </button>
           </div>
 
-          <div className="flex flex-col gap-2 min-w-[400px] max-w-[400px]">
-            {date.map((episode) => (
+          <div className="flex flex-col gap-2 w-full lg:w-[400px] lg:max-w-[400px]">
+            {date.splice(0, 4).map((episode) => (
               <Link
                 key={episode.id}
                 href={`/anime/${episode.id}`}
@@ -93,11 +108,9 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
                 <div className="px-2">
                   <p className="text-sm">{episode.name}</p>
                   <div className="flex gap-1 text-sm">
-                    <span
-                      className="px-1 bg-purple-500/70 flex gap-2 items-center w-fit rounded"
-                    >
+                    <span className="px-1 bg-purple-500/70 flex gap-2 items-center w-fit rounded">
                       <MicIcon size={10} />
-                      {episode.episodes.dub || 'NA'}
+                      {episode.episodes.dub || "NA"}
                     </span>
                     <span className="px-2 bg-yellow-500/70 flex gap-2 items-center w-fit rounded">
                       <CaptionsIcon size={10} />
@@ -159,6 +172,36 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
           ))}
         </div>
       </div>
+      <section className="p-4 md:grid grid-cols-2">
+        <div>
+          <h2 className="text-2xl py-2 font-semibold mt-4">Genres</h2>
+          <div className="flex flex-wrap gap-2">
+            {anime.genres.map((genre, index) => (
+              <Link
+                key={genre + index}
+                className=" px-2 py-1 bg-white/10 rounded-md hover:bg-red-700"
+                href={`/genre/${genre.toLowerCase()}`}
+              >
+                {genre}
+              </Link>
+            ))}
+          </div>
+        </div>
+        <div>
+          <h2 className="text-2xl py-2 font-semibold mt-4">Categories</h2>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((category, index) => (
+              <Link
+                key={category + index}
+                className="capitalize px-2 py-1 bg-white/10 rounded-md hover:bg-red-700"
+                href={`/anime-categories/${category.toLowerCase()}`}
+              >
+                {category.replace(/-/, " ")}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   );
 }

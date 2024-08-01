@@ -1,5 +1,5 @@
 import AniwatchCategoryList from "@/components/aniwatch/aniwatch-category-list";
-import { fetchAniwatchCategories } from "@/data/fetch-data";
+import cache from "@/lib/cache";
 import Link from "next/link";
 
 export async function generateMetadata({
@@ -85,4 +85,30 @@ export default async function Categories({
       </div>
     </div>
   );
+}
+
+
+async function fetchAniwatchCategories(
+  category:aniwatchCategoriesName,
+  page?: number | string
+) {
+
+  const cacheKey = `aniwatchCategories${category}${page || 1}`
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+
+  } catch (error) {
+    throw new Error(`Search failed in Categories`);
+  }
 }

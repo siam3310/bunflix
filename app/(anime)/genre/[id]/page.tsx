@@ -1,14 +1,9 @@
+import cache from "@/lib/cache";
 import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const kababCased = decodeURIComponent(params.id).replace(/\s+/g, "-");
-
-  const response = await fetch(
-    `${process.env.ANIWATCH_API}/anime/genre/${kababCased}`
-  );
-
-  const data: aniwatchGenre = await response.json();
+  const data: aniwatchGenre = await fetchAnimeStudio(params.id);
 
   return {
     title: `${data.genreName} - Genres`,
@@ -16,14 +11,9 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 }
 
 export default async function Genre({ params }: { params: { id: string } }) {
-  const kababCased = decodeURIComponent(params.id).replace(/\s+/g, "-");
 
-  const response = await fetch(
-    `${process.env.ANIWATCH_API}/anime/genre/${kababCased}`
-  );
-
-  const data: aniwatchGenre = await response.json();
-
+  const data: aniwatchGenre = await fetchAnimeStudio(params.id);
+  
   return (
     <div className="min-h-screen bg-black/80 p-4 pb-24">
       <h1 className="text-3xl font-semibold capitalize">{data.genreName}</h1>
@@ -61,4 +51,26 @@ export default async function Genre({ params }: { params: { id: string } }) {
       </div>
     </div>
   );
+}
+
+async function fetchAnimeStudio(genreName: string) {
+  const kababCased = decodeURIComponent(genreName).replace(/\s+/g, "-");
+
+  const cacheKey = `aniwatchStudio${genreName}`;
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/genre/${kababCased}`
+    );
+
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Search failed in Categories`);
+  }
 }

@@ -91,7 +91,7 @@ export async function fetchData(endpoint: string) {
     }
     const response = await fetch(endpoint);
     const data = await response.json();
-    cache.set(cacheKey, data);
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
     return data;
   } catch (error) {
     throw new Error(`Failed to fetch data `);

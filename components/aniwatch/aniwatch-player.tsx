@@ -1,8 +1,5 @@
-import {
-  fetchAniwatchEpisodeSrc,
-  fetchAniwatchEpisodeSrcDub,
-} from "@/data/fetch-data";
 import { HlsPlayer } from "./hls-player";
+import cache from "@/lib/cache";
 
 export default async function AniwatchPlayer({
   episodeId,
@@ -50,6 +47,56 @@ export default async function AniwatchPlayer({
         track={sub.tracks}
         videoSrc={sub.sources[0].url}
       />
+    );
+  }
+}
+
+async function fetchAniwatchEpisodeSrc(
+  episodeId: string,
+  episode: string
+) {
+  const cacheKey = `aniwatchEpisodeSourceJp${episodeId}${episode}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(
+      `Fetch failed Episode Sources japanesse for ${episodeId + episode}`
+    );
+  }
+}
+
+async function fetchAniwatchEpisodeSrcDub(
+  episodeId: string,
+  episode: string
+) {
+  const cacheKey = `aniwatchEpisodeSourceEn${episodeId}${episode}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(
+      `Fetch failed Episode Sources english for ${episodeId + episode}`
     );
   }
 }

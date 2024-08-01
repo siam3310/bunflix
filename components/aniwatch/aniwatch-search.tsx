@@ -1,4 +1,4 @@
-import { fetchAniwatchSearch } from "@/data/fetch-data";
+import cache from "@/lib/cache";
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 
@@ -57,4 +57,25 @@ export async function AniwatchSearch({ searchTerm }: { searchTerm: string }) {
       </div>
     </>
   );
+}
+
+
+async function fetchAniwatchSearch(searchTerm: string) {
+  const cacheKey = `aniwatchSearch${searchTerm}`;
+
+  try {
+    const cachedData = cache.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=1`
+    );
+    const data = await response.json();
+    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+
+    return data;
+  } catch (error) {
+    throw new Error(`Search failed in Search`);
+  }
 }
