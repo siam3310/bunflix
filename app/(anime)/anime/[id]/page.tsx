@@ -77,7 +77,7 @@ async function fetchAniwatchEpisode(seasonId: string) {
       `${process.env.ANIWATCH_API}/anime/episodes/${seasonId}`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+    cache.set(cacheKey, data, 60 * 60 * 24 * 3);
 
     return data;
   } catch (error) {
@@ -105,7 +105,7 @@ async function fetchAniwatchId(id: string) {
 
     return data;
   } catch (error) {
-    throw new Error(`Fetch failed for AnimeID ${id}`);
+    throw new Error(`Failed fetching details for Anime`);
   }
 }
 

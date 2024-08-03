@@ -25,12 +25,12 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
     <>
       <h1 className="text-3xl py-2 font-semibold px-4">Newly Added</h1>
       <div className="lg:flex">
-        <div className="grid align-top self-start gap-1 md:gap-3 p-4 grid-cols-2 md:grid-cols-3  xl:grid-cols-6">
+        <div className="grid align-top self-start gap-4 md:gap-3 p-4 grid-cols-2 sm:grid-cols-3  md:grid-cols-4 lg:grid-cols-5 w-full">
           {anime.latestEpisodeAnimes.map((episode) => (
             <Link
               key={episode.id}
               href={`/anime/${episode.id}`}
-              className="min-w-[150px] md:w-[200px] h-[250px] rounded-md overflow-hidden group  relative text-end"
+              className="min-w-[150px] lg:w-full h-[300px] rounded-md overflow-hidden group  relative text-end"
             >
               <img
                 className="w-full h-full object-cover absolute top-0 group-hover:scale-105 transition-all"
@@ -93,7 +93,7 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
             </button>
           </div>
 
-          <div className="flex flex-col gap-2 w-full lg:w-[400px] lg:max-w-[400px]">
+          <div className="flex flex-col gap-2 w-full lg:w-[350px] lg:max-w-[350px]">
             {date.splice(0, 4).map((episode) => (
               <Link
                 key={episode.id}

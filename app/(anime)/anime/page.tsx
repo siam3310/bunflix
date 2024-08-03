@@ -14,8 +14,8 @@ export default async function Anime() {
   return (
     <div className="pb-24 bg-black/80 min-h-screen">
       <AniwatchSlider anime={data} />
-      {/* <AniwatchContinueWatching /> */}
-      {/* <AniwatchHome anime={data} /> */}
+      <AniwatchContinueWatching />
+      <AniwatchHome anime={data} />
     </div>
   );
 }

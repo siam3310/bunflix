@@ -1,16 +1,7 @@
 "use client";
 import { createImageUrl } from "@/utils/create-image-url";
 import { useEffect, useState } from "react";
-import {
-  Info,
-  Pause,
-  PauseCircle,
-  Play,
-  PlayCircle,
-  PlayCircleIcon,
-  PlayIcon,
-  Star,
-} from "lucide-react";
+
 import Link from "next/link";
 
 export default function TmdbSlider({ data }: { data: TmdbMovie }) {
@@ -35,94 +26,64 @@ export default function TmdbSlider({ data }: { data: TmdbMovie }) {
 
 
   return (
-    <div className=" w-full overflow-hidden">
-      <div className=" flex w-fit relative">
-        {data?.results?.map((movie) => (
-          <div
-            key={movie.id}
-            className=" relative h-screen w-screen transition-all duration-1000 ease-in-out "
-            style={{ translate: `${-100 * imageindex}%` }}
+    <section className="md:p-6 p-4 ">
+      <div className="flex relative h-[250px] sm:h-[350px] md:h-[400px lg:h-[500px]">
+        {data.results.slice(0, 6).map((res, i) => (
+          <Link
+            href={`/anime/${res.id}`}
+            key={res.id}
+            style={{
+              pointerEvents: i === imageindex ? "all" : "none",
+            }}
+            className="absolute size-full bg-gradient-to-br from-transparent to-black/40 rounded-md overflow-hidden cursor-pointer"
           >
-            <div className="bg-gradient-to-b from-black/20 to-black/60 absolute h-full  w-full" />
             <img
-              className=" h-full w-full object-cover flex-shrink-0 flex-grow-0 "
-              src={createImageUrl(movie.backdrop_path, "original")}
+              style={{
+                width: i === imageindex ? "" : "0%",
+                height: i === imageindex ? "" : "0%",
+                opacity: i === imageindex ? "100%" : "0%",
+              }}
+              className="h-full  w-full transition-all duration-500 object-cover"
+              src={createImageUrl(res.backdrop_path||res.poster_path,'original')}
+              alt={res.name}
+            />
+            <div
+              style={{
+                opacity: i === imageindex ? "" : "0%",
+              }}
+              className="absolute bottom-8 right-0 px-6 z-10 opacity-80 text-right w-[80%] space-y-1"
+            >
+              <h1 className="text-lg md:text-2xl font-bold">{res.name || res.title}</h1>
+              <p className="text-sm md:block hidden line-clamp-2">{res.overview||res.synopsis}</p>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div className=" flex overflow-x-scroll scrollbar-hide gap-4 py-4 ">
+        {data.results.slice(0, 6).map((res, i) => (
+          <div
+          style={{
+            transform:`translate(-${imageindex*246}px)`,
+          }}
+            key={res.id}
+            onClick={() => setImageindex(i)}
+            className="flex min-w-[230px] transition-all  duration-500 cursor-pointer rounded-md overflow-hidden  h-28 relative "
+          >
+            <img
+              src={createImageUrl(res.backdrop_path||res.poster_path,'original')}
+              className="w-full h-full object-cover"
               alt=""
             />
-            <div className="xl:top-1/2 lg:w-2/5 w-full px-8  bottom-12 text-white absolute ">
-              <h1 className=" font-bold  text-4xl">{movie.title}</h1>
-              <p className=" leading-5 my-4">{movie.overview}</p>
-              <div className=" flex justify-between ">
-                <div className="flex gap-2  ">
-                  <Link
-                    href={`/video/movie/${movie.id}?provider=vidsrc`}
-                    className=" px-4 py-2 font-semibold rounded-full bg-red-600  flex xl:justify-center gap-2 items-center"
-                  >
-                    <span>
-                      <Play fill="white" size={15} />
-                    </span>
-                    <p>Play</p>
-                  </Link>
-                  <Link
-                    href={`/info/movie/${movie.id}`}
-                    className=" px-3 font-semibold rounded-full border flex xl:justify-center gap-2 items-center"
-                  >
-                    <Info size={15} />
-                  </Link>
-                </div>
-                <div className=" px-3 font-semibold rounded-full flex xl:justify-center gap-2 items-center">
-                  {preferAnimation ? (
-                    <button
-                      className="xl:hidden"
-                      onClick={() => setPreferAnimation(false)}
-                    >
-                      <PauseCircle size={30} />
-                    </button>
-                  ) : (
-                    <button
-                      className="xl:hidden"
-                      onClick={() => setPreferAnimation(true)}
-                    >
-                      <PlayCircle size={30} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <div
+              style={{
+                animation: `${i === imageindex ? "timer 8s forwards" : "none"}`,
+                opacity: i === imageindex ? "100%" : "0%",
+              }}
+              className="h-2  bg-red-700/70 absolute bottom-0"
+            ></div>
           </div>
         ))}
-        <div className=" absolute bottom-2 hidden xl:flex xl:left-8 px-4 py-2 xl:bg-black/30 rounded-full gap-8 items-center">
-          <div className=" flex items-center">
-            {preferAnimation ? (
-              <button onClick={() => setPreferAnimation(false)}>
-                <PauseCircle size={20} />
-              </button>
-            ) : (
-              <button onClick={() => setPreferAnimation(true)}>
-                <PlayCircle size={20} />
-              </button>
-            )}
-          </div>
-          <div className="py-2 flex gap-2">
-            {data.results.map((_, i) => (
-              <span
-                key={_.id}
-                className={`hidden py-1 px-3 opacity-80 cursor-pointer transition-all duration-150 rounded-full xl:flex items-center justify-center aspect-square`}
-                style={{ backgroundColor: i == imageindex ? "red" : "" }}
-                onClick={() => setImageindex(i)}
-              >
-                {i == imageindex ? (
-                  <>{1 + i}</>
-                ) : (
-                  <span className=" flex items-center justify-center">
-                    <div className=" bg-white size-2 rounded-full" />
-                  </span>
-                )}
-              </span>
-            ))}
-          </div>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }

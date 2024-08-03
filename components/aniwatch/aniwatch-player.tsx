@@ -66,12 +66,12 @@ async function fetchAniwatchEpisodeSrc(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+    cache.set(cacheKey, data, 60 * 60 * 24 * 3);
 
     return data;
   } catch (error) {
     throw new Error(
-      `Fetch failed Episode Sources japanesse for ${episodeId + episode}`
+      `Fetch failed Episode Sources japanesse `
     );
   }
 }
@@ -91,12 +91,12 @@ async function fetchAniwatchEpisodeSrcDub(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+    cache.set(cacheKey, data, 60 * 60 * 24 * 3);
 
     return data;
   } catch (error) {
     throw new Error(
-      `Fetch failed Episode Sources english for ${episodeId + episode}`
+      `Fetch failed Episode Sources english`
     );
   }
 }

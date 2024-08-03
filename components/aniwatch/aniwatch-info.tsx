@@ -109,7 +109,7 @@ export function AniwatchInfo({
               {data.anime.info.description}
             </p>
             <div className=" my-4 flex flex-col gap-2 opacity-70">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 Genres :
                 {data.anime.moreInfo.genres.map((e) => (
                   <Link
@@ -121,16 +121,18 @@ export function AniwatchInfo({
                   </Link>
                 ))}
               </div>
-              {data.anime.moreInfo.studios&&<p className=" flex gap-2">
-                Studio :
-                <Link
-                  className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
-                  href={`/anime-studio/${data.anime.moreInfo.studios.toLowerCase()}`}
-                >
-                  {data.anime.moreInfo.studios}
-                </Link>
-                <span className=" hidden xl:block">|</span>
-              </p>}
+              {data.anime.moreInfo.studios && (
+                <p className=" flex gap-2 flex-wrap">
+                  Studio :
+                  <Link
+                    className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
+                    href={`/anime-studio/${data.anime.moreInfo.studios.toLowerCase()}`}
+                  >
+                    {data.anime.moreInfo.studios}
+                  </Link>
+                  <span className=" hidden xl:block">|</span>
+                </p>
+              )}
               <p className=" flex gap-2">
                 Duration : {data.anime.moreInfo.duration}
                 <span className=" hidden xl:block">|</span>
