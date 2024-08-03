@@ -4,23 +4,20 @@ import { useEffect, useState } from "react";
 
 export default function AniwatchSlider({ anime }: { anime: aniwatchApi }) {
   const [imageindex, setImageindex] = useState(0);
-  const [preferAnimation, setPreferAnimation] = useState(true);
 
   const shownext = () => {
-    if (imageindex >= 3) {
+    if (imageindex >= 5) {
       setImageindex(0);
     } else setImageindex(imageindex + 1);
   };
 
   useEffect(() => {
-    if (preferAnimation) {
-      const intervalId = setInterval(() => {
-        shownext();
-      }, 8000);
+    const intervalId = setInterval(() => {
+      shownext();
+    }, 8000);
 
-      return () => clearInterval(intervalId);
-    }
-  }, [imageindex, preferAnimation]);
+    return () => clearInterval(intervalId);
+  }, [imageindex]);
 
   return (
     <section className="md:p-6 p-4 ">
@@ -77,7 +74,6 @@ export default function AniwatchSlider({ anime }: { anime: aniwatchApi }) {
             <div
               style={{
                 animation: `${i === imageindex ? "timer 8s forwards" : "none"}`,
-                opacity: i === imageindex ? "100%" : "0%",
               }}
               className="h-2  bg-red-700/70 absolute bottom-0"
             ></div>
