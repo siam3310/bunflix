@@ -81,17 +81,15 @@ async function fetchAniwatchEpisode(seasonId: string) {
 
     return data;
   } catch (error) {
-    throw new Error(`Fetch failed for SeasonID ${seasonId}`);
+    throw new Error(`Fetch failed for SeasonID`);
   }
 }
 
-
-
-async function fetchAniwatchId(id: string) {
+async function fetchAniwatchId(id: string): Promise<aniwatchInfo> {
   const cacheKey = `aniwatchId${id}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
+    const cachedData: aniwatchInfo | undefined = cache.get(cacheKey);
     if (cachedData) {
       return cachedData;
     }
@@ -100,12 +98,16 @@ async function fetchAniwatchId(id: string) {
       `${process.env.ANIWATCH_API}/anime/info?id=${id}`
     );
 
-    const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+    const data: aniwatchInfo = await response.json();
 
-    return data;
+    if (data.anime.moreInfo.status === "Currently Airing") {
+      cache.set(cacheKey, data, 60 * 60 * 24); // cache for just a day if anime hasn't finished
+      return data;
+    } else {
+      cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+      return data;
+    }
   } catch (error) {
     throw new Error(`Failed fetching details for Anime`);
   }
 }
-

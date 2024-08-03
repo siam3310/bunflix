@@ -72,7 +72,7 @@ async function fetchAniwatchSearch(searchTerm: string) {
       `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=1`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+    cache.set(cacheKey, data, 60 * 60 * 24 * 1); //making search cache last only for one day
 
     return data;
   } catch (error) {

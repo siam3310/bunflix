@@ -49,9 +49,6 @@ export default function AniwatchSlider({ anime }: { anime: aniwatchApi }) {
             >
               <h1 className="text-lg md:text-2xl font-bold">{res.name}</h1>
               <h4 className="italic ">{res.jname}</h4>
-              <p className="text-sm md:block hidden line-clamp-2">
-                {res.description}
-              </p>
             </div>
           </Link>
         ))}
