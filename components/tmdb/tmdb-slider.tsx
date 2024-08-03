@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function TmdbSlider({ data }: { data: TmdbMovie }) {
   const [imageindex, setImageindex] = useState(0);
-  const [preferAnimation, setPreferAnimation] = useState(false);
+  const [preferAnimation, setPreferAnimation] = useState(true);
 
   const shownext = () => {
     if (imageindex >= 19) {
