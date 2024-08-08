@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       );
 
       const data = await response.json();
-      cache.set(cacheKey, data, 60 * 60 * 24 * 1); //making search cache last only for one day
+      cache.set(cacheKey, data, 60 * 60 * 24 * 1);
 
       return Response.json(data);
     } catch  {
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
         `${process.env.ANIWATCH_API}/anime/search?q=${q}&page=${page || 1}`
       );
       const data = await response.json();
-      cache.set(cacheKey, data, 60 * 60 * 24 * 1); //making search cache last only for one day
+      cache.set(cacheKey, data, 60 * 60 * 24 * 1);
 
       return Response.json(data);
     } catch (error) {

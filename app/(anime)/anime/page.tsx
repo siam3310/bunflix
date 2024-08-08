@@ -20,7 +20,6 @@ export default async function Anime() {
   );
 }
 
-
 async function aniwatchHomeApi() {
   const cacheKey = `animeHome`;
   try {
@@ -30,11 +29,10 @@ async function aniwatchHomeApi() {
     }
     const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`);
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 7);
+    cache.set(cacheKey, data, 60 * 60 * 24 * 1);
 
     return data;
   } catch (error) {
     throw new Error(`Fetch failed at Anime Slider`);
   }
 }
-
