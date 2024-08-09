@@ -54,7 +54,6 @@ export function HlsPlayer({
   const [volume, setVolume] = useState<number>(1);
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
-  const [mousemove, setMousemove] = useState({ x: 0, y: 0 });
 
   const { isSearchBarFocused } = useSearchBarFocus();
   const searchParams = useSearchParams();
@@ -303,19 +302,6 @@ export function HlsPlayer({
     pendingShows.shows?.where("id").equals(`${episodeId}?ep=${ep}`).count()
   );
 
-  useEffect(() => {
-    containerRef?.current?.addEventListener("mousemove", (pos) => {
-      setMousemove({ x: pos.clientX, y: pos.clientY });
-    });
-  }, []);
-
-  useEffect(() => {
-    setShowControl(true);
-
-    setTimeout(() => {
-      setShowControl(false);
-    }, 3000);
-  }, [mousemove]);
 
   useEffect(() => {
     const interval = setInterval(() => {
