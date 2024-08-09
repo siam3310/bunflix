@@ -66,7 +66,7 @@ async function fetchAniwatchEpisodeSrc(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 1);
+    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {
@@ -91,7 +91,7 @@ async function fetchAniwatchEpisodeSrcDub(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 1);
+    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {

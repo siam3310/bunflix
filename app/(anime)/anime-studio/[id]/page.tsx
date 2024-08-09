@@ -70,7 +70,7 @@ async function fetchAnimeStudio(studioName: string) {
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 1);
+    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {

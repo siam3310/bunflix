@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   FastForwardIcon,
   FullscreenIcon,
+  GaugeIcon,
   HandIcon,
   LoaderIcon,
   PauseIcon,
@@ -49,7 +50,6 @@ export function HlsPlayer({
   const [durationSec, setDurationSec] = useState<number>(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const [showControl, setShowControl] = useState(false);
   const [animation, setAnimation] = useState<
     | "backward"
@@ -63,12 +63,12 @@ export function HlsPlayer({
   const [volume, setVolume] = useState<number>(1);
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
+  const [mousemove, setMousemove] = useState({ x: 0, y: 0 });
 
   const { isSearchBarFocused } = useSearchBarFocus();
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
-  const time = searchParams.get('time')
-
+  const time = searchParams.get("time");
 
   // hls initialization and attaching soucres
   useEffect(() => {
@@ -77,13 +77,15 @@ export function HlsPlayer({
       hls.loadSource(videoSrc);
       hls.attachMedia(player.current);
 
-      player.current.addEventListener("canplaythrough", () => {
-        setLoading(false);
+      hls.on(Hls.Events.MANIFEST_LOADING, () => {
+        setLoading(true);
       });
 
       hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
         setLevels(data.levels);
+        player.current?.play();
       });
+      hls.startLoad();
       setHlsInstance(hls);
       updateCurrentTime();
 
@@ -108,8 +110,8 @@ export function HlsPlayer({
         }
       });
 
-      if(time){
-        player.current.currentTime = parseInt(time)
+      if (time) {
+        player.current.currentTime = parseInt(time);
       }
 
       return () => {
@@ -121,7 +123,7 @@ export function HlsPlayer({
         hls.destroy();
       };
     }
-  }, [player, videoSrc, hasInteracted]);
+  }, [player, videoSrc, loading]);
 
   const tooglePlayPause = useCallback(() => {
     if (player.current) {
@@ -146,7 +148,7 @@ export function HlsPlayer({
     }
   }, [isMuted, player]);
 
-  const toggleFullscreen = async () => {
+  const toggleFullscreen = () => {
     if (isFullscreen) {
       document.exitFullscreen();
       if (screen.orientation) {
@@ -311,40 +313,40 @@ export function HlsPlayer({
     isSearchBarFocused,
   ]);
 
-  // checking user interactions(click,keyboard presses) to start auto play
-  // special note : fuck autoplay policies
-  useEffect(() => {
-    const handleUserInteraction = () => {
-      setHasInteracted(true);
-    };
-    document.addEventListener("click", handleUserInteraction);
-    document.addEventListener("keydown", handleUserInteraction);
-
-    return () => {
-      document.removeEventListener("click", handleUserInteraction);
-      document.removeEventListener("keydown", handleUserInteraction);
-    };
-  }, []);
-
   const iconSize: number = 20;
 
+  const existingShow = useLiveQuery(() =>
+    pendingShows.shows?.where("id").equals(`${episodeId}?ep=${ep}`).count()
+  );
 
-  const existingShow = useLiveQuery(() => pendingShows.shows?.where("id").equals(`${episodeId}?ep=${ep}`).count());  
-  
+  useEffect(() => {
+    containerRef?.current?.addEventListener("mousemove", (pos) => {
+      setMousemove({ x: pos.clientX, y: pos.clientY });
+    });
+  }, []);
+ 
+  useEffect(() => {
+    setShowControl(true);
+
+    setTimeout(() => {
+      setShowControl(false);
+    }, 3000);
+  }, [mousemove]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      if (existingShow){    
+      if (existingShow) {
         pendingShows.shows.update(`${episodeId}?ep=${ep}`, {
           time: player.current?.currentTime || 0,
         });
       } else {
         pendingShows.shows.add({
           lang,
-          name:data.anime.info.name,
-          image:data.anime.info.poster,
+          name: data.anime.info.name,
+          image: data.anime.info.poster,
           episode,
           id: `${episodeId}?ep=${ep}`,
-          time: player.current?.currentTime||0,
+          time: player.current?.currentTime || 0,
         });
       }
     }, 10_000);
@@ -359,49 +361,43 @@ export function HlsPlayer({
         onMouseLeave={() => setShowControl(false)}
         onClick={() => setShowControl(!showControl)}
         ref={containerRef}
+        style={{
+          cursor: showControl ? "auto" : "none",
+        }}
         className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden md:rounded-lg"
       >
-         {hasInteracted && (
-          <div
-            style={{ opacity: loading ? "100%" : "0%" }}
-            className="pointer-events-none cursor-default absolute -translate-y-1/2 -translate-x-1/2 text-xl left-1/2 top-1/2 rounded-lg p-3 flex items-center gap-2 z-50 "
-          >
-            <LoaderIcon
-              color="white"
-              size={18}
-              style={{
-                animation: "spin 2s linear infinite",
-              }}
-              className=" transition-all"
-            />
-            <span>Loading ...</span>
-          </div>
-        )}
-        {hasInteracted ? (
-          <>
-            <video
-              className="w-full h-full  bg-black/60 relative"
-              crossOrigin="anonymous"
-              controlsList="nodownload"
-              autoPlay
-              ref={player}
-            >
-              {track.map((e) => (
-                <track
-                  key={e.file}
-                  kind={e.kind}
-                  src={e.file}
-                  default={e.default}
-                  label={e.label}
-                ></track>
-              ))}
-            </video>
-          </>
-        ) : (
-          <div className="flex items-center gap-2 p-4 md:p-0 text-2xl">
-            <HandIcon color="white" size={18} /> Waiting for user input
-          </div>
-        )}
+        <div
+          style={{ opacity: loading ? "100%" : "0%" }}
+          className="pointer-events-none cursor-default absolute -translate-y-1/2 -translate-x-1/2 text-xl left-1/2 top-1/2 rounded-lg p-3 flex items-center gap-2 z-50 "
+        >
+          <LoaderIcon
+            color="white"
+            size={18}
+            style={{
+              animation: "spin 2s linear infinite",
+            }}
+            className=" transition-all"
+          />
+          <span>Loading ...</span>
+        </div>
+
+        <video
+          className="w-full h-full  bg-black/60 relative"
+          crossOrigin="anonymous"
+          controlsList="nodownload"
+          ref={player}
+        >
+          {track.map((e) => (
+            <track
+              key={e.file}
+              kind={e.kind}
+              src={e.file}
+              default={e.default}
+              label={e.label}
+            ></track>
+          ))}
+        </video>
+
         <div
           className={`absolute  bottom-16 right-1/2 -translate-x-1/2 text-white text-2xl pointer-events-none `}
         >
@@ -517,6 +513,7 @@ export function HlsPlayer({
               <PlayIcon size={iconSize} />
             )}
           </button>
+
           <button
             style={{
               backgroundColor: isMuted || volume <= 0.1 ? " #ef4444" : "",
@@ -532,6 +529,19 @@ export function HlsPlayer({
               <Volume1Icon size={iconSize} />
             )}
           </button>
+          <button
+            className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+            onClick={() => {
+              if (player.current && player.current.playbackRate <= 2) {
+                player.current.playbackRate +=
+                  player.current.playbackRate + 0.1;
+              } else if (player.current) {
+                player.current.playbackRate = 1;
+              }
+            }}
+          >
+            <GaugeIcon size={iconSize} />
+          </button>
           <p className=" text-nowrap text-sm mt-1">
             {currentTime[0]}:{currentTime[1]} / {duration[0] ? duration[0] : 0}:
             {duration[1] ? duration[1] : 0}
@@ -541,7 +551,7 @@ export function HlsPlayer({
             min="0"
             max={durationSec || 0}
             value={currentTimeSec || 0}
-            className="cursor-pointer focus:outline-none w-full accent-red-500 "
+            className="cursor-pointer  h-2  focus:outline-none w-full accent-red-500 "
             onChange={(e) => {
               e.preventDefault();
               if (player.current && player.current.currentTime) {
@@ -555,9 +565,9 @@ export function HlsPlayer({
                 key={index}
                 style={{
                   display:
-                    index === hlsInstance?.currentLevel ? "node" : "block",
+                    index === hlsInstance?.currentLevel ? "none" : "block",
                 }}
-                className="underline cursor-pointer"
+                className=" cursor-pointer"
                 onClick={() =>
                   hlsInstance ? (hlsInstance.currentLevel = index) : null
                 }

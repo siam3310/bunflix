@@ -104,7 +104,7 @@ async function fetchAniwatchCategories(
       `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24 * 1);
+    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
 
