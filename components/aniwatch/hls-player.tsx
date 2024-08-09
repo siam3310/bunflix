@@ -222,7 +222,6 @@ export function HlsPlayer({
       | "playPause"
       | "mute"
   ) => {
-    setAnimation(null);
 
     if (player.current) {
       switch (control) {
@@ -312,6 +311,7 @@ export function HlsPlayer({
     isPlaying,
     isFullscreen,
     isMuted,
+    animation,
     currentTimeSec,
     toogleMute,
     isSearchBarFocused,
