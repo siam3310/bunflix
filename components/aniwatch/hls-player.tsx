@@ -43,7 +43,7 @@ export function HlsPlayer({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [currentTime, setCurrentTime] = useState<[number, number]>([0, 0]);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
   const [duration, setDuration] = useState<[number, number]>([0, 0]);
@@ -213,7 +213,7 @@ export function HlsPlayer({
     }
   };
 
-  const shortcutPopups = (
+  const shortcutPopups = ( 
     control:
       | "forward"
       | "backward"
@@ -222,6 +222,8 @@ export function HlsPlayer({
       | "playPause"
       | "mute"
   ) => {
+    setAnimation(null);
+
     if (player.current) {
       switch (control) {
         case "forward":
@@ -250,9 +252,11 @@ export function HlsPlayer({
           break;
       }
     }
-    setTimeout(() => {
+    const interval = setInterval(() => {
       setAnimation(null);
     }, 500);
+
+    clearInterval(interval)
   };
 
   // keyboard shortcut for play,pause,etc
@@ -324,7 +328,7 @@ export function HlsPlayer({
       setMousemove({ x: pos.clientX, y: pos.clientY });
     });
   }, []);
- 
+
   useEffect(() => {
     setShowControl(true);
 
