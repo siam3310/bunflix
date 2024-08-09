@@ -51,15 +51,6 @@ export function HlsPlayer({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showControl, setShowControl] = useState(false);
-  const [animation, setAnimation] = useState<
-    | "backward"
-    | "forward"
-    | "increase"
-    | "decrease"
-    | "playPause"
-    | "mute"
-    | null
-  >(null);
   const [volume, setVolume] = useState<number>(1);
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
@@ -227,35 +218,25 @@ export function HlsPlayer({
       switch (control) {
         case "forward":
           player.current.currentTime = player.current.currentTime + 5;
-          setAnimation("forward");
           break;
         case "backward":
           player.current.currentTime = player.current.currentTime - 5;
-          setAnimation("backward");
           break;
         case "increase":
           volumnControl("increase");
-          setAnimation("increase");
           break;
         case "decrease":
           volumnControl("decrease");
-          setAnimation("decrease");
           break;
         case "playPause":
           tooglePlayPause();
-          setAnimation("playPause");
           break;
         case "mute":
           toogleMute();
-          setAnimation("mute");
           break;
       }
     }
-    const interval = setInterval(() => {
-      setAnimation(null);
-    }, 500);
-
-    clearInterval(interval)
+    
   };
 
   // keyboard shortcut for play,pause,etc
@@ -311,7 +292,6 @@ export function HlsPlayer({
     isPlaying,
     isFullscreen,
     isMuted,
-    animation,
     currentTimeSec,
     toogleMute,
     isSearchBarFocused,
@@ -401,75 +381,6 @@ export function HlsPlayer({
             ></track>
           ))}
         </video>
-
-        <div
-          className={`absolute  bottom-16 right-1/2 -translate-x-1/2 text-white text-2xl pointer-events-none `}
-        >
-          <div
-            className="absolute duration-500 text-[16px] top-0  right-0"
-            style={{
-              opacity: animation === "backward" ? "100%" : "0%",
-              transform:
-                animation === "backward"
-                  ? "translateX(-25px)"
-                  : "translateX(00px)",
-            }}
-          >
-            {/* lucide doesn't have a go backward button of such style */}
-            <FastForwardIcon size={iconSize} className="rotate-180" />
-          </div>
-          <div
-            className="absolute duration-500 text-[16px] top-0  right-0"
-            style={{
-              opacity: animation === "forward" ? "100%" : "0%",
-              transform:
-                animation === "forward"
-                  ? "translateX(25px)"
-                  : "translateX(00px)",
-            }}
-          >
-            <FastForwardIcon size={iconSize} />
-          </div>
-          <div
-            className="w-fit text-nowrap absolute top-0 right-0"
-            style={{
-              opacity: animation === "decrease" ? "100%" : "0%",
-            }}
-          >
-            {(volume * 100).toFixed()} %
-          </div>
-          <div
-            className="text-nowrap w-fit absolute top-0 right-0"
-            style={{
-              opacity: animation === "increase" ? "100%" : "0%",
-            }}
-          >
-            {(volume * 100).toFixed()} %
-          </div>
-          <div
-            className="  absolute top-0 right-0"
-            style={{
-              opacity: animation === "mute" ? "100%" : "0%",
-            }}
-          >
-            {isMuted ? (
-              <VolumeXIcon size={iconSize} />
-            ) : volume > 0.5 ? (
-              <Volume2Icon size={iconSize} />
-            ) : (
-              <Volume1Icon size={iconSize} />
-            )}
-          </div>
-          <div
-            className="  absolute top-0 right-0"
-            style={{
-              opacity: animation === "playPause" ? "100%" : "0%",
-            }}
-          >
-            {isPlaying ? <PlayIcon /> : <PauseIcon />}
-          </div>
-        </div>
-
         <div
           style={{
             opacity: loading ? "0%" : showControl ? "100%" : "0%",
