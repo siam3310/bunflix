@@ -297,8 +297,6 @@ export function HlsPlayer({
     isFullscreen,
     isMuted,
     currentTimeSec,
-    shortcutPopups,
-    toogleMute,
     isSearchBarFocused,
   ]);
 
@@ -324,7 +322,7 @@ export function HlsPlayer({
           time: player.current?.currentTime || 0,
         });
       }
-    }, 10_000);
+    }, 20_000);
 
     return () => clearInterval(interval);
   }, [existingShow]);
@@ -334,7 +332,6 @@ export function HlsPlayer({
       <div
         onMouseEnter={() => setShowControl(true)}
         onMouseLeave={() => setShowControl(false)}
-        onClick={() => setShowControl(!showControl)}
         ref={containerRef}
         style={{
           cursor: showControl ? "auto" : "none",
@@ -363,13 +360,16 @@ export function HlsPlayer({
           ref={player}
         />
         <div
-          style={{
-            opacity: loading ? "0%" : showControl ? "100%" : "0%",
-            pointerEvents: loading ? "none" : showControl ? "all" : "none",
-          }}
-          className="absolute top-0  left-0 p-4 space-x-3"
+         
+          onClick={()=>setShowControl(!showControl)}
+          className="absolute top-0  left-0 p-4  size-full"
         >
-        <h1 className="text-lg">{currentEpisode} {episode.episodes[--currentEpisode].title} - {data.anime.info.name}</h1>
+        <h1
+         style={{
+          opacity: loading ? "0%" : showControl ? "100%" : "0%",
+          pointerEvents: loading ? "none" : showControl ? "all" : "none",
+        }}
+        className="text-lg">{currentEpisode} {episode.episodes[--currentEpisode].title} - {data.anime.info.name}</h1>
         </div>
         <div
           style={{
