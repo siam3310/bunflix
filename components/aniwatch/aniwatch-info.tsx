@@ -50,12 +50,18 @@ export function AniwatchInfo({
               <Label htmlFor="audio">Japanesse</Label>
             </div>
             <div className="flex items-center mb-6">
-              <ul className="max-h-[400px] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg">
+              <ul
+                ref={(el) => {
+                  el?.scrollBy(0, 48 * --currentEpisode);
+                }}
+                className="max-h-[400px] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg"
+              >
                 {episode.episodes.map((episode, index) => (
                   <Link
-                  target="_blank"
+                    target="_blank"
                     key={episode.episodeId}
                     href={`/anime/${episode.episodeId}&episode=${episode.number}&lang=${audioToogle}`}
+                    // className="min-h-[90px]"
                   >
                     <button
                       disabled={
@@ -72,7 +78,7 @@ export function AniwatchInfo({
                             ? "#334155"
                             : "#1e293b",
                       }}
-                      className="px-4 text-start py-2 flex w-full items-center justify-between disabled:opacity-35"
+                      className="px-4 h-12 text-start flex w-full items-center justify-between disabled:opacity-35"
                     >
                       {episode.number}. {episode.title}
                       {audioToogle === "english" && (
@@ -114,7 +120,7 @@ export function AniwatchInfo({
                 Genres :
                 {data.anime.moreInfo.genres.map((e) => (
                   <Link
-                  target="_blank"
+                    target="_blank"
                     href={`/genre/${e.toLowerCase()}`}
                     className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
                     key={e}
@@ -127,8 +133,7 @@ export function AniwatchInfo({
                 <p className=" flex gap-2 flex-wrap">
                   Studio :
                   <Link
-                  target="_blank"
-
+                    target="_blank"
                     className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
                     href={`/anime-studio/${data.anime.moreInfo.studios.toLowerCase()}`}
                   >
@@ -164,7 +169,7 @@ export function AniwatchInfo({
         <div className=" mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-4">
           {data.seasons.map((e) => (
             <Link
-            target="_blank"
+              target="_blank"
               href={`/anime/${e.id}`}
               key={e.id}
               className=" p-2 rounded-lg bg-black/50 flex flex-col "

@@ -2,10 +2,8 @@
 import Hls, { Level } from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  FastForwardIcon,
   FullscreenIcon,
   GaugeIcon,
-  HandIcon,
   LoaderIcon,
   PauseIcon,
   PlayIcon,
@@ -17,7 +15,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useSearchBarFocus } from "@/context/searchContext";
-import Dexie, { EntityTable } from "dexie";
 import { useLiveQuery } from "dexie-react-hooks";
 import { pendingShows } from "@/lib/pending-show";
 import { useSearchParams } from "next/navigation";
@@ -54,7 +51,7 @@ export function HlsPlayer({
   const [volume, setVolume] = useState<number>(1);
   const [levels, setLevels] = useState<Level[]>([]);
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
-
+  const [fastSpeed, setFastSpeed] = useState(false);
   const { isSearchBarFocused } = useSearchBarFocus();
   const searchParams = useSearchParams();
 
@@ -203,7 +200,16 @@ export function HlsPlayer({
     }
   };
 
-  const shortcutPopups = ( 
+  const fastSpeedPlayback = () => {
+    setFastSpeed(!fastSpeed);
+    if (player.current && player.current.playbackRate <= 2) {
+      player.current.playbackRate += 2;
+    } else if (player.current) {
+      player.current.playbackRate = 1;
+    }
+  };
+
+  const shortcutPopups = (
     control:
       | "forward"
       | "backward"
@@ -212,7 +218,6 @@ export function HlsPlayer({
       | "playPause"
       | "mute"
   ) => {
-
     if (player.current) {
       switch (control) {
         case "forward":
@@ -235,7 +240,6 @@ export function HlsPlayer({
           break;
       }
     }
-    
   };
 
   // keyboard shortcut for play,pause,etc
@@ -253,6 +257,10 @@ export function HlsPlayer({
         case "KeyF":
           event.preventDefault();
           toggleFullscreen();
+          break;
+        case "KeyL":
+          event.preventDefault();
+          fastSpeedPlayback()
           break;
         case "KeyM":
           toogleMute();
@@ -276,9 +284,7 @@ export function HlsPlayer({
           break;
         case "Escape":
           event.preventDefault();
-          if (isFullscreen) {
-            toggleFullscreen();
-          }
+          toggleFullscreen();
       }
     };
     updateCurrentTime();
@@ -301,7 +307,6 @@ export function HlsPlayer({
   const existingShow = useLiveQuery(() =>
     pendingShows.shows?.where("id").equals(`${episodeId}?ep=${ep}`).count()
   );
-
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -356,17 +361,7 @@ export function HlsPlayer({
           crossOrigin="anonymous"
           controlsList="nodownload"
           ref={player}
-        >
-          {track.map((e) => (
-            <track
-              key={e.file}
-              kind={e.kind}
-              src={e.file}
-              default={e.default}
-              label={e.label}
-            ></track>
-          ))}
-        </video>
+        />
         <div
           style={{
             opacity: loading ? "0%" : showControl ? "100%" : "0%",
@@ -431,15 +426,11 @@ export function HlsPlayer({
             )}
           </button>
           <button
+           style={{
+            backgroundColor: fastSpeed ? " #ef4444" : "",
+          }}
             className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-            onClick={() => {
-              if (player.current && player.current.playbackRate <= 2) {
-                player.current.playbackRate +=
-                  player.current.playbackRate + 0.1;
-              } else if (player.current) {
-                player.current.playbackRate = 1;
-              }
-            }}
+            onClick={fastSpeedPlayback}
           >
             <GaugeIcon size={iconSize} />
           </button>
