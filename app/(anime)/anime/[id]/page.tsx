@@ -44,6 +44,7 @@ export default async function Anime({
       {searchParams.ep ? (
         <AniwatchPlayer
           data={data}
+          episodeData={episode}
           lang={searchParams.lang}
           episode={searchParams.episode}
           episodeId={params.id}

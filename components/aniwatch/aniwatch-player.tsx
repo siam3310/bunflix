@@ -7,9 +7,11 @@ export default async function AniwatchPlayer({
   lang,
   data,
   episode,
+  episodeData,
 }: {
   episodeId: string;
   data: aniwatchInfo;
+  episodeData: aniwatchEpisodeData;
   ep: string;
   episode: number;
   lang: "english" | "japanesse";
@@ -22,9 +24,10 @@ export default async function AniwatchPlayer({
 
     return (
       <HlsPlayer
+        episode={episodeData}
         data={data}
         lang={lang}
-        episode={episode}
+        currentEpisode={episode}
         ep={ep}
         episodeId={episodeId}
         track={dub.tracks}
@@ -39,9 +42,10 @@ export default async function AniwatchPlayer({
 
     return (
       <HlsPlayer
+        episode={episodeData}
         data={data}
         lang={lang}
-        episode={episode}
+        currentEpisode={episode}
         ep={ep}
         episodeId={episodeId}
         track={sub.tracks}
@@ -51,10 +55,7 @@ export default async function AniwatchPlayer({
   }
 }
 
-async function fetchAniwatchEpisodeSrc(
-  episodeId: string,
-  episode: string
-) {
+async function fetchAniwatchEpisodeSrc(episodeId: string, episode: string) {
   const cacheKey = `aniwatchEpisodeSourceJp${episodeId}${episode}`;
 
   try {
@@ -70,16 +71,11 @@ async function fetchAniwatchEpisodeSrc(
 
     return data;
   } catch (error) {
-    throw new Error(
-      `Fetch failed Episode Sources japanesse `
-    );
+    throw new Error(`Fetch failed Episode Sources japanesse `);
   }
 }
 
-async function fetchAniwatchEpisodeSrcDub(
-  episodeId: string,
-  episode: string
-) {
+async function fetchAniwatchEpisodeSrcDub(episodeId: string, episode: string) {
   const cacheKey = `aniwatchEpisodeSourceEn${episodeId}${episode}`;
 
   try {
@@ -95,8 +91,6 @@ async function fetchAniwatchEpisodeSrcDub(
 
     return data;
   } catch (error) {
-    throw new Error(
-      `Fetch failed Episode Sources english`
-    );
+    throw new Error(`Fetch failed Episode Sources english`);
   }
 }

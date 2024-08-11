@@ -58,7 +58,7 @@ export function AniwatchInfo({
               >
                 {episode.episodes.map((episode, index) => (
                   <Link
-                    target="_blank"
+                    // target="_blank"
                     key={episode.episodeId}
                     href={`/anime/${episode.episodeId}&episode=${episode.number}&lang=${audioToogle}`}
                     // className="min-h-[90px]"

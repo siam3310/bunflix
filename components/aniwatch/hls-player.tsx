@@ -2,6 +2,7 @@
 import Hls, { Level } from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  FastForwardIcon,
   FullscreenIcon,
   GaugeIcon,
   LoaderIcon,
@@ -24,18 +25,21 @@ export function HlsPlayer({
   data,
   track,
   lang,
-  episode,
+  currentEpisode,
   ep,
+  episode,
   episodeId,
 }: {
   videoSrc: string;
   data: aniwatchInfo;
+  episode: aniwatchEpisodeData
   track: { file: string; kind: string; label: string; default: boolean }[];
   lang: string;
-  episode: number;
+  currentEpisode: number;
   ep: string;
   episodeId: string;
 }) {
+
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -102,17 +106,12 @@ export function HlsPlayer({
       }
 
       return () => {
-        if (player.current) {
-          player.current.addEventListener("canplaythrough", () => {
-            setLoading(false);
-          });
-        }
         hls.destroy();
       };
     }
   }, [player, videoSrc, loading]);
 
-  const tooglePlayPause = useCallback(() => {
+  const tooglePlayPause = () => {
     if (player.current) {
       if (isPlaying) {
         player.current.pause();
@@ -121,9 +120,9 @@ export function HlsPlayer({
       }
       setIsPlaying(!isPlaying);
     }
-  }, [player, isPlaying]);
+  };
 
-  const toogleMute = useCallback(() => {
+  const toogleMute = () => {
     if (player.current) {
       if (isMuted) {
         player.current.muted = false;
@@ -133,7 +132,7 @@ export function HlsPlayer({
         setIsMuted(true);
       }
     }
-  }, [isMuted, player]);
+  };
 
   const toggleFullscreen = () => {
     if (isFullscreen) {
@@ -163,7 +162,7 @@ export function HlsPlayer({
     };
   };
 
-  const updateCurrentTime = useCallback(() => {
+  const updateCurrentTime = () => {
     if (player.current) {
       const { min, sec } = sec2Min(player.current.duration);
       setDurationSec(player.current.duration);
@@ -179,7 +178,7 @@ export function HlsPlayer({
 
       return () => clearInterval(interval);
     }
-  }, [isPlaying, player]);
+  };
 
   const volumnControl = (control: "increase" | "decrease") => {
     if (player.current) {
@@ -260,7 +259,7 @@ export function HlsPlayer({
           break;
         case "KeyL":
           event.preventDefault();
-          fastSpeedPlayback()
+          fastSpeedPlayback();
           break;
         case "KeyM":
           toogleMute();
@@ -298,6 +297,7 @@ export function HlsPlayer({
     isFullscreen,
     isMuted,
     currentTimeSec,
+    shortcutPopups,
     toogleMute,
     isSearchBarFocused,
   ]);
@@ -319,7 +319,7 @@ export function HlsPlayer({
           lang,
           name: data.anime.info.name,
           image: data.anime.info.poster,
-          episode,
+          episode:currentEpisode,
           id: `${episodeId}?ep=${ep}`,
           time: player.current?.currentTime || 0,
         });
@@ -357,7 +357,7 @@ export function HlsPlayer({
         </div>
 
         <video
-          className="w-full h-full  bg-black/60 relative"
+          className="w-full h-full  bg-black/60 relative "
           crossOrigin="anonymous"
           controlsList="nodownload"
           ref={player}
@@ -367,83 +367,21 @@ export function HlsPlayer({
             opacity: loading ? "0%" : showControl ? "100%" : "0%",
             pointerEvents: loading ? "none" : showControl ? "all" : "none",
           }}
-          className="absolute top-0  right-0 flex items-center justify-center size-full space-x-3"
+          className="absolute top-0  left-0 p-4 space-x-3"
         >
-          <button
-            onClick={() => shortcutPopups("backward")}
-            className="rounded-full hover:scale-110  hover:bg-black bg-black/60 aspect-square p-1 size-12  flex items-center justify-center  transition-all"
-          >
-            <RotateCcwIcon color="white" size={20} />
-          </button>
-          <button
-            className="rounded-full hover:bg-black hover:scale-110 bg-black/60 aspect-square p-1 size-16  flex items-center justify-center  transition-all"
-            onClick={tooglePlayPause}
-          >
-            {isPlaying ? (
-              <PauseIcon color="white" size={30} />
-            ) : (
-              <PlayIcon color="white" size={30} />
-            )}
-          </button>
-          <button
-            onClick={() => shortcutPopups("forward")}
-            className="rounded-full hover:bg-black hover:scale-110 bg-black/60 aspect-square p-1 size-12 flex items-center justify-center   transition-all"
-          >
-            <RotateCwIcon color="white" size={20} />
-          </button>
+        <h1 className="text-lg">{currentEpisode} {episode.episodes[--currentEpisode].title} - {data.anime.info.name}</h1>
         </div>
         <div
           style={{
-            opacity: !loading ? "100%" : "0%",
             transform: showControl ? "translateY(0px)" : "translateY(96px)",
           }}
-          className="flex  transition-all  items-center justify-center gap-2 px-4 absolute bottom-0 w-full py-2 bg-black/20"
+          className="transition-all  gap-2 px-4 absolute bottom-0 w-full py-2 bg-gradient-to-b from-transparent to-black "
         >
-          <button
-            className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-            onClick={tooglePlayPause}
-          >
-            {isPlaying ? (
-              <PauseIcon size={iconSize} />
-            ) : (
-              <PlayIcon size={iconSize} />
-            )}
-          </button>
-
-          <button
-            style={{
-              backgroundColor: isMuted || volume <= 0.1 ? " #ef4444" : "",
-            }}
-            className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-            onClick={toogleMute}
-          >
-            {isMuted || volume <= 0.1 ? (
-              <VolumeXIcon size={iconSize} />
-            ) : volume > 0.5 ? (
-              <Volume2Icon size={iconSize} />
-            ) : (
-              <Volume1Icon size={iconSize} />
-            )}
-          </button>
-          <button
-           style={{
-            backgroundColor: fastSpeed ? " #ef4444" : "",
-          }}
-            className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-            onClick={fastSpeedPlayback}
-          >
-            <GaugeIcon size={iconSize} />
-          </button>
-          <p className=" text-nowrap text-sm mt-1">
-            {currentTime[0]}:{currentTime[1]} / {duration[0] ? duration[0] : 0}:
-            {duration[1] ? duration[1] : 0}
-          </p>
           <input
             type="range"
-            min="0"
             max={durationSec || 0}
             value={currentTimeSec || 0}
-            className="cursor-pointer  h-2  focus:outline-none w-full accent-red-500 "
+            className="cursor-pointer  h-1 hover:h-2 transition-all focus:outline-none  w-full accent-red-500 "
             onChange={(e) => {
               e.preventDefault();
               if (player.current && player.current.currentTime) {
@@ -451,33 +389,91 @@ export function HlsPlayer({
               }
             }}
           />
-          <div className="py-2 px-3 text-start flex gap-2">
-            {levels.map((level, index) => (
-              <p
-                key={index}
-                style={{
-                  display:
-                    index === hlsInstance?.currentLevel ? "none" : "block",
-                }}
-                className=" cursor-pointer"
-                onClick={() =>
-                  hlsInstance ? (hlsInstance.currentLevel = index) : null
-                }
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <button
+                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                onClick={() => shortcutPopups("backward")}
               >
-                {level.height}p
-              </p>
-            ))}
-          </div>
+                <FastForwardIcon className="rotate-180" color="white" size={20} />
+              </button>
+              <button
+                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                onClick={()=>shortcutPopups("forward")}
+              >
+                {isPlaying ? (
+                  <PauseIcon size={iconSize} />
+                ) : (
+                  <PlayIcon size={iconSize} />
+                )}
+              </button>
+              <button
+                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                onClick={()=>shortcutPopups("forward")}
+              >
+                  <FastForwardIcon size={iconSize} />
+              </button>
 
-          <button
-            className="rounded-full aspect-square p-2 "
-            onClick={toggleFullscreen}
-          >
-            <FullscreenIcon
-              size={iconSize}
-              className="hover:scale-125 transition-all"
-            />
-          </button>
+              <button
+                style={{
+                  backgroundColor: isMuted || volume <= 0.1 ? " #ef4444" : "",
+                }}
+                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                onClick={toogleMute}
+              >
+                {isMuted || volume <= 0.1 ? (
+                  <VolumeXIcon size={iconSize} />
+                ) : volume > 0.5 ? (
+                  <Volume2Icon size={iconSize} />
+                ) : (
+                  <Volume1Icon size={iconSize} />
+                )}
+              </button>
+              <button
+                style={{
+                  backgroundColor: fastSpeed ? " #ef4444" : "",
+                }}
+                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                onClick={fastSpeedPlayback}
+              >
+                <GaugeIcon size={iconSize} />
+              </button>
+              <p className=" text-nowrap text-sm mt-1">
+                {currentTime[0]}:{currentTime[1]} /{" "}
+                {duration[0] ? duration[0] : 0}:{duration[1] ? duration[1] : 0}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="py-2 px-3 text-start flex gap-2">
+                {levels.map((level, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      backgroundColor:
+                        index === hlsInstance?.currentLevel ? "#ef4444" : "",
+                    }}
+                    className=" cursor-pointer rounded-md py-0.5  px-2"
+                    onClick={() =>
+                      hlsInstance ? (hlsInstance.currentLevel = index) : null
+                    }
+                  >
+                    {level.height}p
+                  </p>
+                ))}
+              </div>
+
+              <button
+                className="rounded-full aspect-square p-2 "
+                onClick={toggleFullscreen}
+              >
+                <FullscreenIcon
+                  size={iconSize}
+                  className="hover:scale-125 transition-all"
+                />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
