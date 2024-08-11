@@ -42,23 +42,50 @@ export function HlsPlayer({
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [loading, setLoading] = useState(false);
+  interface PlayerOptions {
+    isPlaying: boolean;
+    loading: boolean;
+    isFullscreen: boolean;
+    isMuted: boolean;
+    showControl: boolean;
+    volume: number;
+    levels: Level[];
+    fastSpeed: boolean;
+  }
+
+  const [playerOptions, setPlayerOptions] = useState<PlayerOptions>({
+    fastSpeed: false,
+    isPlaying: true,
+    loading: false,
+    isFullscreen: false,
+    isMuted: false,
+    showControl: false,
+    volume: 1,
+    levels: [],
+  });
+
   const [currentTime, setCurrentTime] = useState<[number, number]>([0, 0]);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
   const [duration, setDuration] = useState<[number, number]>([0, 0]);
   const [durationSec, setDurationSec] = useState<number>(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
-  const [showControl, setShowControl] = useState(false);
-  const [volume, setVolume] = useState<number>(1);
-  const [levels, setLevels] = useState<Level[]>([]);
+
   const [hlsInstance, setHlsInstance] = useState<null | Hls>(null);
-  const [fastSpeed, setFastSpeed] = useState(false);
+
   const { isSearchBarFocused } = useSearchBarFocus();
   const searchParams = useSearchParams();
 
   const time = searchParams.get("time");
+
+  const {
+    fastSpeed,
+    isFullscreen,
+    isMuted,
+    isPlaying,
+    levels,
+    loading,
+    showControl,
+    volume,
+  } = playerOptions;
 
   // hls initialization and attaching soucres
   useEffect(() => {
@@ -68,11 +95,11 @@ export function HlsPlayer({
       hls.attachMedia(player.current);
 
       hls.on(Hls.Events.MANIFEST_LOADING, () => {
-        setLoading(true);
+        setPlayerOptions({ ...playerOptions, loading: true });
       });
 
       hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        setLevels(data.levels);
+        setPlayerOptions({ ...playerOptions, levels: data.levels });
         player.current?.play();
       });
       hls.startLoad();
@@ -117,7 +144,10 @@ export function HlsPlayer({
       } else {
         player.current.play();
       }
-      setIsPlaying(!isPlaying);
+      setPlayerOptions({
+        ...playerOptions,
+        isPlaying: !playerOptions.isPlaying,
+      });
     }
   };
 
@@ -125,10 +155,10 @@ export function HlsPlayer({
     if (player.current) {
       if (isMuted) {
         player.current.muted = false;
-        setIsMuted(false);
+        setPlayerOptions({...playerOptions,isMuted:false});
       } else {
         player.current.muted = true;
-        setIsMuted(true);
+        setPlayerOptions({...playerOptions,isMuted:true});
       }
     }
   };
@@ -138,7 +168,7 @@ export function HlsPlayer({
       document.exitFullscreen();
       if (screen.orientation) {
         screen.orientation.unlock();
-        setIsFullscreen(false);
+        setPlayerOptions({...playerOptions,isFullscreen:false});
       }
     } else {
       containerRef?.current?.requestFullscreen();
@@ -147,7 +177,7 @@ export function HlsPlayer({
         typeof (screen.orientation as any).lock === "function"
       ) {
         (screen.orientation as any).lock("landscape");
-        setIsFullscreen(true);
+        setPlayerOptions({...playerOptions,isFullscreen:true});
       }
     }
   };
@@ -181,7 +211,7 @@ export function HlsPlayer({
 
   const volumnControl = (control: "increase" | "decrease") => {
     if (player.current) {
-      setVolume(player.current.volume);
+      setPlayerOptions({...playerOptions,volume:player.current.volume});
       if (control === "increase") {
         if (player.current.volume === 1) {
           toast.warning("Maximum volumn reached");
@@ -199,7 +229,7 @@ export function HlsPlayer({
   };
 
   const fastSpeedPlayback = () => {
-    setFastSpeed(!fastSpeed);
+    setPlayerOptions({...playerOptions,fastSpeed:!playerOptions.fastSpeed});
     if (player.current && player.current.playbackRate <= 2) {
       player.current.playbackRate += 1.5;
     } else if (player.current) {
@@ -323,8 +353,8 @@ export function HlsPlayer({
   return (
     <div className=" md:p-4 focus:outline-none">
       <div
-        onMouseEnter={() => setShowControl(true)}
-        onMouseLeave={() => setShowControl(false)}
+        onMouseEnter={() => setPlayerOptions({...playerOptions,showControl:true})}
+        onMouseLeave={() => setPlayerOptions({...playerOptions,showControl:false})}
         ref={containerRef}
         style={{
           cursor: showControl ? "auto" : "none",
@@ -338,7 +368,7 @@ export function HlsPlayer({
           ref={player}
         />
         <div
-          onClick={() => setShowControl(!showControl)}
+          onClick={() => setPlayerOptions({...playerOptions,showControl:!playerOptions.showControl})}
           className="absolute top-0  left-0 p-4  size-full"
         >
           <h1
@@ -384,7 +414,7 @@ export function HlsPlayer({
               </button>
               <button
                 className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-                onClick={() => shortcutPopups("forward")}
+                onClick={() => tooglePlayPause()}
               >
                 {isPlaying ? (
                   <PauseIcon size={iconSize} />
