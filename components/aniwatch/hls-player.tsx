@@ -32,14 +32,13 @@ export function HlsPlayer({
 }: {
   videoSrc: string;
   data: aniwatchInfo;
-  episode: aniwatchEpisodeData
+  episode: aniwatchEpisodeData;
   track: { file: string; kind: string; label: string; default: boolean }[];
   lang: string;
   currentEpisode: number;
   ep: string;
   episodeId: string;
 }) {
-
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -202,7 +201,7 @@ export function HlsPlayer({
   const fastSpeedPlayback = () => {
     setFastSpeed(!fastSpeed);
     if (player.current && player.current.playbackRate <= 2) {
-      player.current.playbackRate += 2;
+      player.current.playbackRate += 1.5;
     } else if (player.current) {
       player.current.playbackRate = 1;
     }
@@ -292,13 +291,7 @@ export function HlsPlayer({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [
-    isPlaying,
-    isFullscreen,
-    isMuted,
-    currentTimeSec,
-    isSearchBarFocused,
-  ]);
+  }, [isPlaying, isFullscreen, isMuted, currentTimeSec, isSearchBarFocused]);
 
   const iconSize: number = 20;
 
@@ -317,7 +310,7 @@ export function HlsPlayer({
           lang,
           name: data.anime.info.name,
           image: data.anime.info.poster,
-          episode:currentEpisode,
+          episode: currentEpisode,
           id: `${episodeId}?ep=${ep}`,
           time: player.current?.currentTime || 0,
         });
@@ -338,21 +331,6 @@ export function HlsPlayer({
         }}
         className=" group md:h-[450px] lg:h-[550px] xl:h-[600px] w-full relative overflow-hidden md:rounded-lg"
       >
-        <div
-          style={{ opacity: loading ? "100%" : "0%" }}
-          className="pointer-events-none cursor-default absolute -translate-y-1/2 -translate-x-1/2 text-xl left-1/2 top-1/2 rounded-lg p-3 flex items-center gap-2 z-50 "
-        >
-          <LoaderIcon
-            color="white"
-            size={18}
-            style={{
-              animation: "spin 2s linear infinite",
-            }}
-            className=" transition-all"
-          />
-          <span>Loading ...</span>
-        </div>
-
         <video
           className="w-full h-full  bg-black/60 relative "
           crossOrigin="anonymous"
@@ -360,16 +338,19 @@ export function HlsPlayer({
           ref={player}
         />
         <div
-         
-          onClick={()=>setShowControl(!showControl)}
+          onClick={() => setShowControl(!showControl)}
           className="absolute top-0  left-0 p-4  size-full"
         >
-        <h1
-         style={{
-          opacity: loading ? "0%" : showControl ? "100%" : "0%",
-          pointerEvents: loading ? "none" : showControl ? "all" : "none",
-        }}
-        className="text-lg">{currentEpisode} {episode.episodes[--currentEpisode].title} - {data.anime.info.name}</h1>
+          <h1
+            style={{
+              opacity: loading ? "0%" : showControl ? "100%" : "0%",
+              pointerEvents: loading ? "none" : showControl ? "all" : "none",
+            }}
+            className="text-lg"
+          >
+            {currentEpisode} {episode.episodes[--currentEpisode].title} -{" "}
+            {data.anime.info.name}
+          </h1>
         </div>
         <div
           style={{
@@ -395,11 +376,15 @@ export function HlsPlayer({
                 className="rounded-full aspect-square p-2 transition-all hover:scale-110"
                 onClick={() => shortcutPopups("backward")}
               >
-                <FastForwardIcon className="rotate-180" color="white" size={20} />
+                <FastForwardIcon
+                  className="rotate-180"
+                  color="white"
+                  size={20}
+                />
               </button>
               <button
                 className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-                onClick={()=>shortcutPopups("forward")}
+                onClick={() => shortcutPopups("forward")}
               >
                 {isPlaying ? (
                   <PauseIcon size={iconSize} />
@@ -409,9 +394,9 @@ export function HlsPlayer({
               </button>
               <button
                 className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-                onClick={()=>shortcutPopups("forward")}
+                onClick={() => shortcutPopups("forward")}
               >
-                  <FastForwardIcon size={iconSize} />
+                <FastForwardIcon size={iconSize} />
               </button>
 
               <button
