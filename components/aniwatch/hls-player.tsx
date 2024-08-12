@@ -2,6 +2,7 @@
 import Hls, { Level } from "hls.js";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
+  CaptionsIcon,
   FastForwardIcon,
   FullscreenIcon,
   GaugeIcon,
@@ -39,6 +40,8 @@ export function HlsPlayer({
   ep: string;
   episodeId: string;
 }) {
+  // console.log(track);
+
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -46,10 +49,11 @@ export function HlsPlayer({
     isPlaying: boolean;
     loading: boolean;
     isFullscreen: boolean;
+    isCaptionsOn: boolean;
     isMuted: boolean;
     showControl: boolean;
     volume: number;
-    levels: Level[];
+    resolutions: Level[];
     fastSpeed: boolean;
   }
 
@@ -58,10 +62,11 @@ export function HlsPlayer({
     isPlaying: true,
     loading: false,
     isFullscreen: false,
+    isCaptionsOn: false,
     isMuted: false,
     showControl: false,
     volume: 1,
-    levels: [],
+    resolutions: [],
   });
 
   const [currentTime, setCurrentTime] = useState<[number, number]>([0, 0]);
@@ -81,10 +86,11 @@ export function HlsPlayer({
     isFullscreen,
     isMuted,
     isPlaying,
-    levels,
+    resolutions,
     loading,
     showControl,
     volume,
+    isCaptionsOn
   } = playerOptions;
 
   // hls initialization and attaching soucres
@@ -99,7 +105,7 @@ export function HlsPlayer({
       });
 
       hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-        setPlayerOptions({ ...playerOptions, levels: data.levels });
+        setPlayerOptions({ ...playerOptions, resolutions: data.levels });
         player.current?.play();
       });
       hls.startLoad();
@@ -155,10 +161,10 @@ export function HlsPlayer({
     if (player.current) {
       if (isMuted) {
         player.current.muted = false;
-        setPlayerOptions({...playerOptions,isMuted:false});
+        setPlayerOptions({ ...playerOptions, isMuted: false });
       } else {
         player.current.muted = true;
-        setPlayerOptions({...playerOptions,isMuted:true});
+        setPlayerOptions({ ...playerOptions, isMuted: true });
       }
     }
   };
@@ -168,7 +174,7 @@ export function HlsPlayer({
       document.exitFullscreen();
       if (screen.orientation) {
         screen.orientation.unlock();
-        setPlayerOptions({...playerOptions,isFullscreen:false});
+        setPlayerOptions({ ...playerOptions, isFullscreen: false });
       }
     } else {
       containerRef?.current?.requestFullscreen();
@@ -177,10 +183,17 @@ export function HlsPlayer({
         typeof (screen.orientation as any).lock === "function"
       ) {
         (screen.orientation as any).lock("landscape");
-        setPlayerOptions({...playerOptions,isFullscreen:true});
+        setPlayerOptions({ ...playerOptions, isFullscreen: true });
       }
     }
   };
+
+  const toogleCaptions =() => {
+    setPlayerOptions({
+      ...playerOptions,
+      isCaptionsOn: !playerOptions.isCaptionsOn,
+    });
+  }
 
   const sec2Min = (sec: number) => {
     const min = Math.floor(sec / 60);
@@ -211,7 +224,7 @@ export function HlsPlayer({
 
   const volumnControl = (control: "increase" | "decrease") => {
     if (player.current) {
-      setPlayerOptions({...playerOptions,volume:player.current.volume});
+      setPlayerOptions({ ...playerOptions, volume: player.current.volume });
       if (control === "increase") {
         if (player.current.volume === 1) {
           toast.warning("Maximum volumn reached");
@@ -229,7 +242,7 @@ export function HlsPlayer({
   };
 
   const fastSpeedPlayback = () => {
-    setPlayerOptions({...playerOptions,fastSpeed:!playerOptions.fastSpeed});
+    setPlayerOptions({ ...playerOptions, fastSpeed: !playerOptions.fastSpeed });
     if (player.current && player.current.playbackRate <= 2) {
       player.current.playbackRate += 1.5;
     } else if (player.current) {
@@ -270,13 +283,17 @@ export function HlsPlayer({
     }
   };
 
+  // console.log(playerOptions.isCaptionsOn);
+  
   // keyboard shortcut for play,pause,etc
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (isSearchBarFocused) {
         return;
       }
+      // console.log(event.code);
       switch (event.code) {
+        
         case "Space":
           event.preventDefault();
           tooglePlayPause();
@@ -289,6 +306,10 @@ export function HlsPlayer({
         case "KeyL":
           event.preventDefault();
           fastSpeedPlayback();
+          break;
+        case "KeyC":
+          event.preventDefault();
+         toogleCaptions()
           break;
         case "KeyM":
           toogleMute();
@@ -321,7 +342,7 @@ export function HlsPlayer({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isPlaying, isFullscreen, isMuted, currentTimeSec, isSearchBarFocused]);
+  }, [isPlaying, isFullscreen,isCaptionsOn, isMuted, currentTimeSec, isSearchBarFocused]);
 
   const iconSize: number = 20;
 
@@ -353,8 +374,12 @@ export function HlsPlayer({
   return (
     <div className=" md:p-4 focus:outline-none">
       <div
-        onMouseEnter={() => setPlayerOptions({...playerOptions,showControl:true})}
-        onMouseLeave={() => setPlayerOptions({...playerOptions,showControl:false})}
+        onMouseEnter={() =>
+          setPlayerOptions({ ...playerOptions, showControl: true })
+        }
+        onMouseLeave={() =>
+          setPlayerOptions({ ...playerOptions, showControl: false })
+        }
         ref={containerRef}
         style={{
           cursor: showControl ? "auto" : "none",
@@ -366,9 +391,27 @@ export function HlsPlayer({
           crossOrigin="anonymous"
           controlsList="nodownload"
           ref={player}
-        />
+        >
+          {playerOptions.isCaptionsOn &&
+            track
+              ?.filter((engSub) => engSub.default === true)
+              ?.map((track) => (
+                <track
+                key={track.file}
+                  label={track.label}
+                  kind={track.kind}
+                  src={track.file}
+                  default={track.default}
+                />
+              ))}
+        </video>
         <div
-          onClick={() => setPlayerOptions({...playerOptions,showControl:!playerOptions.showControl})}
+          onClick={() =>
+            setPlayerOptions({
+              ...playerOptions,
+              showControl: !playerOptions.showControl,
+            })
+          }
           className="absolute top-0  left-0 p-4  size-full"
         >
           <h1
@@ -453,6 +496,19 @@ export function HlsPlayer({
               >
                 <GaugeIcon size={iconSize} />
               </button>
+              {/* {track */}
+              {/* ?.filter((engSub) => engSub.default === true) */}
+              {/* ?.map((track, index) => ( */}
+              <button
+                style={{
+                  backgroundColor: playerOptions.isCaptionsOn ? " #ef4444" : "",
+                }}
+                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                onClick={toogleCaptions}
+              >
+                <CaptionsIcon size={iconSize} />
+              </button>
+              {/* ))} */}
               <p className=" text-nowrap text-sm mt-1">
                 {currentTime[0]}:{currentTime[1]} /{" "}
                 {duration[0] ? duration[0] : 0}:{duration[1] ? duration[1] : 0}
@@ -461,8 +517,8 @@ export function HlsPlayer({
 
             <div className="flex items-center gap-2">
               <div className="py-2 px-3 text-start flex gap-2">
-                {levels.map((level, index) => (
-                  <p
+                {resolutions.map((level, index) => (
+                  <button
                     key={index}
                     style={{
                       backgroundColor:
@@ -474,10 +530,9 @@ export function HlsPlayer({
                     }
                   >
                     {level.height}p
-                  </p>
+                  </button>
                 ))}
               </div>
-
               <button
                 className="rounded-full aspect-square p-2 "
                 onClick={toggleFullscreen}

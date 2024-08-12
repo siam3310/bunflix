@@ -132,13 +132,17 @@ export function AniwatchInfo({
               {data.anime.moreInfo.studios && (
                 <p className=" flex gap-2 flex-wrap">
                   Studio :
-                  <Link
+                  {data.anime.moreInfo.studios.split(',').map((studio:string)=>(
+                    <Link
+                    key={studio}
                     target="_blank"
                     className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
-                    href={`/anime-studio/${data.anime.moreInfo.studios.toLowerCase()}`}
+                    href={`/anime-studio/${studio.toLowerCase()}`}
                   >
-                    {data.anime.moreInfo.studios}
+                    {studio}
                   </Link>
+                  ))}
+                  
                   <span className=" hidden xl:block">|</span>
                 </p>
               )}
