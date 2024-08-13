@@ -90,7 +90,7 @@ export function HlsPlayer({
     loading,
     showControl,
     volume,
-    isCaptionsOn
+    isCaptionsOn,
   } = playerOptions;
 
   // hls initialization and attaching soucres
@@ -116,11 +116,11 @@ export function HlsPlayer({
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              toast.warning("fatal network error encountered, try to recover");
+              toast.warning("network error");
               hls.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-              toast.warning("fatal media error encountered, try to recover");
+              toast.warning("media error");
               hls.recoverMediaError();
               break;
             case Hls.ErrorTypes.OTHER_ERROR:
@@ -188,12 +188,12 @@ export function HlsPlayer({
     }
   };
 
-  const toogleCaptions =() => {
+  const toogleCaptions = () => {
     setPlayerOptions({
       ...playerOptions,
       isCaptionsOn: !playerOptions.isCaptionsOn,
     });
-  }
+  };
 
   const sec2Min = (sec: number) => {
     const min = Math.floor(sec / 60);
@@ -284,7 +284,7 @@ export function HlsPlayer({
   };
 
   // console.log(playerOptions.isCaptionsOn);
-  
+
   // keyboard shortcut for play,pause,etc
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -293,7 +293,6 @@ export function HlsPlayer({
       }
       // console.log(event.code);
       switch (event.code) {
-        
         case "Space":
           event.preventDefault();
           tooglePlayPause();
@@ -309,7 +308,7 @@ export function HlsPlayer({
           break;
         case "KeyC":
           event.preventDefault();
-         toogleCaptions()
+          toogleCaptions();
           break;
         case "KeyM":
           toogleMute();
@@ -342,7 +341,14 @@ export function HlsPlayer({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [isPlaying, isFullscreen,isCaptionsOn, isMuted, currentTimeSec, isSearchBarFocused]);
+  }, [
+    isPlaying,
+    isFullscreen,
+    isCaptionsOn,
+    isMuted,
+    currentTimeSec,
+    isSearchBarFocused,
+  ]);
 
   const iconSize: number = 20;
 
@@ -397,7 +403,7 @@ export function HlsPlayer({
               ?.filter((engSub) => engSub.default === true)
               ?.map((track) => (
                 <track
-                key={track.file}
+                  key={track.file}
                   label={track.label}
                   kind={track.kind}
                   src={track.file}

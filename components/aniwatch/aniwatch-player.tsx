@@ -1,5 +1,4 @@
 import { HlsPlayer } from "./hls-player";
-import cache from "@/lib/cache";
 
 export default async function AniwatchPlayer({
   episodeId,
@@ -56,18 +55,13 @@ export default async function AniwatchPlayer({
 }
 
 async function fetchAniwatchEpisodeSrc(episodeId: string, episode: string) {
-  const cacheKey = `aniwatchEpisodeSourceJp${episodeId}${episode}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
+   
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {
@@ -76,18 +70,12 @@ async function fetchAniwatchEpisodeSrc(episodeId: string, episode: string) {
 }
 
 async function fetchAniwatchEpisodeSrcDub(episodeId: string, episode: string) {
-  const cacheKey = `aniwatchEpisodeSourceEn${episodeId}${episode}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {
