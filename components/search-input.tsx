@@ -89,7 +89,7 @@ export default function SearchInput() {
       style={{
         bottom: "0px",
         left: "0px",
-        transform: isSearchOpen ? "translateY(0px)" : "translateY(600px)",
+        transform: isSearchOpen ? "translateY(0px)" : "translateY(6000px)",
       }}
       className="flex w-full flex-col duration-500 fixed z-50  h-fit transition-all px-2 md:px-4 items-center justify-center"
     >
@@ -180,7 +180,7 @@ export default function SearchInput() {
               Clear
             </button>
           )}
-          {history?.slice(0, 10).map((value, index) => (
+          {history?.map((value, index) => (
             <p
               key={index}
               onClick={() => {
