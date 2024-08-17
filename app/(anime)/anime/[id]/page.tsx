@@ -2,6 +2,7 @@ import { AniwatchInfo } from "@/components/aniwatch/aniwatch-info";
 import AniwatchPlayer from "@/components/aniwatch/aniwatch-player";
 import cache from "@/lib/cache";
 import { CircleArrowDownIcon } from "lucide-react";
+import { Metadata } from "next";
 
 export async function generateMetadata({
   params,
@@ -9,23 +10,27 @@ export async function generateMetadata({
 }: {
   params: { id: string };
   searchParams: { ep: string; episode: string; lang: "english" | "japanesse" };
-}) {
+}): Promise<Metadata> {
   const data: aniwatchInfo = await fetchAniwatchId(params.id);
-  const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(params.id);
-  let currentEpisodeName;
 
-  episode.episodes.forEach((value) =>
-    value.number === parseInt(searchParams.episode)
-      ? (currentEpisodeName = value.title)
-      : "Title Error"
-  );
-
+  const title = `${
+    searchParams.episode ? `${searchParams.episode}` : "Select a Episode"
+  }  - ${data.anime.info.name}`;
   return {
-    title: `${
-      searchParams.episode
-        ? `${searchParams.episode} ${currentEpisodeName}`
-        : "Select a Episode"
-    }  - ${data.anime.info.name}`,
+    title,
+    description: data.anime.info.description,
+    openGraph: {
+      title,
+      siteName: "Nextflix",
+      type: "video.movie",
+      description: data.anime.info.description,
+      images: data.anime.info.poster,
+    },
+    twitter: {
+      title,
+      description: data.anime.info.description,
+      images: data.anime.info.poster,
+    },
   };
 }
 

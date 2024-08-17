@@ -1,5 +1,6 @@
 import { TmdbVideo } from "@/components/tmdb/tmdb-video";
 import cache from "@/lib/cache";
+import { createImageUrl } from "@/utils/create-image-url";
 
 export async function generateMetadata({
   params,
@@ -9,10 +10,27 @@ export async function generateMetadata({
   const type = params.id[0];
   const id = params.id[1];
   const data: MovieResults = await fetchTmdbInfo(type, id);
-
+  const title = `${data.title || data.name} - Nextflix`;
+  const image = createImageUrl(
+    data.poster_path || data.backdrop_path,
+    "original"
+  );
+  const description = data.overview || data.synopsis;
   return {
-    title: `${data.title || data.name} - Nextflix`,
-    description: "Nextflix clone built with Next.js and Tailwind CSS",
+    title,
+    description: description,
+    openGraph: {
+      title,
+      siteName: "Nextflix",
+      type: "video.movie",
+      description: description,
+      images: image,
+    },
+    twitter: {
+      title,
+      description: description,
+      images: image,
+    },
   };
 }
 
@@ -49,7 +67,6 @@ export default async function Page({
   const superTvApi = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=${searchParams.season}&e=${searchParams.episode}`;
   const smashystreamTvApi = `https://player.smashy.stream/tv/${id}?s=${searchParams.season}&e=${searchParams.episode}`;
 
-
   let url = "";
   if (type === "tv") {
     switch (searchParams.provider) {
@@ -66,7 +83,7 @@ export default async function Page({
         url = superTvApi;
         break;
       default:
-        url=vidsrcTvapi
+        url = vidsrcTvapi;
     }
   } else {
     switch (searchParams.provider) {
@@ -82,13 +99,13 @@ export default async function Page({
       case "smashystream":
         url = smashystreamMovieApi;
         break;
-        default:
-          url=vidsrcMovieApi
+      default:
+        url = vidsrcMovieApi;
     }
   }
 
   return (
-    <div >
+    <div>
       <TmdbVideo
         type={type}
         id={id}
@@ -102,9 +119,7 @@ export default async function Page({
   );
 }
 
-
 async function fetchTmdbInfo(type: string, id: number | string) {
-  
   const key = process.env.TMDB_KEY;
   const cacheKey = `tmdbInfo${type}-${id}`;
 
@@ -125,7 +140,6 @@ async function fetchTmdbInfo(type: string, id: number | string) {
     throw new Error(`Failed to fetch data for ${id}`);
   }
 }
-
 
 async function fetchSeasonData(
   series_id: number | string,
