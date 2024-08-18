@@ -427,7 +427,7 @@ export function HlsPlayer({
             }}
             className="text-lg"
           >
-            {currentEpisode} {episode.episodes[--currentEpisode].title} -{" "}
+            {currentEpisode} {episode.episodes[--currentEpisode]?.title} -{" "}
             {data.anime.info.name}
           </h1>
         </div>
