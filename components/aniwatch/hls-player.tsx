@@ -130,7 +130,6 @@ export function HlsPlayer({
         player.current.currentTime = parseInt(time);
       }
 
-      hls.destroy()
       return () => {
         hls.destroy();
       };
