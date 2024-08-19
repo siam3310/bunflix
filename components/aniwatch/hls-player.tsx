@@ -6,11 +6,8 @@ import {
   FastForwardIcon,
   FullscreenIcon,
   GaugeIcon,
-  LoaderIcon,
   PauseIcon,
   PlayIcon,
-  RotateCcwIcon,
-  RotateCwIcon,
   Volume1Icon,
   Volume2Icon,
   VolumeXIcon,
@@ -40,7 +37,6 @@ export function HlsPlayer({
   ep: string;
   episodeId: string;
 }) {
-  // console.log(track);
 
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -126,9 +122,6 @@ export function HlsPlayer({
             case Hls.ErrorTypes.OTHER_ERROR:
               toast.error("fatal error encountered");
               break;
-            default:
-              hls.destroy();
-              break;
           }
         }
       });
@@ -137,6 +130,7 @@ export function HlsPlayer({
         player.current.currentTime = parseInt(time);
       }
 
+      hls.destroy()
       return () => {
         hls.destroy();
       };
@@ -283,8 +277,6 @@ export function HlsPlayer({
     }
   };
 
-  // console.log(playerOptions.isCaptionsOn);
-
   // keyboard shortcut for play,pause,etc
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -377,15 +369,27 @@ export function HlsPlayer({
     return () => clearInterval(interval);
   }, [existingShow]);
 
+  useEffect(() => {
+    containerRef.current?.addEventListener("mousemove", () => {
+      setPlayerOptions({ ...playerOptions, showControl: true });
+    });
+    const interval = setInterval(() => {
+      setPlayerOptions({ ...playerOptions, showControl: false });
+    }, 4000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <div className=" md:p-4 focus:outline-none">
       <div
-        onMouseEnter={() =>
-          setPlayerOptions({ ...playerOptions, showControl: true })
-        }
-        onMouseLeave={() =>
-          setPlayerOptions({ ...playerOptions, showControl: false })
-        }
+        // onMouseEnter={() =>
+        //   setPlayerOptions({ ...playerOptions, showControl: true })
+        // }
+        // onMouseLeave={() =>
+        //   setPlayerOptions({ ...playerOptions, showControl: false })
+        // }
         ref={containerRef}
         style={{
           cursor: showControl ? "auto" : "none",
@@ -552,6 +556,7 @@ export function HlsPlayer({
           </div>
         </div>
       </div>
+      {loading && (<p>loading</p>)}
     </div>
   );
 }
