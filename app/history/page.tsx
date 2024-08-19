@@ -13,7 +13,7 @@ export default function History() {
       <h1 className="text-3xl font-bold text-start w-fit">Search History</h1>
       <div className="flex items-center w-full flex-col gap-4 mt-4 max-w-4xl">
         {history?.map((value) => (
-          <div className="relative w-full">
+          <div className="relative w-full" key={value.id}>
             <Link
               className="w-full "
               href={`/search/${value.type}/${value.term}`}
