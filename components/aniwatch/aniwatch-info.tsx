@@ -118,7 +118,7 @@ export function AniwatchInfo({
             <div className=" my-4 flex flex-col gap-2 opacity-70">
               <div className="flex items-center gap-2 flex-wrap">
                 Genres :
-                {data.anime.moreInfo.genres.map((e) => (
+                {data.anime.moreInfo.genres?.map((e) => (
                   <Link
                     target="_blank"
                     href={`/genre/${e.toLowerCase()}`}
