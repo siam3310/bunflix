@@ -21,7 +21,7 @@ export default async function AnimeStudio({
     <div className="min-h-screen bg-black/80 p-4 pb-24">
       <h1 className="text-3xl font-semibold capitalize">{data.producerName}</h1>
       <div className="grid mt-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 text-end">
-        {data.animes.map((show) => (
+        {data.animes?.map((show) => (
           <div
             className="w-full h-full rounded-md overflow-hidden group   relative"
             key={show.id}
@@ -57,7 +57,7 @@ export default async function AnimeStudio({
 }
 
 async function fetchAnimeStudio(studioName: string) {
-  const kababCased = decodeURIComponent(studioName).replace(/\s+/g, "-");
+  const parsedStudioName = decodeURIComponent(studioName).replace(/\s+/g, "-").replace(/\./g, "")
 
   const cacheKey = `aniwatchStudio${studioName}`;
   try {
@@ -66,7 +66,7 @@ async function fetchAnimeStudio(studioName: string) {
       return cachedData;
     }
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/producer/${kababCased}`
+      `${process.env.ANIWATCH_API}/anime/producer/${parsedStudioName}`
     );
 
     const data = await response.json();

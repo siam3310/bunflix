@@ -116,7 +116,7 @@ export function AniwatchInfo({
               {data.anime.info.description}
             </p>
             <div className=" my-4 flex flex-col gap-2 opacity-70">
-              <div className="flex items-center gap-2 flex-wrap">
+              {data.anime.moreInfo.genres && <div className="flex items-center gap-2 flex-wrap">
                 Genres :
                 {data.anime.moreInfo.genres?.map((e) => (
                   <Link
@@ -128,7 +128,7 @@ export function AniwatchInfo({
                     <span className=" flex gap-2">{e}</span>
                   </Link>
                 ))}
-              </div>
+              </div>}
               {data.anime.moreInfo.studios && (
                 <p className=" flex gap-2 flex-wrap">
                   Studio :

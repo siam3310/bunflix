@@ -1,5 +1,5 @@
 "use client";
-import { Search, CircleX, X, FileWarningIcon } from "lucide-react";
+import { Search, CircleX, X, FileWarningIcon, HistoryIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -20,8 +20,7 @@ export default function SearchInput() {
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
-  const { setIsSearchBarFocused, isSearchOpen, setIsSearchOpen } =
-    useSearchBarFocus();
+  const { setIsSearchBarFocused, isSearchOpen, setIsSearchOpen } =  useSearchBarFocus();
 
   useEffect(() => {
     if (!term) {
@@ -172,6 +171,7 @@ export default function SearchInput() {
 
         <div className="flex flex-wrap items-center gap-2 my-2">
           {history && history.length > 0 && (
+            <>
             <button
               className=" text-red-500 transition-all text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
               onClick={() => searchHistory.searches.clear()}
@@ -179,6 +179,14 @@ export default function SearchInput() {
               <CircleX className=" mr-2 cursor-pointer " size={15} />
               Clear
             </button>
+            <Link
+              className=" text-blue-500 transition-all text-md bg-blue-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
+              href={'/history'}
+            >
+              <HistoryIcon className=" mr-2 cursor-pointer " size={15} />
+              History
+            </Link>
+            </>
           )}
           {history?.map((value, index) => (
             <p
