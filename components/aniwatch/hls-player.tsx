@@ -90,6 +90,9 @@ export function HlsPlayer({
 
   // hls initialization and attaching soucres
   useEffect(() => {
+    if (hlsInstance) {
+      hlsInstance.destroy();
+    }
     if (Hls.isSupported() && player.current) {
       const hls = new Hls();
       hls.loadSource(videoSrc);
@@ -377,7 +380,7 @@ export function HlsPlayer({
     return () => {
       clearInterval(interval);
     };
-  }, [player]);
+  }, [playerOptions]);
 
   return (
     <div className=" md:p-4 focus:outline-none">
@@ -501,19 +504,19 @@ export function HlsPlayer({
               >
                 <GaugeIcon size={iconSize} />
               </button>
-              {/* {track */}
-              {/* ?.filter((engSub) => engSub.default === true) */}
-              {/* ?.map((track, index) => ( */}
-              <button
-                style={{
-                  backgroundColor: playerOptions.isCaptionsOn ? " #ef4444" : "",
-                }}
-                className="rounded-full aspect-square p-2 transition-all hover:scale-110"
-                onClick={toogleCaptions}
-              >
-                <CaptionsIcon size={iconSize} />
-              </button>
-              {/* ))} */}
+              {track.length && (
+                <button
+                  style={{
+                    backgroundColor: playerOptions.isCaptionsOn
+                      ? " #ef4444"
+                      : "",
+                  }}
+                  className="rounded-full aspect-square p-2 transition-all hover:scale-110"
+                  onClick={toogleCaptions}
+                >
+                  <CaptionsIcon size={iconSize} />
+                </button>
+              )}
               <p className=" text-nowrap text-sm mt-1">
                 {currentTime[0]}:{currentTime[1]} /{" "}
                 {duration[0] ? duration[0] : 0}:{duration[1] ? duration[1] : 0}
