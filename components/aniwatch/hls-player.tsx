@@ -1,6 +1,6 @@
 "use client";
 import Hls, { Level } from "hls.js";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CaptionsIcon,
   FastForwardIcon,
@@ -37,7 +37,6 @@ export function HlsPlayer({
   ep: string;
   episodeId: string;
 }) {
-
   const player = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -366,7 +365,7 @@ export function HlsPlayer({
     }, 20_000);
 
     return () => clearInterval(interval);
-  }, [existingShow]);
+  }, [existingShow, playerOptions]);
 
   useEffect(() => {
     containerRef.current?.addEventListener("mousemove", () => {
@@ -378,17 +377,14 @@ export function HlsPlayer({
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [player]);
 
   return (
     <div className=" md:p-4 focus:outline-none">
       <div
-        // onMouseEnter={() =>
-        //   setPlayerOptions({ ...playerOptions, showControl: true })
-        // }
-        // onMouseLeave={() =>
-        //   setPlayerOptions({ ...playerOptions, showControl: false })
-        // }
+        onMouseLeave={() =>
+          setPlayerOptions({ ...playerOptions, showControl: false })
+        }
         ref={containerRef}
         style={{
           cursor: showControl ? "auto" : "none",
@@ -555,7 +551,7 @@ export function HlsPlayer({
           </div>
         </div>
       </div>
-      {loading && (<p>loading</p>)}
+      {loading && <p>loading</p>}
     </div>
   );
 }
