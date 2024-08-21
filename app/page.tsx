@@ -4,7 +4,7 @@ import endpoint from "@/data/apiEndpoint";
 import { Metadata } from "next";
 import { Suspense } from "react";
 import TmdbHomeSkeleton from "@/components/fallback-ui/tmdb-home-row";
-import cache from "@/lib/cache";
+
 
 export const metadata: Metadata = {
   title: "Home - Nextflix",
@@ -44,20 +44,12 @@ export default async function Home() {
 
 async function fetchHeroData() {
   const key = process.env.TMDB_KEY;
-  const cacheKey = "tmdbHero";
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/popular?api_key=${key}`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
-
     return data;
   } catch (error) {
     throw new Error("Failed to fetch Slider data");

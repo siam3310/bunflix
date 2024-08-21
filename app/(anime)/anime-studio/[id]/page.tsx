@@ -1,4 +1,3 @@
-import cache from "@/lib/cache";
 import { MicIcon, CaptionsIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -59,19 +58,12 @@ export default async function AnimeStudio({
 async function fetchAnimeStudio(studioName: string) {
   const parsedStudioName = decodeURIComponent(studioName).replace(/\s+/g, "-").replace(/\./g, "")
 
-  const cacheKey = `aniwatchStudio${studioName}`;
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/producer/${parsedStudioName}`
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
-
     return data;
   } catch (error) {
     throw new Error(`Search failed in Categories`);

@@ -1,11 +1,9 @@
 import { createImageUrl } from "@/utils/create-image-url";
 import { Play } from "lucide-react";
 import Link from "next/link";
-import cache from "@/lib/cache";
 
 export async function TmdbMovieInfo({ id }: { id: number }) {
   const data: tmdbMovieInfo = await fetchTmdbInfo("movie", id);
-  
 
   return (
     <div className=" xl:p-0 p-2 pb-24 bg-black/70 min-h-screen">
@@ -33,8 +31,6 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
             <p className=" flex gap-2">
               {data.release_date} <span className="xl:block hidden">|</span>
             </p>
-           
-           
           </div>
           <h1 className="text-xl font-semibold">Categories</h1>
           <div className=" flex gap-2 opacity-70">
@@ -78,21 +74,14 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
 }
 
 async function fetchTmdbInfo(type: string, id: number | string) {
-  
   const key = process.env.TMDB_KEY;
-  const cacheKey = `tmdbInfo${type}-${id}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {

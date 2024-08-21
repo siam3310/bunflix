@@ -1,7 +1,6 @@
 import { createImageUrl } from "@/utils/create-image-url";
-import {  Play, SquareArrowOutUpRight } from "lucide-react";
+import { Play, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
-import cache from "@/lib/cache";
 
 export async function TmdbTvInfo({ id }: { id: number }) {
   const data: tmdbTvInfo = await fetchTmdbInfo("tv", id);
@@ -53,30 +52,27 @@ export async function TmdbTvInfo({ id }: { id: number }) {
           </div>
 
           <h1 className="text-xl mt-4 font-semibold mb-2">Available Seasons</h1>
-          
+
           <div className=" xl:flex gap-4 flex-wrap">
             {data.seasons.map((e) => (
-              <div 
-              className=" flex gap-2"
-              key={e.id}
-              >
-                  <Link
-                    href={`/video/tv/${id}?season=${e.season_number}&episode=1&provider=vidsrc`}
-                    className=" px-4 py-2 font-semibold rounded-md bg-red-600 w-full justify-center mt-2 xl:w-fit  flex xl:justify-center gap-2 items-center"
-                  >
-                    <span>
-                      <Play fill="white" size={15} />
-                    </span>
-                    <p>S{e.season_number}E1</p>
-                  </Link>
-                  <Link
-                  target='_blank'
-                    href={`/video/tv/${id}?season=${e.season_number}&episode=1&provider=vidsrc`}
-                    className=" px-4 py-2 font-semibold rounded-md border justify-center mt-2 w-fit  flex xl:justify-center gap-2 items-center"
-                    >
-                      <SquareArrowOutUpRight size={15} />
-                  </Link>
-            </div>
+              <div className=" flex gap-2" key={e.id}>
+                <Link
+                  href={`/video/tv/${id}?season=${e.season_number}&episode=1&provider=vidsrc`}
+                  className=" px-4 py-2 font-semibold rounded-md bg-red-600 w-full justify-center mt-2 xl:w-fit  flex xl:justify-center gap-2 items-center"
+                >
+                  <span>
+                    <Play fill="white" size={15} />
+                  </span>
+                  <p>S{e.season_number}E1</p>
+                </Link>
+                <Link
+                  target="_blank"
+                  href={`/video/tv/${id}?season=${e.season_number}&episode=1&provider=vidsrc`}
+                  className=" px-4 py-2 font-semibold rounded-md border justify-center mt-2 w-fit  flex xl:justify-center gap-2 items-center"
+                >
+                  <SquareArrowOutUpRight size={15} />
+                </Link>
+              </div>
             ))}
           </div>
         </div>
@@ -85,23 +81,15 @@ export async function TmdbTvInfo({ id }: { id: number }) {
   );
 }
 
-
 async function fetchTmdbInfo(type: string, id: number | string) {
-  
   const key = process.env.TMDB_KEY;
-  const cacheKey = `tmdbInfo${type}-${id}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {

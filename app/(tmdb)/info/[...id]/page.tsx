@@ -1,7 +1,6 @@
 import TmdbInfoSkeleton from "@/components/fallback-ui/tmdb-info-skeleton";
 import { TmdbMovieInfo } from "@/components/tmdb/tmdb-movie-info";
 import { TmdbTvInfo } from "@/components/tmdb/tmdb-tv-info";
-import cache from "@/lib/cache";
 import { Suspense } from "react";
 
 export async function generateMetadata({
@@ -39,19 +38,13 @@ export default async function Info({
 async function fetchTmdbInfo(type: string, id: number | string) {
   
   const key = process.env.TMDB_KEY;
-  const cacheKey = `tmdbInfo${type}-${id}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {

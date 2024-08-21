@@ -1,4 +1,3 @@
-import cache from "@/lib/cache";
 import MovieItem from "@/components/movie-item";
 
 export default async function TmdbShowRow({
@@ -20,8 +19,7 @@ export default async function TmdbShowRow({
         </h1>
       </div>
       <div className=" w-full overflow-x-scroll scrollbar-hide ">
-        <div
-          className= "flex w-fit px-2 ">
+        <div className="flex w-fit px-2 ">
           {results?.results.map((movie) => (
             <MovieItem type={type} key={movie.id} movie={movie} />
           ))}
@@ -31,21 +29,12 @@ export default async function TmdbShowRow({
   );
 }
 
-export async function fetchData(
-  endpoint: string
-): Promise<TmdbMovie | null> {
-  const cacheKey = `${endpoint}`;
-
+export async function fetchData(endpoint: string): Promise<TmdbMovie | null> {
   try {
-    const cachedData: TmdbMovie | undefined = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(endpoint);
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
     return data;
   } catch (error) {
-    return null
+    return null;
   }
 }

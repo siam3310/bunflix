@@ -1,6 +1,5 @@
 import { AniwatchInfo } from "@/components/aniwatch/aniwatch-info";
 import AniwatchPlayer from "@/components/aniwatch/aniwatch-player";
-import cache from "@/lib/cache";
 import { CircleArrowDownIcon } from "lucide-react";
 import { Metadata } from "next";
 
@@ -72,18 +71,11 @@ export default async function Anime({
 }
 
 async function fetchAniwatchEpisode(seasonId: string) {
-  const cacheKey = `aniwatchEpisode${seasonId}`;
-
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/episodes/${seasonId}`
     );
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {
@@ -92,21 +84,14 @@ async function fetchAniwatchEpisode(seasonId: string) {
 }
 
 async function fetchAniwatchId(id: string): Promise<aniwatchInfo> {
-  const cacheKey = `aniwatchId${id}`;
 
   try {
-    const cachedData: aniwatchInfo | undefined = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/info?id=${id}`
     );
 
     const data: aniwatchInfo = await response.json();
 
-    cache.set(cacheKey, data, 60 * 60 * 24);
     return data;
   } catch (error) {
     throw new Error(`Failed fetching details for Anime`);

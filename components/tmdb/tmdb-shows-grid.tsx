@@ -1,21 +1,18 @@
 "use client";
 import MovieItem from "@/components/movie-item";
-import cache from "@/lib/cache";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 
-
 export default function TmdbShowGrid({
   title,
   type,
-  endpoint
+  endpoint,
 }: {
   title: string;
   type: string;
-  endpoint:string
+  endpoint: string;
 }) {
-
   const [data, setData] = useState<tmdbMultiSearch>({
     page: 1,
     results: [],
@@ -29,26 +26,22 @@ export default function TmdbShowGrid({
     threshold: 0,
   });
 
-
   useEffect(() => {
     if (data?.page !== data?.total_pages) {
       setPage((prePage) => (prePage += 1));
-      fetchData(`${endpoint}&page=${page}`).then(
-        (res: tmdbMultiSearch) => {
-          setData(res);
-          if (results) {
-            const combinedResults = [...results, ...res.results];
-            setResults(combinedResults);
-          } else {
-            setResults(res.results);
-          }
+      fetchData(`${endpoint}&page=${page}`).then((res: tmdbMultiSearch) => {
+        setData(res);
+        if (results) {
+          const combinedResults = [...results, ...res.results];
+          setResults(combinedResults);
+        } else {
+          setResults(res.results);
         }
-      );
+      });
     }
   }, [inView]);
 
   const pathname = usePathname();
-
 
   return (
     <div className=" mb-4">
@@ -67,11 +60,8 @@ export default function TmdbShowGrid({
               movie={movie}
             />
           ))}
-            {(pathname === "/") === false && (
-            <div
-              ref={ref}
-              className="text-2xl p-3 font-semibold"
-            ></div>
+          {(pathname === "/") === false && (
+            <div ref={ref} className="text-2xl p-3 font-semibold"></div>
           )}
         </div>
       </div>
@@ -79,19 +69,10 @@ export default function TmdbShowGrid({
   );
 }
 
-
-
 export async function fetchData(endpoint: string) {
-  const cacheKey = `${endpoint}`;
-
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(endpoint);
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
     return data;
   } catch (error) {
     throw new Error(`Failed to fetch data `);

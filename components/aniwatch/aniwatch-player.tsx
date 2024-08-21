@@ -1,12 +1,10 @@
-import { HlsPlayer } from "./hls-player";
+"use server";
+import Player from "./art-player";
 
 export default async function AniwatchPlayer({
   episodeId,
   ep,
   lang,
-  data,
-  episode,
-  episodeData,
 }: {
   episodeId: string;
   data: aniwatchInfo;
@@ -21,43 +19,18 @@ export default async function AniwatchPlayer({
       ep
     );
 
-    return (
-      <HlsPlayer
-        episode={episodeData}
-        data={data}
-        lang={lang}
-        currentEpisode={episode}
-        ep={ep}
-        episodeId={episodeId}
-        track={dub.tracks}
-        videoSrc={dub.sources[0].url}
-      />
-    );
+    return <Player src={dub.sources[0].url} track={dub.tracks} />;
   } else {
     const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
       episodeId,
       ep
     );
-
-    return (
-      <HlsPlayer
-        episode={episodeData}
-        data={data}
-        lang={lang}
-        currentEpisode={episode}
-        ep={ep}
-        episodeId={episodeId}
-        track={sub.tracks}
-        videoSrc={sub.sources[0].url}
-      />
-    );
+    return <Player src={sub.sources[0].url} track={sub.tracks} />;
   }
 }
 
 async function fetchAniwatchEpisodeSrc(episodeId: string, episode: string) {
-
   try {
-   
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
     );
@@ -70,7 +43,6 @@ async function fetchAniwatchEpisodeSrc(episodeId: string, episode: string) {
 }
 
 async function fetchAniwatchEpisodeSrcDub(episodeId: string, episode: string) {
-
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`

@@ -1,5 +1,4 @@
 import { TmdbVideo } from "@/components/tmdb/tmdb-video";
-import cache from "@/lib/cache";
 import { createImageUrl } from "@/utils/create-image-url";
 
 export async function generateMetadata({
@@ -121,19 +120,13 @@ export default async function Page({
 
 async function fetchTmdbInfo(type: string, id: number | string) {
   const key = process.env.TMDB_KEY;
-  const cacheKey = `tmdbInfo${type}-${id}`;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {
@@ -145,21 +138,14 @@ async function fetchSeasonData(
   series_id: number | string,
   season_number: number | string
 ) {
-  const cacheKey = `tmdbSeasonData${series_id}${season_number}`;
   const key = process.env.TMDB_KEY;
 
   try {
-    const cachedData = cache.get(cacheKey);
-    if (cachedData) {
-      return cachedData;
-    }
-
     const response = await fetch(
       `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`
     );
 
     const data = await response.json();
-    cache.set(cacheKey, data, 60 * 60 * 24);
 
     return data;
   } catch (error) {
