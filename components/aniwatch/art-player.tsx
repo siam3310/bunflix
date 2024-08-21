@@ -76,6 +76,14 @@ export default function Player({
           },
         },
       ],
+      subtitle: {
+        type: "vtt",
+        encoding: "utf-8",
+        style: {
+          fontWeight: "600",
+          fontSize: "28px",
+        },
+      },
       customType: {
         m3u8: function playM3u8(video, url, art) {
           if (Hls.isSupported()) {
