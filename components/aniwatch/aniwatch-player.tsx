@@ -13,19 +13,46 @@ export default async function AniwatchPlayer({
   episode: number;
   lang: "english" | "japanesse";
 }) {
+  const htmlTagPattern = /<[^>]+>/g;
+
   if (lang === "english") {
     const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
       episodeId,
       ep
     );
 
-    return <Player src={dub.sources[0].url} track={dub.tracks} />;
+    const englishSub = dub.tracks.filter((sub) => sub.label === "English");
+
+    const res = await fetch(englishSub[0].file);
+    const data = await res.text();
+    const escapedSub = data.replace(htmlTagPattern, "");
+
+    return (
+      <Player
+        src={dub.sources[0].url}
+        track={dub.tracks}
+        englishSub={escapedSub}
+      />
+    );
   } else {
     const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
       episodeId,
       ep
     );
-    return <Player src={sub.sources[0].url} track={sub.tracks} />;
+    const englishSub = sub.tracks.filter((sub) => sub.label === "English");
+
+    const res = await fetch(englishSub[0].file);
+    const data = await res.text();
+    const escapedSub = data.replace(htmlTagPattern, "");
+
+
+    return (
+      <Player
+        src={sub.sources[0].url}
+        track={sub.tracks}
+        englishSub={escapedSub}
+      />
+    );
   }
 }
 

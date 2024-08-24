@@ -8,6 +8,7 @@ export default function Player({
   src,
   getInstance,
   track,
+  englishSub,
 }: {
   src: string;
   getInstance?: (art: Artplayer) => void;
@@ -17,9 +18,11 @@ export default function Player({
     label: string;
     default: boolean;
   }[];
+  englishSub: string;
 }) {
+  
   const artRef = useRef<HTMLDivElement>(null);
-  const englishSub = track.filter((sub)=>sub.label==="English")
+  const sub = new Blob([englishSub], { type: "text/vtt" });
 
   useEffect(() => {
     if (!artRef.current) return;
@@ -78,8 +81,8 @@ export default function Player({
         },
       ],
       subtitle: {
-        url:englishSub[0].file,
-        escape:true,
+        url: URL.createObjectURL(sub),
+        escape: true,
         type: "vtt",
         encoding: "utf-8",
         style: {
