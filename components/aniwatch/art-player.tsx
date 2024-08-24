@@ -19,6 +19,7 @@ export default function Player({
   }[];
 }) {
   const artRef = useRef<HTMLDivElement>(null);
+  const englishSub = track.filter((sub)=>sub.label==="English")
 
   useEffect(() => {
     if (!artRef.current) return;
@@ -77,6 +78,8 @@ export default function Player({
         },
       ],
       subtitle: {
+        url:englishSub[0].file,
+        escape:true,
         type: "vtt",
         encoding: "utf-8",
         style: {
