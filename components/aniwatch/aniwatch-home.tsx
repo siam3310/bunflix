@@ -194,7 +194,7 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
               <Link
                 key={category + index}
                 className="capitalize px-2 py-1 bg-white/10 rounded-md hover:bg-red-700"
-                href={`/anime-categories/${category.toLowerCase()}`}
+                href={`/anime-categories?type=${category.toLowerCase()}`}
               >
                 {category.replace(/-/, " ")}
               </Link>

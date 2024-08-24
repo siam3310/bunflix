@@ -5,7 +5,6 @@ import { Metadata } from "next";
 import { Suspense } from "react";
 import TmdbHomeSkeleton from "@/components/fallback-ui/tmdb-home-row";
 
-
 export const metadata: Metadata = {
   title: "Home - Nextflix",
 };
@@ -47,7 +46,8 @@ async function fetchHeroData() {
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${key}`
+      `https://api.themoviedb.org/3/movie/popular?api_key=${key}`,
+      { next: { revalidate: 3600 } }
     );
     const data = await response.json();
     return data;
