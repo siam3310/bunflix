@@ -23,9 +23,13 @@ export default async function AniwatchPlayer({
 
     const englishSub = dub.tracks.filter((sub) => sub.label === "English");
 
-    const res = await fetch(englishSub[0].file);
-    const data = await res.text();
-    const escapedSub = data.replace(htmlTagPattern, "");
+    let escapedSub:string|undefined;
+
+    if(englishSub[0]?.file){
+      const res = await fetch(englishSub[0].file);
+      const data = await res.text();
+      escapedSub = data.replace(htmlTagPattern, "");
+    }
 
     return (
       <Player

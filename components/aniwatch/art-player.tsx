@@ -18,11 +18,11 @@ export default function Player({
     label: string;
     default: boolean;
   }[];
-  englishSub: string;
+  englishSub?: string;
 }) {
   
   const artRef = useRef<HTMLDivElement>(null);
-  const sub = new Blob([englishSub], { type: "text/vtt" });
+  const sub = new Blob([englishSub || ""], { type: "text/vtt" });
 
   useEffect(() => {
     if (!artRef.current) return;
@@ -122,7 +122,7 @@ export default function Player({
   return (
     <div
       ref={artRef}
-      className="w-full p-4 h-[300px] sm:h-[350px ] md:h-[450px] lg:h-[550px] xl:h-[600px]"
+      className="w-full sm:p-4 h-[300px] sm:h-[350px ] md:h-[450px] lg:h-[550px] xl:h-[600px]"
     ></div>
   );
 }

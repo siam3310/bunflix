@@ -52,7 +52,7 @@ export function AniwatchInfo({
             <div className="flex items-center mb-6">
               <ul
                 ref={(el) => {
-                  el?.scrollBy(0, 48 * --currentEpisode);
+                  el?.scrollBy(0, 64 * --currentEpisode);
                 }}
                 className="max-h-[400px] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg"
               >
@@ -78,11 +78,11 @@ export function AniwatchInfo({
                             ? "#334155"
                             : "#1e293b",
                       }}
-                      className="px-4 h-12 text-start flex w-full items-center justify-between disabled:opacity-35"
+                      className="px-4 h-16 text-start flex w-full items-center justify-between disabled:opacity-35"
                     >
                       {episode.number}. {episode.title}
                       {audioToogle === "english" && (
-                        <span className="px-2 bg-purple-700 flex gap-2 items-center w-fit rounded text-nowrap">
+                        <span className="px-2 bg-purple-700 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap">
                           <MicIcon size={15} />
                           {data.anime.info.stats.episodes.dub < episode.number
                             ? "Dub not available"
@@ -90,7 +90,7 @@ export function AniwatchInfo({
                         </span>
                       )}
                       {audioToogle === "japanesse" && (
-                        <span className="px-2 bg-yellow-700 flex gap-2 items-center w-fit rounded text-nowrap">
+                        <span className="px-2 bg-yellow-700 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap">
                           <CaptionsIcon size={15} />
                           {data.anime.info.stats.episodes.sub < episode.number
                             ? "Sub not available"
