@@ -16,43 +16,52 @@ export default async function AniwatchPlayer({
   const htmlTagPattern = /<[^>]+>/g;
 
   if (lang === "english") {
+    const server = await fetchAniwatchEpisodeServer(episodeId, ep);
     const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
       episodeId,
-      ep
+      ep,
+      server.dub[0].serverName
     );
 
-    const englishSub = dub.tracks.filter((sub) => sub.label === "English");
+    const englishSub = dub.tracks?.filter((sub) => sub.label === "English");
 
-    let escapedSub:string|undefined;
-
-    if(englishSub[0]?.file){
+    console.log(englishSub);
+    
+    let data;
+    if (englishSub.length > 0) {
       const res = await fetch(englishSub[0].file);
-      const data = await res.text();
-      escapedSub = data.replace(htmlTagPattern, "");
+      data = await res.text();
     }
+    const escapedSub = data?.replace(htmlTagPattern, "");
 
     return (
       <Player
-        src={dub.sources[0].url}
+        src={`/api/proxy/${dub?.sources[0]?.url}`}
         track={dub.tracks}
         englishSub={escapedSub}
       />
     );
   } else {
+    const server = await fetchAniwatchEpisodeServer(episodeId, ep);
+
     const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
       episodeId,
-      ep
+      ep,
+      server.sub[0].serverName
     );
-    const englishSub = sub.tracks.filter((sub) => sub.label === "English");
 
-    const res = await fetch(englishSub[0].file);
-    const data = await res.text();
-    const escapedSub = data.replace(htmlTagPattern, "");
+    const englishSub = sub.tracks?.filter((sub) => sub.label === "English");
 
+    let data;
+    if (englishSub) {
+      const res = await fetch(englishSub[0].file);
+      data = await res.text();
+    }
+    const escapedSub = data?.replace(htmlTagPattern, "");
 
     return (
       <Player
-        src={sub.sources[0].url}
+        src={`/api/proxy/${sub?.sources[0]?.url}`}
         track={sub.tracks}
         englishSub={escapedSub}
       />
@@ -60,23 +69,51 @@ export default async function AniwatchPlayer({
   }
 }
 
-async function fetchAniwatchEpisodeSrc(episodeId: string, episode: string) {
+async function fetchAniwatchEpisodeSrc(
+  episodeId: string,
+  episode: string,
+  server: string
+) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming`
+      `${
+        process.env.ANIWATCH_API
+      }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
+        server ? server : "vidstreaming"
+      }`
     );
     const data = await response.json();
-
     return data;
   } catch (error) {
     throw new Error(`Fetch failed Episode Sources japanesse `);
   }
 }
 
-async function fetchAniwatchEpisodeSrcDub(episodeId: string, episode: string) {
+async function fetchAniwatchEpisodeSrcDub(
+  episodeId: string,
+  episode: string,
+  server: string
+) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=vidstreaming&category=dub`
+      `${
+        process.env.ANIWATCH_API
+      }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
+        server ? server : "vidstreaming"
+      }&category=dub`
+    );
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    throw new Error(`Fetch failed Episode Sources english`);
+  }
+}
+
+async function fetchAniwatchEpisodeServer(episodeId: string, episode: string) {
+  try {
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`
     );
     const data = await response.json();
 
