@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -8,16 +9,23 @@ export async function GET(req: NextRequest) {
     .map((part) => (part === "https:" ? part + "//" : part + "/"))
     .join("");
 
-  const res = await fetch(completeUrl);
+  const urlArray = completeUrl.split(".");
 
-  if (!res.ok) {
-    return Response.json(
-      { Error: "failed to fetch requested url" },
-      { status: 404 }
-    );
+  if (urlArray[urlArray.length - 1] === "m3u8/") {
+    console.log("hello mf");
+    const res = await fetch(completeUrl);
+
+    if (!res.ok) {
+      return Response.json(
+        { Error: "failed to fetch requested url" },
+        { status: 404 }
+      );
+    }
+
+    const data = await res.arrayBuffer();
+
+    return new Response(data, { status: 200 });
+  } else {
+    redirect(completeUrl);
   }
-
-  const data = await res.arrayBuffer();
-
-  return new Response(data, { status: 200 });
 }
