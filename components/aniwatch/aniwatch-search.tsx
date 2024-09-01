@@ -1,67 +1,35 @@
 "use client";
-
-import { MicIcon, CaptionsIcon, View } from "lucide-react";
-// import { CaptionsIcon, MicIcon, SquareArrowOutUpRight } from "lucide-react";
-// import Link from "next/link";
-
-// export async function AniwatchSearch({ data }: { data: aniwatchSearch }) {
-
-//   return (
-//     <>
-//
-//     </>
-//   );
-// }
-
-import MovieItem from "../movie-item";
-import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
-import { toast } from "sonner";
+import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function AniwatchSearch({
-  search,
-  initialData,
-}: {
-  search: string;
-  initialData: aniwatchSearch;
-}) {
-  const [data, setData] = useState<aniwatchSearch>(initialData);
-  const [results, setResults] = useState<Anime[]>([]);
-  const [page, setPage] = useState(data?.currentPage || 1);
-
-  const { ref, inView } = useInView({
-    threshold: 1,
-  });
+export default function AniwatchSearch({ data }: { data: aniwatchSearch }) {
+  const [anime, setAnime] = useState(data.animes);
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+  const page = Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
-    if (data?.currentPage === initialData.totalPages) {
-      return;
+    if (!type) {
+      setAnime(data.animes);
     }
-    setPage((data.currentPage += 1));
-    fetch(`/api/search?q=${search}&type=anime&page=${page}`)
-      .then((response) => {
-        if (!response.ok) {
-          toast.error("Error please try again");
-        }
-        return response.json();
-      })
-      .then((res: aniwatchSearch) => {
-        setData(res);
-        if (results) {
-          const combinedResults = [...results, ...res?.animes];
-          setResults(combinedResults);
-        } else {
-          setResults(res.animes);
-        }
-      });
-  }, [inView]);
+    if (type) {
+      const filteredResult = data.animes.filter((ep) => ep.type === type);
+      setAnime(filteredResult);
+    }
+  }, [searchParams]);
 
+  console.log(
+    data.totalPages != data.currentPage,
+    data.totalPages,
+    data.currentPage
+  );
 
   return (
-    <div className=" p-2 pb-24 w-full">
-      <div className="grid grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 xl:grid-cols-6 w-full gap-3 bg-green-200 min-h-screen">
-        {results.map((episode) => (
+    <div className="flex flex-col w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 xl:grid-cols-6 w-full gap-3  ">
+        {anime.map((episode) => (
           <Link
             key={episode.id}
             href={`/anime/${episode.id}`}
@@ -72,7 +40,6 @@ export default function AniwatchSearch({
               src={episode.poster}
               alt={episode.name}
             />
-
             <div className=" absolute bottom-0 left-0 p-2 bg-gradient-to-br from-transparent to-black/80 transition-all group-hover:backdrop-blur-md size-full flex items-end flex-col justify-end capitalize">
               <h1 className="text-xl font-semibold">{episode.name}</h1>
               <div className="flex text-sm gap-1">
@@ -90,13 +57,11 @@ export default function AniwatchSearch({
           </Link>
         ))}
       </div>
-      <div ref={ref} className="text-2xl p-3 font-semibold">
-        {/* {data?.currentPage !== data?.totalPages ? (
-          <p>Loading...</p>
-        ) : (
-          <p>You&apos;ve Reached the End of the road</p>
-        )} */}
-      </div>
+      {data.totalPages != data.currentPage && (
+        <Link href={`/search/anime/${data.searchQuery}?page=${page + 1}`}>
+          Next Page
+        </Link>
+      )}
     </div>
   );
 }

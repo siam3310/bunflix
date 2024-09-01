@@ -1,4 +1,4 @@
-import  AniwatchSearch  from "@/components/aniwatch/aniwatch-search";
+import AniwatchSearch from "@/components/aniwatch/aniwatch-search";
 import AnimeSearchFilter from "@/components/aniwatch/aniwatch-search-filter";
 import SearchSkeleton from "@/components/fallback-ui/search-skeleton";
 import TmdbSearch from "@/components/tmdb/tmdb-search";
@@ -28,6 +28,7 @@ export default async function Query({
     lang: AnimeLanguage;
     sort: AnimeSort;
     status: AnimeStaus;
+    page?: string;
   };
 }) {
   const type = params.query[0];
@@ -36,10 +37,7 @@ export default async function Query({
   if (type === "anime") {
     const data: aniwatchSearch = await fetchAniwatchSearch(
       searchTerm,
-      searchParams?.type,
-      searchParams?.lang,
-      searchParams?.sort,
-      searchParams?.status
+      searchParams?.page
     );
 
     return (
@@ -47,7 +45,7 @@ export default async function Query({
         <Suspense fallback={<SearchSkeleton />}>
           <div className="pb-24 p-4 md:flex-row flex-col flex gap-4">
             <AnimeSearchFilter search={searchTerm} />
-            <AniwatchSearch initialData={data} search={searchTerm}/>
+            <AniwatchSearch data={data} />
           </div>
         </Suspense>
       </div>
@@ -79,20 +77,12 @@ type AnimeSort =
   | "released-date"
   | "recently-updated";
 
-async function fetchAniwatchSearch(
-  searchTerm: string,
-  type?: AnimeType,
-  language?: AnimeLanguage,
-  sort?: AnimeSort,
-  status?: AnimeStaus
-) {
+async function fetchAniwatchSearch(searchTerm: string, page?: number | string) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=1&type=${
-        type ? type : "all"
-      }$&language=${language ? language : "sub-&-dub"}&sort=${
-        sort ? sort : "default"
-      }&status=${status ? status : "all"}`,
+      `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=${
+        page ? page : 1
+      }`,
       { cache: "no-store" }
     );
     const data = await response.json();

@@ -20,7 +20,8 @@ export default function SearchInput() {
   const debounceSearch = useDebounce(term);
   const router = useRouter();
 
-  const { setIsSearchBarFocused, isSearchOpen, setIsSearchOpen } =  useSearchBarFocus();
+  const { setIsSearchBarFocused, isSearchOpen, setIsSearchOpen } =
+    useSearchBarFocus();
 
   useEffect(() => {
     if (!term) {
@@ -35,7 +36,7 @@ export default function SearchInput() {
           return response.json();
         })
         .then((data) => {
-          type==="anime" ? setAnime(data) : setResult(data);
+          type === "anime" ? setAnime(data) : setResult(data);
         })
         .catch((error) => {
           console.error(
@@ -172,32 +173,30 @@ export default function SearchInput() {
         <div className="flex flex-wrap max-h-64 overflow-x-hidden overflow-y-scroll items-center gap-2 my-2">
           {history && history.length > 0 && (
             <>
-            <button
-              className=" text-red-500 transition-all text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
-              onClick={() => searchHistory.searches.clear()}
-            >
-              <CircleX className=" mr-2 cursor-pointer " size={15} />
-              Clear
-            </button>
-            <Link
-              className=" text-blue-500 transition-all text-md bg-blue-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
-              href={'/history'}
-            >
-              <HistoryIcon className=" mr-2 cursor-pointer " size={15} />
-              History
-            </Link>
+              <button
+                className=" text-red-500 transition-all text-md bg-red-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
+                onClick={() => searchHistory.searches.clear()}
+              >
+                <CircleX className=" mr-2 cursor-pointer " size={15} />
+                Clear
+              </button>
+              <Link
+                className=" text-blue-500 transition-all text-md bg-blue-100 py-1 rounded-md px-2 font-medium w-fit flex items-center justify-between cursor-pointer"
+                href={"/history"}
+              >
+                <HistoryIcon className=" mr-2 cursor-pointer " size={15} />
+                History
+              </Link>
             </>
           )}
           {history?.map((value, index) => (
-            <p
+            <Link
+              href={`/search/${value.type}/${encodeURIComponent(value.term)}`}
               key={index}
-              onClick={() => {
-                router.push(`/search/${value.type}/${value.term}`);
-              }}
               className="bg-gray-100 text-nowrap text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
             >
               {value.term}
-            </p>
+            </Link>
           ))}
         </div>
 
@@ -236,7 +235,7 @@ const TmdbInSearchArray = ({
       className=" w-full "
     >
       <button className="p-2 w-full rounded-sm text-start hover:bg-gray-700/50 transition-all flex items-center gap-3">
-      <div className="relative h-[100px] min-w-[80px]">
+        <div className="relative h-[100px] min-w-[80px]">
           {!isloaded && !error && (
             <div className="h-[100px]  min-w-[80px] absolute top-0 rounded-md bg-gray-400 animate-pulse"></div>
           )}
@@ -249,8 +248,11 @@ const TmdbInSearchArray = ({
                 scale: isloaded ? "100%" : "0%",
               }}
               className="h-[100px]  min-w-[80px] absolute object-cover top-0 rounded-sm"
-              src={createImageUrl(show.backdrop_path||show.backdrop_path,"w500")}
-              alt={show.name||show.title}
+              src={createImageUrl(
+                show.backdrop_path || show.backdrop_path,
+                "w500"
+              )}
+              alt={show.name || show.title}
             />
           ) : (
             <div className="h-[100px]  w-[80px] absolute top-0 rounded-md bg-black/60 flex items-center justify-center flex-col">
