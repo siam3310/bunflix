@@ -12,7 +12,6 @@ export async function GET(req: NextRequest) {
   const urlArray = completeUrl.split(".");
 
   if (urlArray[urlArray.length - 1] === "m3u8/") {
-    console.log("hello mf");
     const res = await fetch(completeUrl);
 
     if (!res.ok) {

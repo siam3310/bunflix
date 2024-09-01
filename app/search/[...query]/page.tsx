@@ -1,4 +1,4 @@
-import { AniwatchSearch } from "@/components/aniwatch/aniwatch-search";
+import  AniwatchSearch  from "@/components/aniwatch/aniwatch-search";
 import AnimeSearchFilter from "@/components/aniwatch/aniwatch-search-filter";
 import SearchSkeleton from "@/components/fallback-ui/search-skeleton";
 import TmdbSearch from "@/components/tmdb/tmdb-search";
@@ -42,14 +42,12 @@ export default async function Query({
       searchParams?.status
     );
 
-    // console.log(searchParams);
-
     return (
       <div className=" bg-black/80 min-h-screen">
         <Suspense fallback={<SearchSkeleton />}>
           <div className="pb-24 p-4 md:flex-row flex-col flex gap-4">
             <AnimeSearchFilter search={searchTerm} />
-            <AniwatchSearch data={data} />
+            <AniwatchSearch initialData={data} search={searchTerm}/>
           </div>
         </Suspense>
       </div>

@@ -169,7 +169,7 @@ export default function SearchInput() {
           </button>
         </form>
 
-        <div className="flex flex-wrap items-center gap-2 my-2">
+        <div className="flex flex-wrap max-h-64 overflow-x-hidden overflow-y-scroll items-center gap-2 my-2">
           {history && history.length > 0 && (
             <>
             <button

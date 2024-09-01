@@ -4,28 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
-  const [date, setDate] = useState(anime.top10Animes.today);
-  const categories = [
-    "most-favorite",
-    "most-popular",
-    "subbed-anime",
-    "dubbed-anime",
-    "recently-updated",
-    "recently-added",
-    "top-upcoming",
-    "top-airing",
-    "movie",
-    "special",
-    "ova",
-    "ona",
-    "tv",
-    "completed",
-  ];
+  const [date, setDate] = useState(anime.top10Animes.week);
+
   return (
     <>
       <h1 className="text-3xl py-2 font-semibold px-4">Newly Added</h1>
       <div className="lg:flex">
-        <div className="grid align-top self-start gap-4 md:gap-3 p-4 grid-cols-2 sm:grid-cols-3  md:grid-cols-4 lg:grid-cols-5 w-full">
+        <div className="grid align-top self-start gap-4 md:gap-3 p-4 grid-cols-2 sm:grid-cols-3  md:grid-cols-4 xl:grid-cols-6 w-full">
           {anime.latestEpisodeAnimes.map((episode) => (
             <Link
               key={episode.id}
@@ -56,7 +41,7 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
           ))}
         </div>
 
-        <div className="px-4 flex flex-col gap-2">
+        <div className="px-4 flex flex-col gap-2 sticky top-4 pb-4 h-fit">
           <h1 className="text-3xl py-2 font-semibold ">Popular Anime</h1>
           <div className="flex gap-2 my-1">
             <button
@@ -124,7 +109,7 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
         </div>
       </div>
 
-      <div className="">
+      {/* <div className="">
         <h1 className="text-3xl py-2 font-semibold px-4">Top Airing</h1>
         <div className="px-4 flex  gap-3 overflow-x-scroll scrollbar-hide">
           {anime.topAiringAnimes.map((episode) => (
@@ -171,37 +156,8 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
             </div>
           ))}
         </div>
-      </div>
-      <section className="p-4 md:grid grid-cols-2">
-        <div>
-          <h2 className="text-2xl py-2 font-semibold mt-4">Genres</h2>
-          <div className="flex flex-wrap gap-2">
-            {anime.genres.map((genre, index) => (
-              <Link
-                key={genre + index}
-                className=" px-2 py-1 bg-white/10 rounded-md hover:bg-red-700"
-                href={`/genre/${genre.toLowerCase()}`}
-              >
-                {genre}
-              </Link>
-            ))}
-          </div>
-        </div>
-        <div>
-          <h2 className="text-2xl py-2 font-semibold mt-4">Categories</h2>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category, index) => (
-              <Link
-                key={category + index}
-                className="capitalize px-2 py-1 bg-white/10 rounded-md hover:bg-red-700"
-                href={`/anime-categories?type=${category.toLowerCase()}`}
-              >
-                {category.replace(/-/, " ")}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div> */}
+      
     </>
   );
 }

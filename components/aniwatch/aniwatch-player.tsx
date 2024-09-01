@@ -25,7 +25,6 @@ export default async function AniwatchPlayer({
 
     const englishSub = dub.tracks?.filter((sub) => sub.label === "English");
 
-    console.log(englishSub);
     
     let data;
     if (englishSub.length > 0) {
