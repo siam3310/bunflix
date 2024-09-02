@@ -95,9 +95,9 @@ type aniwatchInfo = {
       duration: string;
       status: string;
       malscore: string;
-      genres: [string];
+      genres: string[];
       studios: string;
-      producers: [string];
+      producers: string[];
     };
   };
   seasons: {

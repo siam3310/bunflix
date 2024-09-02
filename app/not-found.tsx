@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function NotFound () {
   return (
-    <div className='h-screen text-center w-full flex item-center justify-center flex-col'>
+    <div className='h-screen text-center w-full flex item-center justify-center flex-col bg-black/70'>
       <h1 className=' text-2xl lg:text-8xl'>404 Not Found</h1>
       <p className='capitalize opacity-70  text-lg'>the resourse your looking for does not exist</p>
       <p>Go Back <Link href={'/'} className='underline uppercase '>Home</Link></p>
