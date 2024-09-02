@@ -56,8 +56,10 @@ async function fetchAniwatchCategories(
   page?: number | string
 ) {
   try {
+  const parsedProducerName = decodeURIComponent(producer).replace(/\s+/g, "-").replace(/\./g, "")
+
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/producer/${producer}?page=${page || 1}`
+      `${process.env.ANIWATCH_API}/anime/producer/${parsedProducerName}?page=${page || 1}`
     );
     const data = await response.json() as aniwatchCategories
 
