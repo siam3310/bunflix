@@ -1,13 +1,13 @@
+"use server";
 import AniwatchHome from "@/components/aniwatch/aniwatch-home";
 import AniwatchSlider from "@/components/aniwatch/aniwatch-slider";
 import { MicIcon, CaptionsIcon } from "lucide-react";
-import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export const metadata: Metadata = {
-  title: "Anime - Nextflix",
-};
+export async function generateMetadata() {
+  return { title: "Anime - Nextflix" };
+}
 
 export default async function Anime() {
   const data: aniwatchApi = await aniwatchHomeApi();
@@ -26,16 +26,16 @@ export default async function Anime() {
 }
 
 async function aniwatchHomeApi() {
-  try {
-    const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`,
-      {  cache: "no-store" }
-    );
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
+  const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`, {
+    cache: "no-store",
+  });
+  if (!response.ok) {
     throw new Error(`Fetch failed at Anime Slider`);
   }
+
+  const data = await response.json();
+
+  return data;
 }
 
 const AniwatchCategories = ({ anime }: { anime: aniwatchApi }) => {
@@ -141,15 +141,14 @@ async function fetchAniwatchCategories(
   category: aniwatchCategoriesName,
   page?: number | string
 ) {
-  try {
-    const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
-      {  cache: "no-store" }
-    );
-    const data = (await response.json()) as aniwatchCategories;
-
-    return data;
-  } catch (error) {
+  const response = await fetch(
+    `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) {
     throw new Error(`Search failed in Categories`);
   }
+  const data = (await response.json()) as aniwatchCategories;
+
+  return data;
 }

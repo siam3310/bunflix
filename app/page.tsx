@@ -1,13 +1,13 @@
+"use server";
 import TmdbSlider from "@/components/tmdb/tmdb-slider";
 import TmdbShowRow from "@/components/tmdb/tmdb-shows-row";
 import endpoint from "@/data/apiEndpoint";
-import { Metadata } from "next";
 import { Suspense } from "react";
 import TmdbHomeSkeleton from "@/components/fallback-ui/tmdb-home-row";
 
-export const metadata: Metadata = {
-  title: "Home - Nextflix",
-};
+export async function generateMetadata() {
+  return { title: "Home - Nextflix" };
+}
 
 export default async function Home() {
   const data: TmdbMovie = await fetchHeroData();
@@ -44,14 +44,13 @@ export default async function Home() {
 async function fetchHeroData() {
   const key = process.env.TMDB_KEY;
 
-  try {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${key}`,
-      {  cache: "no-store" }
-    );
-    const data = await response.json();
-    return data;
-  } catch (error) {
+  const response = await fetch(
+    `https://api.themoviedb.org/3/movie/popular?api_key=${key}`,
+    { cache: "no-store" }
+  );
+  if (!response.ok) {
     throw new Error("Failed to fetch Slider data");
   }
+  const data = await response.json();
+  return data;
 }
