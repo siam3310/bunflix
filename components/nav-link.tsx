@@ -10,6 +10,7 @@ export default function NavLink({
   currentRoute,
   onMouseEnter,
   onClick,
+  showIcon,
 }: {
   icon?: React.ReactNode;
   linkName: string;
@@ -17,8 +18,8 @@ export default function NavLink({
   currentRoute?: boolean;
   onMouseEnter: () => void;
   onClick: () => void;
+  showIcon?: boolean;
 }) {
-
   return (
     <Link
       href={href}
@@ -32,10 +33,8 @@ export default function NavLink({
       }}
     >
       <div className="relative group py-1.5 px-3 w-fit flex gap-2 items-center">
-        {currentRoute ? icon : null}
-        <h1 className="text-nowrap" >
-          {linkName}
-        </h1>
+        {showIcon ? icon : currentRoute ? icon : null}
+        <h1 className="text-nowrap">{linkName}</h1>
       </div>
     </Link>
   );

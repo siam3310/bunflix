@@ -1,8 +1,10 @@
 "use client";
 
 import {
+  ChevronDown,
   CrownIcon,
   Home,
+  PlusCircle,
   PopcornIcon,
   Search,
   TrendingUpIcon,
@@ -13,7 +15,7 @@ import { useSearchBarFocus } from "@/context/searchContext";
 import NavLink from "./nav-link";
 import SearchInput from "./search-input";
 import Link from "next/link";
-import favicon from '@/app/favicon.ico'
+import favicon from "@/app/favicon.ico";
 import { URL } from "url";
 
 export default function Navbar() {
@@ -35,7 +37,7 @@ export default function Navbar() {
   const navLinks = [
     {
       id: 1,
-      icon: <img src='/favicon.ico' className="size-4" alt="favicon" />,
+      // icon: <img src="/favicon.ico" className="size-4" alt="favicon" />,
       linkName: "Home",
       href: "/",
       currentRoute: isHome,
@@ -77,9 +79,9 @@ export default function Navbar() {
   ];
 
   const linkref = useRef<HTMLDivElement>(null);
-
+  const [openDropdown, setOpenDropdown] = useState(true);
   return (
-    <section className="h-20 bg-black/80 w-full">
+    <section className="h-20 bg-black/80 w-full relative">
       <nav className="bg-black/30 backdrop-blur h-20 w-full px-6 fixed mb-20 z-[500] top-0 flex items-center justify-between">
         <div className="hidden group lg:flex" ref={linkref}>
           {navLinks.map((link) => (
@@ -107,7 +109,7 @@ export default function Navbar() {
           />
         </div>
         <div className="flex lg:hidden">
-          {navLinks.slice(0, 4).map((link) => (
+          {navLinks.slice(0, 2).map((link) => (
             <NavLink
               key={link.id}
               onClick={link.onClick}
@@ -118,7 +120,13 @@ export default function Navbar() {
               linkName={link.linkName}
             />
           ))}
-          
+          <button
+            onClick={() => setOpenDropdown(!openDropdown)}
+            className="flex items-center gap-2 py-1.5 px-3 relative"
+          >
+            <span>More</span>
+            <ChevronDown className="size-4" />
+          </button>
         </div>
         <div className="flex gap-4">
           <button
@@ -133,7 +141,7 @@ export default function Navbar() {
             }}
           >
             <Search color="white" className=" size-6" />
-            Search
+            <button className="hidden lg:flex">Search</button>
           </button>
           <Link
             target="_blank"
@@ -154,6 +162,25 @@ export default function Navbar() {
         </div>
       </nav>
       <SearchInput />
+      <div
+        style={{
+          opacity: openDropdown ? "100%" : 0,
+          transform: openDropdown ? "translateY(0px)" : "translateY(-30px)",
+        }}
+        className="fixed transition-all  duration-300 top-24 left-4 bg-white/30 backdrop-blur  w-fit rounded-lg flex flex-col text-start p-2 z-50 lg:hidden lg:pointer-events-none"
+      >
+        {navLinks.slice(2).map((link) => (
+          <Link
+          onClick={()=>setOpenDropdown(!openDropdown)}
+            href={link.href}
+            className="px-2.5 py-3 flex rounded-md transition-all h-fit hover:bg-black/30 gap-4 text-nowrap"
+            key={link.id}
+          >
+            {link.icon}
+            <button>{link.linkName}</button>
+          </Link>
+        ))}
+      </div>
     </section>
   );
 }

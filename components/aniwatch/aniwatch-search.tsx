@@ -17,7 +17,7 @@ export default function AniwatchSearch({
   const type = searchParams.get("type");
 
   const { data, fetchNextPage } = useInfiniteQuery({
-    queryKey: ["anime-search"],
+    queryKey: ["anime-search", { searchTerm }],
     queryFn: ({ pageParam }) =>
       fetchAnime(pageParam.hasNextPage, pageParam.pageToFetch),
     initialPageParam: {
