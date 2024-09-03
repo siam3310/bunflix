@@ -28,7 +28,7 @@ export default async function Anime() {
 async function aniwatchHomeApi() {
   try {
     const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = await response.json();
 
@@ -144,7 +144,7 @@ async function fetchAniwatchCategories(
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = (await response.json()) as aniwatchCategories;
 

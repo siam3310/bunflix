@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
         `https://api.themoviedb.org/3/search/multi?query=${q}&page=${
           page || 1
         }&api_key=${key}`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
 
       );
 

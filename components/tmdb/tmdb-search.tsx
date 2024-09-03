@@ -22,7 +22,7 @@ export default function TmdbSearch({ search }: { search: string }) {
     if (inView && data?.page !== data?.total_pages) {
       setPage((prePage) => (prePage += 1));
       fetch(`/api/search?q=${search}&type=multi&page=${page}`, {
-        next: { revalidate: 3600 },
+        
         cache: "no-store",
       })
         .then((response) => {

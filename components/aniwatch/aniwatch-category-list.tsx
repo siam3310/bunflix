@@ -41,7 +41,7 @@ export default function AniwatchCategoryList({ type }: { type: string }) {
 
     const res = await fetch(
       `/api/anime/category?category=${type}&page=${pageToFetch}`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = (await res.json()) as aniwatchSearch;
     return data;

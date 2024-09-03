@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
   }
   const response = await fetch(
     `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
-    { next: { revalidate: 3600 }, cache: "no-store" }
+    {  cache: "no-store" }
 
   );
   if (!response.ok) {

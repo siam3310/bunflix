@@ -88,7 +88,7 @@ async function fetchAniwatchSearch(searchTerm: string, page?: number | string) {
       `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=${
         page ? page : 1
       }`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = await response.json();
 

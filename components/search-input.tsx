@@ -29,7 +29,7 @@ export default function SearchInput() {
       return;
     } else {
       fetch(`/api/search?q=${debounceSearch}&type=${type}`, {
-        next: { revalidate: 3600 },
+        
         cache: "no-store",
       })
         .then((response) => {

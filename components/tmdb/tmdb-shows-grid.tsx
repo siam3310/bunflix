@@ -72,7 +72,7 @@ export default function TmdbShowGrid({
 export async function fetchData(endpoint: string) {
   try {
     const response = await fetch(endpoint, {
-      next: { revalidate: 3600 },
+      
       cache: "no-store",
     });
     const data = await response.json();

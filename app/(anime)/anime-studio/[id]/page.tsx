@@ -61,7 +61,7 @@ async function fetchAnimeStudio(studioName: string) {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/producer/${parsedStudioName}`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
 
     const data = await response.json();

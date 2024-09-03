@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   if (urlArray[urlArray.length - 1] === "m3u8/") {
     const res = await fetch(completeUrl, {
-      next: { revalidate: 3600 },
+      
       cache: "no-store",
     });
 

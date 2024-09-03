@@ -47,7 +47,7 @@ async function fetchHeroData() {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/movie/popular?api_key=${key}`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = await response.json();
     return data;

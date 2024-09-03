@@ -25,7 +25,7 @@ export default async function AniwatchPlayer({
     let data;
     if (englishSub.length > 0) {
       const res = await fetch(englishSub[0].file, {
-        next: { revalidate: 3600 },
+        
         cache: "no-store",
       });
       data = await res.text();
@@ -53,7 +53,7 @@ export default async function AniwatchPlayer({
     let data;
     if (englishSub) {
       const res = await fetch(englishSub[0].file, {
-        next: { revalidate: 3600 },
+        
         cache: "no-store",
       });
       data = await res.text();
@@ -82,7 +82,7 @@ async function fetchAniwatchEpisodeSrc(
       }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
         server ? server : "vidstreaming"
       }`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = await response.json();
     return data;
@@ -103,7 +103,7 @@ async function fetchAniwatchEpisodeSrcDub(
       }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
         server ? server : "vidstreaming"
       }&category=dub`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = await response.json();
 
@@ -117,7 +117,7 @@ async function fetchAniwatchEpisodeServer(episodeId: string, episode: string) {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`,
-      { next: { revalidate: 3600 }, cache: "no-store" }
+      {  cache: "no-store" }
     );
     const data = await response.json();
 
