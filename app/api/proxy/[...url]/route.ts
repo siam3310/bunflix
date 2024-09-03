@@ -12,7 +12,10 @@ export async function GET(req: NextRequest) {
   const urlArray = completeUrl.split(".");
 
   if (urlArray[urlArray.length - 1] === "m3u8/") {
-    const res = await fetch(completeUrl);
+    const res = await fetch(completeUrl, {
+      next: { revalidate: 3600 },
+      cache: "no-store",
+    });
 
     if (!res.ok) {
       return Response.json(

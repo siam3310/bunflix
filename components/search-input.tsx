@@ -28,7 +28,10 @@ export default function SearchInput() {
       setTerm("");
       return;
     } else {
-      fetch(`/api/search?q=${debounceSearch}&type=${type}`)
+      fetch(`/api/search?q=${debounceSearch}&type=${type}`, {
+        next: { revalidate: 3600 },
+        cache: "no-store",
+      })
         .then((response) => {
           if (!response.ok) {
             toast.error("Error please try again");
@@ -90,7 +93,7 @@ export default function SearchInput() {
         bottom: "0px",
         left: "0px",
         transform: isSearchOpen ? "translateY(0px)" : "translateY(6000px)",
-        visibility:isSearchOpen?"visible":"hidden"
+        visibility: isSearchOpen ? "visible" : "hidden",
       }}
       className="flex w-full flex-col duration-500 fixed z-50  h-fit transition-all px-2 md:px-4 items-center justify-center"
     >

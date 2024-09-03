@@ -22,15 +22,9 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
           <h1 className=" my-2 text-4xl font-semibold">{data.title}</h1>
           <p className=" leading-6 text-[18px]">{data.overview}</p>
           <div className=" my-4 flex gap-2 opacity-70">
-            <p className=" flex gap-2">
-              {data.status}
-            </p>
-            <p className=" flex gap-2">
-              {data.popularity}
-            </p>
-            <p className=" flex gap-2">
-              {data.release_date}
-            </p>
+            <p className=" flex gap-2">{data.status}</p>
+            <p className=" flex gap-2">{data.popularity}</p>
+            <p className=" flex gap-2">{data.release_date}</p>
           </div>
           <h1 className="text-xl font-semibold">Categories</h1>
           <div className=" flex gap-2 opacity-70">
@@ -49,9 +43,7 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
                     alt={e.name}
                   />
                 )}
-                <p className="gap-2 flex">
-                  {e.name}
-                </p>
+                <p className="gap-2 flex">{e.name}</p>
               </div>
             ))}
           </div>
@@ -77,7 +69,8 @@ async function fetchTmdbInfo(type: string, id: number | string) {
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
+      `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
     );
 
     const data = await response.json();

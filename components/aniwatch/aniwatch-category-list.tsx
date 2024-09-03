@@ -8,7 +8,7 @@ import { useInView } from "react-intersection-observer";
 
 export default function AniwatchCategoryList({ type }: { type: string }) {
   const { data, fetchNextPage } = useInfiniteQuery({
-    queryKey: ["anime-category",{type}],
+    queryKey: ["anime-category", { type }],
     queryFn: ({ pageParam }) =>
       fetchAniwatchCategories(pageParam.hasNextPage, pageParam.pageToFetch),
     initialPageParam: {
@@ -40,7 +40,8 @@ export default function AniwatchCategoryList({ type }: { type: string }) {
     }
 
     const res = await fetch(
-      `/api/anime/category?category=${type}&page=${pageToFetch}`
+      `/api/anime/category?category=${type}&page=${pageToFetch}`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
     );
     const data = (await res.json()) as aniwatchSearch;
     return data;

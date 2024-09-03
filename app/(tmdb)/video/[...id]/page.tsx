@@ -123,7 +123,8 @@ async function fetchTmdbInfo(type: string, id: number | string) {
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`
+      `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
     );
 
     const data = await response.json();
@@ -142,7 +143,9 @@ async function fetchSeasonData(
 
   try {
     const response = await fetch(
-      `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`
+      `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
+
     );
 
     const data = await response.json();

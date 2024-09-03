@@ -22,10 +22,12 @@ export default async function AniwatchPlayer({
 
     const englishSub = dub.tracks?.filter((sub) => sub.label === "English");
 
-    
     let data;
     if (englishSub.length > 0) {
-      const res = await fetch(englishSub[0].file);
+      const res = await fetch(englishSub[0].file, {
+        next: { revalidate: 3600 },
+        cache: "no-store",
+      });
       data = await res.text();
     }
     const escapedSub = data?.replace(htmlTagPattern, "");
@@ -50,7 +52,10 @@ export default async function AniwatchPlayer({
 
     let data;
     if (englishSub) {
-      const res = await fetch(englishSub[0].file);
+      const res = await fetch(englishSub[0].file, {
+        next: { revalidate: 3600 },
+        cache: "no-store",
+      });
       data = await res.text();
     }
     const escapedSub = data?.replace(htmlTagPattern, "");
@@ -76,7 +81,8 @@ async function fetchAniwatchEpisodeSrc(
         process.env.ANIWATCH_API
       }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
         server ? server : "vidstreaming"
-      }`
+      }`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
     );
     const data = await response.json();
     return data;
@@ -96,7 +102,8 @@ async function fetchAniwatchEpisodeSrcDub(
         process.env.ANIWATCH_API
       }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
         server ? server : "vidstreaming"
-      }&category=dub`
+      }&category=dub`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
     );
     const data = await response.json();
 
@@ -109,7 +116,8 @@ async function fetchAniwatchEpisodeSrcDub(
 async function fetchAniwatchEpisodeServer(episodeId: string, episode: string) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`
+      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
     );
     const data = await response.json();
 

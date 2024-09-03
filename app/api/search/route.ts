@@ -14,7 +14,9 @@ export async function GET(request: NextRequest) {
       const response = await fetch(
         `https://api.themoviedb.org/3/search/multi?query=${q}&page=${
           page || 1
-        }&api_key=${key}`
+        }&api_key=${key}`,
+      { next: { revalidate: 3600 }, cache: "no-store" }
+
       );
 
       const data = await response.json();

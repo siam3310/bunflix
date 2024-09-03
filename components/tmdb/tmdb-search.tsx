@@ -21,7 +21,10 @@ export default function TmdbSearch({ search }: { search: string }) {
   useEffect(() => {
     if (inView && data?.page !== data?.total_pages) {
       setPage((prePage) => (prePage += 1));
-      fetch(`/api/search?q=${search}&type=multi&page=${page}`)
+      fetch(`/api/search?q=${search}&type=multi&page=${page}`, {
+        next: { revalidate: 3600 },
+        cache: "no-store",
+      })
         .then((response) => {
           if (!response.ok) {
             toast.error("Error please try again");
@@ -31,7 +34,7 @@ export default function TmdbSearch({ search }: { search: string }) {
         .then((res) => {
           setData(res);
           if (results) {
-            const combinedResults = [...results,...res?.results];
+            const combinedResults = [...results, ...res?.results];
             setResults(combinedResults);
           } else {
             setResults(res.results);

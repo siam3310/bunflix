@@ -12,7 +12,9 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: "category param is required" });
   }
   const response = await fetch(
-    `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`
+    `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
+    { next: { revalidate: 3600 }, cache: "no-store" }
+
   );
   if (!response.ok) {
     return Response.json({ error: "failed to fetch category info" });
