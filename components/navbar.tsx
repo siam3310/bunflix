@@ -79,7 +79,7 @@ export default function Navbar() {
   ];
 
   const linkref = useRef<HTMLDivElement>(null);
-  const [openDropdown, setOpenDropdown] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState(false);
   return (
     <section className="h-20 bg-black/80 w-full relative">
       <nav className="bg-black/30 backdrop-blur h-20 w-full px-6 fixed mb-20 z-[500] top-0 flex items-center justify-between">
