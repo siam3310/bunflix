@@ -132,6 +132,7 @@ type aniwatchInfo = {
   recommendedAnimes: {
     id: string;
     name: string;
+    jname?: string;
     poster: string;
     duration: string;
     type: string;
@@ -176,6 +177,7 @@ type Anime = {
   poster: string;
   duration: string;
   type: string;
+  jname?: string;
   rating: string;
   episodes: { sub: number; dub: number };
 };

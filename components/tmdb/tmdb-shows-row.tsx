@@ -1,4 +1,5 @@
 import MovieItem from "@/components/movie-item";
+import Link from "next/link";
 
 export default async function TmdbShowRow({
   title,
@@ -12,11 +13,17 @@ export default async function TmdbShowRow({
   const results = await fetchData(endpoint);
 
   return (
-    <div className=" mb-4">
+    <div className=" mb-6">
       <div>
-        <h1 className="font-bold text-3xl lg:text-5xl p-4 capitalize">
-          {decodeURIComponent(title)}
-        </h1>
+        <Link
+          href={`/categories/${title
+            .charAt(0)
+            .toLocaleLowerCase()
+            .concat(title.slice(1))}/movie/1`}
+          className="font-bold text-3xl lg:text-5xl  capitalize hover:underline "
+        >
+          <button className="p-4 text-start">{decodeURIComponent(title)}</button>
+        </Link>
       </div>
       <div className=" w-full overflow-x-scroll scrollbar-hide ">
         <div className="flex w-fit px-2 ">

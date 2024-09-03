@@ -7,10 +7,7 @@ export default async function AniwatchPlayer({
   lang,
 }: {
   episodeId: string;
-  data: aniwatchInfo;
-  episodeData: aniwatchEpisodeData;
   ep: string;
-  episode: number;
   lang: "english" | "japanesse";
 }) {
   const htmlTagPattern = /<[^>]+>/g;

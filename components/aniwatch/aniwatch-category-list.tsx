@@ -3,10 +3,10 @@
 import { MicIcon, CaptionsIcon } from "lucide-react";
 import Link from "next/link";
 
-export default function AniwatchCategoryList({ anime }: { anime: Anime[] }) {
+export default function AniwatchCategoryList({ type }: { type: string }) {
   return (
     <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-      {anime?.map((episode) => (
+      {/* {anime?.map((episode) => (
         <Link
           key={episode.id}
           href={`/anime/${episode.id}`}
@@ -33,7 +33,23 @@ export default function AniwatchCategoryList({ anime }: { anime: Anime[] }) {
             </div>
           </div>
         </Link>
-      ))}
+      ))} */}
     </div>
   );
+}
+
+async function fetchAniwatchCategories(
+  category: aniwatchCategoriesName,
+  page?: number | string
+) {
+  try {
+    const response = await fetch(
+      `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`
+    );
+    const data = await response.json() as aniwatchCategories
+
+    return data;
+  } catch (error) {
+    throw new Error(`Search failed in Categories`);
+  }
 }

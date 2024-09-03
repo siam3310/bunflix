@@ -33,7 +33,7 @@ export async function TmdbTvInfo({ id }: { id: number }) {
             ))}
           </div>
           <h1 className="text-xl font-semibold mt-4">Production Companies</h1>
-          <div className=" xl:flex gap-2 opacity-70">
+          <div className=" flex-col flex gap-2 opacity-70">
             {data.production_companies.map((e) => (
               <div key={e.id} className=" flex gap-2 items-center ">
                 {e.logo_path && (
@@ -45,7 +45,6 @@ export async function TmdbTvInfo({ id }: { id: number }) {
                 )}
                 <p className="gap-2 flex">
                   {e.name}
-                  <span className="xl:block hidden">|</span>
                 </p>
               </div>
             ))}

@@ -47,10 +47,7 @@ export default async function Anime({
     <div className="bg-black/60 min-h-screen space-y-6 pb-24">
       {searchParams.ep ? (
         <AniwatchPlayer
-          data={data}
-          episodeData={episode}
           lang={searchParams.lang}
-          episode={searchParams.episode}
           episodeId={params.id}
           ep={searchParams.ep}
         />

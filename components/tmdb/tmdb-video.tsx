@@ -1,7 +1,7 @@
 "use client";
 
 import { createImageUrl } from "@/utils/create-image-url";
-import { Home, Info, Play, Star } from "lucide-react";
+import { Info } from "lucide-react";
 import Link from "next/link";
 
 export function TmdbVideo({
@@ -38,8 +38,8 @@ export function TmdbVideo({
 
       <div>
         <div className=" p-4">
-          <div className="p-4 bg-black/20 rounded-xl flex-col  xl:flex-row flex">
-            <div className={` ${seasonData ? "xl:w-[400px]" : "w-full"} `}>
+          <div className="p-4  rounded-xl flex-col  xl:flex-row flex">
+            <div className={` ${seasonData ? "xl:w-[800px]" : "w-full"} `}>
               <h1 className="text-5xl font-semibold lg:mb-4">
                 {data.title ? data.title : data.name}
               </h1>
@@ -145,49 +145,29 @@ export function TmdbVideo({
               </div>
             </div>
             {seasonData && (
-              <div className="xl:pl-4 grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 xl:w-5/6 gap-4 rounded-lg overflow-hidden">
+              <div className="flex flex-col gap-2 w-full max-h-[60vh] overflow-y-scroll">
                 {seasonData.episodes.map((e) => (
-                  <div
-                    className=" bg-gray-800 p-2 flex flex-col justify-between"
+                  <Link
+                    href={`/video/${type}/${id}?season=${e.season_number}&episode=${e.episode_number}`}
                     key={e.id}
+                    className="flex gap-2 w-full bg-black/10 hover:bg-black/40 rounded-md p-2"
                   >
-                    <div>
-                      <img
-                        className=" rounded-sm"
-                        src={createImageUrl(e.still_path, "w500")}
-                        alt={e.name}
-                      />
-                      <div className="mt-2 flex flex-col gap-2">
-                        <h1 className=" text-2xl font-semibold">{e.name}</h1>
+                    <img
+                      className=" rounded-sm  h-full w-[200px]"
+                      src={createImageUrl(e.still_path, "w500")}
+                      alt={e.name}
+                    />
+                    <div className=" flex flex-col  gap-2">
+                      <h1 className=" text-2xl font-semibold">
+                        {e.episode_number}. {e.name}
+                      </h1>
 
-                        <p className=" leading-tight text-md opacity-50">
-                          {e.overview}
-                        </p>
-                        <div className="opacity-50">
-                          <p>Avg. Runtime : {e.runtime} Minutes</p>
-                          <p>Episode : {e.episode_number}</p>
-                        </div>
-                      </div>
+                      <p className=" leading-tight text-md opacity-50">
+                        {e.overview}
+                      </p>
+                      <p>Runtime : {e.runtime}M</p>
                     </div>
-                    <div className=" flex gap-2">
-                      <Link
-                        href={`/video/${type}/${id}?season=${e.season_number}&episode=${e.episode_number}`}
-                        className=" px-2 py-1 font-semibold rounded-md bg-red-600 w-full justify-center  xl:w-fit  flex xl:justify-center gap-1 items-center"
-                      >
-                        <span>
-                          <Play fill="white" size={15} />
-                        </span>
-                        <p>Play</p>
-                      </Link>
-                      <Link
-                        target="_blank"
-                        href={`/info/${type || data.media_type}/${data.id}`}
-                        className=" px-2 py-1 font-semibold rounded-full border w-full justify-center  xl:w-fit  flex xl:justify-center gap-1 items-center"
-                      >
-                        <Info size={15} />
-                      </Link>
-                    </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

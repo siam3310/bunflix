@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-
 :root,
 html,
-body{
+body {
   color: white;
 }
 
@@ -15,12 +14,12 @@ body{
 
 ::-webkit-scrollbar-track {
   background: #888;
-  border-radius:  0 10px 10px 0px;
+  border-radius: 0 10px 10px 0px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: #373737;
-  border-radius:  0 10px 10px 0px;
+  border-radius: 0 10px 10px 0px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -61,13 +60,13 @@ body{
   }
 
   .dark {
-    --background: 0 0% 100%
+    --background: 0 0% 100%;
     --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%
+    --card: 0 0% 100%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%
+    --popover: 0 0% 100%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 210 40% 98%;
@@ -100,7 +99,6 @@ body{
   }
 }
 
-
 @layer base {
   video::-webkit-media-controls {
     display: none;
@@ -127,25 +125,35 @@ body{
   }
 }
 
-
 @keyframes jumpForward {
-  0%, 100% {
-      opacity: 0;
-      transform: translateX(0);
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
   }
   50% {
-      opacity: 1;
-      transform: translateX(50px);
+    opacity: 1;
+    transform: translateX(50px);
   }
 }
 
 @keyframes jumpBackward {
-  0%, 100% {
-      opacity: 0;
-      transform: translateX(0);
+  0%,
+  100% {
+    opacity: 0;
+    transform: translateX(0);
   }
   50% {
-      opacity: 1;
-      transform: translateX(-50px);
+    opacity: 1;
+    transform: translateX(-50px);
+  }
+}
+
+@keyframes timer {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
   }
 }

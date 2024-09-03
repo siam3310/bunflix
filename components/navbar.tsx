@@ -7,11 +7,14 @@ import {
   Search,
   TrendingUpIcon,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import SearchInput from "./search-input";
+import { ForwardedRef, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import NavLink from "./nav-link";
 import { useSearchBarFocus } from "@/context/searchContext";
+import NavLink from "./nav-link";
+import SearchInput from "./search-input";
+import Link from "next/link";
+import favicon from '@/app/favicon.ico'
+import { URL } from "url";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -23,9 +26,7 @@ export default function Navbar() {
   const isTrending =
     pathname.split("/")[1] === "categories" &&
     pathname.split("/")[2] === "trending%20Movies";
-  const isTopRated =
-    pathname.split("/")[1] === "categories" &&
-    pathname.split("/")[2] === "top%20Rated%20Movies";
+  const isMostFavoriteAnime = pathname.split("/")[1] === "anime-categories";
 
   const [navIndex, setNavIndex] = useState(2);
 
@@ -34,7 +35,7 @@ export default function Navbar() {
   const navLinks = [
     {
       id: 1,
-      icon: <Home color="white" className=" size-6" />,
+      icon: <img src='/favicon.ico' className="size-4" alt="favicon" />,
       linkName: "Home",
       href: "/",
       currentRoute: isHome,
@@ -44,7 +45,7 @@ export default function Navbar() {
     {
       id: 2,
       icon: (
-        <svg className=" size-6 fill-white">
+        <svg className=" size-4 fill-white">
           <title>AniList</title>
           <path d="M24 17.53v2.421c0 .71-.391 1.101-1.1 1.101h-5l-.057-.165L11.84 3.736c.106-.502.46-.788 1.053-.788h2.422c.71 0 1.1.391 1.1 1.1v12.38H22.9c.71 0 1.1.392 1.1 1.101zM11.034 2.947l6.337 18.104h-4.918l-1.052-3.131H6.019l-1.077 3.131H0L6.361 2.948h4.673zm-.66 10.96-1.69-5.014-1.541 5.015h3.23z" />
         </svg>
@@ -57,7 +58,7 @@ export default function Navbar() {
     },
     {
       id: 3,
-      icon: <PopcornIcon color="white" className=" size-6" />,
+      icon: <PopcornIcon color="white" className=" size-4" />,
       linkName: "Popular Movies",
       href: "/categories/popular%20Movies/movie/1",
       currentRoute: isPopular,
@@ -65,39 +66,22 @@ export default function Navbar() {
       onClick: () => setNavIndex(2),
     },
     {
-      id: 4,
-      icon: <TrendingUpIcon color="white" className=" size-6" />,
-      linkName: "Trending Movies",
-      href: "/categories/trending%20Movies/movie/1",
-      currentRoute: isTrending,
+      id: 5,
+      icon: <CrownIcon color="white" className=" size-4" />,
+      linkName: "Most Favorite Anime",
+      href: "/anime-categories?type=most-favorite",
+      currentRoute: isMostFavoriteAnime,
       onMouseEnter: () => setNavIndex(3),
       onClick: () => setNavIndex(3),
     },
-    {
-      id: 5,
-      icon: <CrownIcon color="white" className=" size-6" />,
-      linkName: "Top Rated Movies",
-      href: "/categories/top%20Rated%20Movies/movie/1",
-      currentRoute: isTopRated,
-      onMouseEnter: () => setNavIndex(4),
-      onClick: () => setNavIndex(4),
-    },
   ];
 
-  const [isSearchHovered, setisSearchHovered] = useState(false);
-
+  const linkref = useRef<HTMLDivElement>(null);
 
   return (
-    <>
-      <nav className="outline-none group focus:outline-none z-20 fixed bottom-4 left-1/2 transform -translate-x-1/2 ">
-        <div        
-          className="flex gap-3 items-center w-fit relative justify-evenly py-3 px-4  rounded-full bg-white/30 border border-white/40 backdrop-blur-sm"
-        >
-          <div
-            style={{ translate: `${52 * navIndex}px` }}
-            className="group-hover:bg-white duration-&lsqb;5000ms&rsqb; h-2 w-[40px] bottom-0 left-4 absolute transition-all  ease-in-out"
-          />
-
+    <section className="h-20 bg-black/80 w-full">
+      <nav className="bg-black/30 backdrop-blur h-20 w-full px-6 fixed mb-20 z-[500] top-0 flex items-center justify-between">
+        <div className="hidden group lg:flex" ref={linkref}>
           {navLinks.map((link) => (
             <NavLink
               key={link.id}
@@ -109,40 +93,67 @@ export default function Navbar() {
               linkName={link.linkName}
             />
           ))}
-
+          <div
+            style={{
+              translate: `${
+                (linkref.current?.children[navIndex]?.getBoundingClientRect()
+                  .left ?? 0) - 16
+              }px`,
+              width:
+                linkref.current?.children[navIndex].getBoundingClientRect()
+                  .width,
+            }}
+            className="group-hover:bg-white h-2 bottom-2 left-4 absolute transition-all  ease-in-out"
+          />
+        </div>
+        <div className="flex lg:hidden">
+          {navLinks.slice(0, 4).map((link) => (
+            <NavLink
+              key={link.id}
+              onClick={link.onClick}
+              onMouseEnter={link.onMouseEnter}
+              currentRoute={link.currentRoute}
+              href={link.href}
+              icon={link.icon}
+              linkName={link.linkName}
+            />
+          ))}
+          
+        </div>
+        <div className="flex gap-4">
           <button
             onClick={() => {
               setIsSearchOpen(!isSearchOpen);
             }}
-            onMouseEnter={() => {
-              setisSearchHovered(true);
-            }}
-            onMouseLeave={() => setisSearchHovered(false)}
-            className="outline-none focus:outline-none group"
+            className=" flex items-center gap-2 py-1.5 px-3"
             style={{
               backgroundColor:
                 pathname.split("/")[1] === "search" ? "#dc2626" : "",
               borderRadius: "50px",
             }}
           >
-            <div className="relative group p-2 w-fit">
-              <Search color="white" className=" size-6" />
-              <h1
-                className={` absolute  bottom-0 transform -translate-x-1/2 left-1/2 text-nowrap 
-                ${
-                  isSearchHovered
-                    ? "-translate-y-14 text-black scale-100 bg-white"
-                    : "scale-0 text-transparent"
-                }
-                  delay-200  transition-all   px-2  rounded-md`}
-              >
-                Search
-              </h1>
-            </div>
+            <Search color="white" className=" size-6" />
+            Search
           </button>
+          <Link
+            target="_blank"
+            href="https://github.com/shishantbiswas/bunflix"
+            className="flex items-center gap-2 text-nowrap"
+          >
+            <svg
+              className=" size-6 fill-white"
+              role="img"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>GitHub</title>
+              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+            </svg>
+            <button className="hidden lg:flex">Source Code</button>
+          </Link>
         </div>
       </nav>
       <SearchInput />
-    </>
+    </section>
   );
 }

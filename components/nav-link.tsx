@@ -11,40 +11,29 @@ export default function NavLink({
   onMouseEnter,
   onClick,
 }: {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   linkName: string;
   href: string;
-  currentRoute: boolean;
+  currentRoute?: boolean;
   onMouseEnter: () => void;
   onClick: () => void;
 }) {
-  const [ishovered, setishovered] = useState(false);
 
   return (
     <Link
       href={href}
       onMouseEnter={() => {
         onMouseEnter();
-        setishovered(true);
       }}
-      onMouseLeave={() => setishovered(false)}
       onClick={onClick}
       style={{
         backgroundColor: currentRoute ? "#dc2626" : "",
-        borderRadius: "50px",
+        borderRadius: "10px",
       }}
     >
-      <div className="relative group p-2 w-fit ">
-        {icon}
-        <h1
-          className={` absolute  bottom-0 transform -translate-x-1/2 left-1/2 text-nowrap 
-            ${
-              ishovered
-                ? "-translate-y-14 text-black scale-100 bg-white"
-                : "scale-0 text-transparent"
-            }
-              delay-200  transition-all   px-2  rounded-md`}
-        >
+      <div className="relative group py-1.5 px-3 w-fit flex gap-2 items-center">
+        {currentRoute ? icon : null}
+        <h1 className="text-nowrap" >
           {linkName}
         </h1>
       </div>

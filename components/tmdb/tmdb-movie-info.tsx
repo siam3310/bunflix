@@ -21,15 +21,15 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
         <div className=" lg:mt-0 mt-6 lg:px-4">
           <h1 className=" my-2 text-4xl font-semibold">{data.title}</h1>
           <p className=" leading-6 text-[18px]">{data.overview}</p>
-          <div className=" my-4 xl:flex gap-2 opacity-70">
+          <div className=" my-4 flex gap-2 opacity-70">
             <p className=" flex gap-2">
-              {data.status} <span className="xl:block hidden">|</span>
+              {data.status}
             </p>
             <p className=" flex gap-2">
-              {data.popularity} <span className="xl:block hidden">|</span>
+              {data.popularity}
             </p>
             <p className=" flex gap-2">
-              {data.release_date} <span className="xl:block hidden">|</span>
+              {data.release_date}
             </p>
           </div>
           <h1 className="text-xl font-semibold">Categories</h1>
@@ -39,7 +39,7 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
             ))}
           </div>
           <h1 className="text-xl font-semibold mt-4">Production Companies</h1>
-          <div className=" xl:flex gap-2 opacity-70">
+          <div className="flex flex-col gap-2 opacity-70">
             {data.production_companies.map((e) => (
               <div key={e.id} className=" flex gap-2 items-center ">
                 {e.logo_path && (
@@ -51,7 +51,6 @@ export async function TmdbMovieInfo({ id }: { id: number }) {
                 )}
                 <p className="gap-2 flex">
                   {e.name}
-                  <span className="xl:block hidden">|</span>
                 </p>
               </div>
             ))}

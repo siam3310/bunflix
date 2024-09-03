@@ -12,11 +12,11 @@ import { useState } from "react";
 export default function MovieItem({
   type,
   movie,
-  size
+  size,
 }: {
   type: string;
   movie: MovieResults;
-  size?:String
+  size?: String;
 }) {
   const {
     id,
@@ -39,12 +39,18 @@ export default function MovieItem({
 
   return (
     <div
-      style={{ display: media_type === "person" || media_type === "collection" ? "none" : "flex" }}
-      className={`relative inline-block text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 ${size ? size : "h-[300px] w-[200px]"} `}
+      style={{
+        display:
+          media_type === "person" || media_type === "collection"
+            ? "none"
+            : "flex",
+      }}
+      className={`relative inline-block focus:outline text-white rounded-lg overflow-hidden mx-2 transition-all duration-200 ${
+        size ? size : "h-[300px] w-[200px]"
+      } `}
     >
       {!loaded && (
-        <div className="absolute top-0 size-full animate-pulse bg-gray-400">
-        </div>
+        <div className="absolute top-0 size-full animate-pulse bg-gray-400"></div>
       )}
       {!error ? (
         <img
@@ -68,25 +74,24 @@ export default function MovieItem({
           <span className="text-sm leading-none text-center">Image Error</span>
         </div>
       )}
-      <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full focus:hover:bg-red-700 transition-all bg-black/80 backdrop-blur-md opacity-0 hover:opacity-100  p-3 group">
+      <div className="absolute h-full flex items-center justify-between flex-col top-0 left-0 w-full focus:hover:bg-red-700 transition-all bg-black/80 backdrop-blur-md opacity-0  focus-within:opacity-100 hover:opacity-100  p-3 group">
         <div>
           <p
-            className={` whitespace-normal font-semibold mb-2 leading-[12px] transition-all duration-&lsqb;300ms&rsqb;  group-hover:leading-[22px] text-md md:text-xl `}
+            className={` whitespace-normal font-semibold mb-2 leading-[12px] transition-all  group-hover:leading-[22px] text-md md:text-xl `}
           >
             {title ? title : name}
           </p>
-          <div className=" flex gap-2">
-            <p className="text-[13px] md:text-md opacity-10 text-nowrap  duration-500 group-hover:opacity-70 ">
+          <div className=" flex gap-2 opacity-70">
+            <p className="text-[13px] md:text-md text-nowrap  duration-500  ">
               {release_date ? release_date : first_air_date}
             </p>
-            <p className=" opacity-70">|</p>
-            <p className="text-[13px] capitalize md:text-md opacity-10  duration-500 group-hover:opacity-70 ">
+            <p className="text-[13px] capitalize md:text-md   duration-500  focus-within:opacity-70">
               {media_type}
             </p>
           </div>
           <p
-            className=" whitespace-normal line-clamp-2  duration-500 group-hover:opacity-70 
-          text-[15px] pt-1 opacity-10"
+            className=" whitespace-normal line-clamp-2  duration-500  
+          text-[15px] pt-1 opacity-70"
           >
             {overview ? overview : synopsis}
           </p>
