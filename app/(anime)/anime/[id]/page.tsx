@@ -47,6 +47,7 @@ export default async function Anime({
     <div className="bg-black/60 min-h-screen space-y-6 pb-24">
       {searchParams.ep ? (
         <AniwatchPlayer
+        data={data}
           lang={searchParams.lang}
           episodeId={params.id}
           ep={searchParams.ep}
@@ -77,7 +78,7 @@ async function fetchAniwatchEpisode(seasonId: string) {
 
     return data;
   } catch (error) {
-    throw new Error(`Fetch failed for SeasonID`);
+    throw new Error(`Fetch failed for Season`);
   }
 }
 

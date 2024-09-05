@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useRef } from "react";
 import Artplayer from "artplayer";
-import Hls from "hls.js";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
+import Hls from "hls.js/dist/hls.light.js";
 
 export default function Player({
   src,
@@ -20,7 +20,6 @@ export default function Player({
   }[];
   englishSub?: string;
 }) {
-  
   const artRef = useRef<HTMLDivElement>(null);
   const sub = new Blob([englishSub || ""], { type: "text/vtt" });
 
@@ -94,7 +93,11 @@ export default function Player({
         m3u8: function playM3u8(video, url, art) {
           if (Hls.isSupported()) {
             if (art.hls) art.hls.destroy();
-            const hls = new Hls();
+            const hls = new Hls({
+              fragLoadingMaxRetry: 20,
+              fragLoadingRetryDelay: 2000,
+              fragLoadingMaxRetryTimeout: 15000,
+            });
             hls.loadSource(url);
             hls.attachMedia(video);
             art.hls = hls;

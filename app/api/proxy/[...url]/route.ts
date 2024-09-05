@@ -9,11 +9,10 @@ export async function GET(req: NextRequest) {
     .map((part) => (part === "https:" ? part + "//" : part + "/"))
     .join("");
 
-  const urlArray = completeUrl.split(".");
+  const masterManifest = completeUrl.split("/")[completeUrl.split("/").length - 2];
 
-  if (urlArray[urlArray.length - 1] === "m3u8/") {
+  if (masterManifest === "master.m3u8") {
     const res = await fetch(completeUrl, {
-      
       cache: "no-store",
     });
 

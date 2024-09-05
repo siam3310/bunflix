@@ -4,10 +4,12 @@ import Player from "./art-player";
 export default async function AniwatchPlayer({
   episodeId,
   ep,
+  data,
   lang,
 }: {
   episodeId: string;
   ep: string;
+  data: aniwatchInfo;
   lang: "english" | "japanesse";
 }) {
   const htmlTagPattern = /<[^>]+>/g;
@@ -22,15 +24,14 @@ export default async function AniwatchPlayer({
 
     const englishSub = dub.tracks?.filter((sub) => sub.label === "English");
 
-    let data;
+    let englishSubData;
     if (englishSub.length > 0) {
       const res = await fetch(englishSub[0].file, {
-        
         cache: "no-store",
       });
-      data = await res.text();
+      englishSubData = await res.text();
     }
-    const escapedSub = data?.replace(htmlTagPattern, "");
+    const escapedSub = englishSubData?.replace(htmlTagPattern, "");
 
     return (
       <Player
@@ -50,16 +51,16 @@ export default async function AniwatchPlayer({
 
     const englishSub = sub.tracks?.filter((sub) => sub.label === "English");
 
-    let data;
+    let englishSubData;
     if (englishSub) {
       const res = await fetch(englishSub[0].file, {
-        
         cache: "no-store",
       });
-      data = await res.text();
+      englishSubData = await res.text();
     }
-    const escapedSub = data?.replace(htmlTagPattern, "");
+    const escapedSub = englishSubData?.replace(htmlTagPattern, "");
 
+    
     return (
       <Player
         src={`/api/proxy/${sub?.sources[0]?.url}`}
@@ -82,7 +83,7 @@ async function fetchAniwatchEpisodeSrc(
       }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
         server ? server : "vidstreaming"
       }`,
-      {  cache: "no-store" }
+      { cache: "no-store" }
     );
     const data = await response.json();
     return data;
@@ -103,7 +104,7 @@ async function fetchAniwatchEpisodeSrcDub(
       }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
         server ? server : "vidstreaming"
       }&category=dub`,
-      {  cache: "no-store" }
+      { cache: "no-store" }
     );
     const data = await response.json();
 
@@ -117,7 +118,7 @@ async function fetchAniwatchEpisodeServer(episodeId: string, episode: string) {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`,
-      {  cache: "no-store" }
+      { cache: "no-store" }
     );
     const data = await response.json();
 
