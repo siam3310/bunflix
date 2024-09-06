@@ -4,7 +4,6 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
-import { toast } from "sonner";
 
 export default function EpisodeSelector({
   currentEpisode,
@@ -14,7 +13,7 @@ export default function EpisodeSelector({
   lang,
 }: {
   currentEpisode: string;
-  currentEpisodeNum:string;
+  currentEpisodeNum: string;
   data: aniwatchInfo;
   episode: aniwatchEpisodeData;
   lang: "english" | "japanesse";
@@ -22,9 +21,12 @@ export default function EpisodeSelector({
   const [audioToogle, setAudioToogle] = useState<"english" | "japanesse">(
     lang ? lang : "japanesse"
   );
+  const [firstRender, setFirstRender] = useState(true);
+
+  useEffect(() => setFirstRender(false), []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 lg:p-2 lg:pl-0 lg:w-1/4">
       <div className="flex items-center py-4 space-x-2 ">
         <Label htmlFor="audio">English</Label>
         <Switch
@@ -39,7 +41,9 @@ export default function EpisodeSelector({
       <div className="flex items-center mb-6 text-sm">
         <ul
           ref={(el) => {
-            el?.scrollBy(0, 64 * Number(currentEpisodeNum?currentEpisodeNum : 1));
+            if(firstRender){
+              el?.scrollBy(0, 64 * (Number(currentEpisodeNum) - 1));
+            }
           }}
           className="max-h-[70vh] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg"
         >
@@ -65,7 +69,8 @@ export default function EpisodeSelector({
                 }
                 style={{
                   backgroundColor:
-                    Number(currentEpisodeNum) == Number(episode.number) && audioToogle === lang
+                    Number(currentEpisodeNum) == Number(episode.number) &&
+                    audioToogle === lang
                       ? "#b91c1c"
                       : index % 2 === 0
                       ? "#334155"

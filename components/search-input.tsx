@@ -174,7 +174,7 @@ export default function SearchInput() {
           </button>
         </form>
 
-        <div className="flex flex-wrap max-h-64 overflow-x-hidden overflow-y-scroll items-center gap-2 my-2">
+        <div className="flex flex-wrap text-sm max-h-64 overflow-x-hidden overflow-y-scroll items-center gap-2 my-2">
           {history && history.length > 0 && (
             <>
               <button
@@ -197,7 +197,7 @@ export default function SearchInput() {
             <Link
               href={`/search/${value.type}/${encodeURIComponent(value.term)}`}
               key={index}
-              className="bg-gray-100 text-nowrap text-gray-900 w-fit py-1 px-2 rounded-lg flex items-center justify-between cursor-pointer hover:bg-gray-300 "
+              className="bg-gray-100  text-nowrap text-gray-900 w-fit py-1 px-2 rounded-md flex items-center justify-between cursor-pointer hover:bg-gray-300 "
             >
               {value.term}
             </Link>
