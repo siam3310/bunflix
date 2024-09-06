@@ -2,85 +2,47 @@
 import Player from "./art-player";
 
 export default async function AniwatchPlayer({
-  episodeId,
+  // episodeId,
   ep,
   data,
   lang,
 }: {
-  episodeId: string;
+  // episodeId: string;
   ep: string;
   data: aniwatchInfo;
   lang: "english" | "japanesse";
 }) {
-  const htmlTagPattern = /<[^>]+>/g;
+  const escapedEpisode = ep?.replace("&", "?");
 
   if (lang === "english") {
-    const server = await fetchAniwatchEpisodeServer(episodeId, ep);
+    const server = await fetchAniwatchEpisodeServer(escapedEpisode);
+
     const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
-      episodeId,
-      ep,
+      escapedEpisode,
       server.dub[0].serverName
     );
 
-    const englishSub = dub.tracks?.filter((sub) => sub.label === "English");
-
-    let englishSubData;
-    if (englishSub.length > 0) {
-      const res = await fetch(englishSub[0].file, {
-        cache: "no-store",
-      });
-      englishSubData = await res.text();
-    }
-    const escapedSub = englishSubData?.replace(htmlTagPattern, "");
-
     return (
-      <Player
-        src={`/api/proxy/${dub?.sources[0]?.url}`}
-        track={dub.tracks}
-        englishSub={escapedSub}
-      />
+      <Player src={`/api/proxy/${dub?.sources[0]?.url}`} track={dub.tracks} />
     );
   } else {
-    const server = await fetchAniwatchEpisodeServer(episodeId, ep);
+    const server = await fetchAniwatchEpisodeServer(escapedEpisode);
 
     const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
-      episodeId,
-      ep,
+      escapedEpisode,
       server.sub[0].serverName
     );
 
-    const englishSub = sub.tracks?.filter((sub) => sub.label === "English");
-
-    let englishSubData;
-    if (englishSub) {
-      const res = await fetch(englishSub[0].file, {
-        cache: "no-store",
-      });
-      englishSubData = await res.text();
-    }
-    const escapedSub = englishSubData?.replace(htmlTagPattern, "");
-
-    
     return (
-      <Player
-        src={`/api/proxy/${sub?.sources[0]?.url}`}
-        track={sub.tracks}
-        englishSub={escapedSub}
-      />
+      <Player src={`/api/proxy/${sub?.sources[0]?.url}`} track={sub.tracks} />
     );
   }
 }
 
-async function fetchAniwatchEpisodeSrc(
-  episodeId: string,
-  episode: string,
-  server: string
-) {
+async function fetchAniwatchEpisodeSrc(episode: string, server: string) {
   try {
     const response = await fetch(
-      `${
-        process.env.ANIWATCH_API
-      }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
+      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episode}&server=${
         server ? server : "vidstreaming"
       }`,
       { cache: "no-store" }
@@ -92,16 +54,10 @@ async function fetchAniwatchEpisodeSrc(
   }
 }
 
-async function fetchAniwatchEpisodeSrcDub(
-  episodeId: string,
-  episode: string,
-  server: string
-) {
+async function fetchAniwatchEpisodeSrcDub(episode: string, server: string) {
   try {
     const response = await fetch(
-      `${
-        process.env.ANIWATCH_API
-      }/anime/episode-srcs?id=${episodeId}?ep=${episode}&server=${
+      `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${episode}&server=${
         server ? server : "vidstreaming"
       }&category=dub`,
       { cache: "no-store" }
@@ -114,10 +70,10 @@ async function fetchAniwatchEpisodeSrcDub(
   }
 }
 
-async function fetchAniwatchEpisodeServer(episodeId: string, episode: string) {
+async function fetchAniwatchEpisodeServer(episode: string) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episodeId}?ep=${episode}`,
+      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${episode}`,
       { cache: "no-store" }
     );
     const data = await response.json();

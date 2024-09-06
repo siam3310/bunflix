@@ -1,5 +1,6 @@
 import { AniwatchInfo } from "@/components/aniwatch/aniwatch-info";
 import AniwatchPlayer from "@/components/aniwatch/aniwatch-player";
+import EpisodeSelector from "@/components/aniwatch/episode-selector";
 import { CircleArrowDownIcon } from "lucide-react";
 import { Metadata } from "next";
 
@@ -8,12 +9,12 @@ export async function generateMetadata({
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { ep: string; episode: string; lang: "english" | "japanesse" };
+  searchParams: { ep: string; num: string; lang: "english" | "japanesse" };
 }): Promise<Metadata> {
   const data: aniwatchInfo = await fetchAniwatchId(params.id);
 
   const title = `${
-    searchParams.episode ? `${searchParams.episode}` : "Select a Episode"
+    searchParams.num ? `${searchParams.num}` : "1"
   }  - ${data.anime.info.name}`;
   return {
     title,
@@ -38,32 +39,41 @@ export default async function Anime({
   searchParams,
 }: {
   params: { id: string };
-  searchParams: { ep: string; episode: number; lang: "english" | "japanesse" };
+  searchParams: { episode: string; lang: "english" | "japanesse"; num: string };
 }) {
   const data: aniwatchInfo = await fetchAniwatchId(params.id);
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(params.id);
 
+  const escapedEpisode = searchParams?.episode?.replace("?", "&");
+
   return (
     <div className="bg-black/60 min-h-screen space-y-6 pb-24">
-      {searchParams.ep ? (
+      <div className="flex lg:flex-row flex-col">
         <AniwatchPlayer
-        data={data}
+          data={data}
           lang={searchParams.lang}
-          episodeId={params.id}
-          ep={searchParams.ep}
+          ep={
+            searchParams.episode
+              ? escapedEpisode
+              : episode.episodes[0].episodeId
+          }
         />
-      ) : (
-        <h1 className="text-3xl font-semibold py-4 p-4 flex items-center gap-2">
-          <CircleArrowDownIcon className="animate-bounce" />
-          Select a Episode
-        </h1>
-      )}
-      <AniwatchInfo
-        data={data}
-        lang={searchParams.lang}
-        episode={episode}
-        currentEpisode={searchParams.episode}
-      />
+        <EpisodeSelector
+          lang={searchParams.lang}
+          episode={episode}
+          currentEpisode={
+            searchParams.episode
+              ? escapedEpisode
+              : episode.episodes[0].episodeId
+          }
+          currentEpisodeNum={
+            searchParams.num ? searchParams.num : episode.episodes[0].number
+          }
+          data={data}
+        />
+      </div>
+
+      <AniwatchInfo data={data} />
     </div>
   );
 }
@@ -72,7 +82,7 @@ async function fetchAniwatchEpisode(seasonId: string) {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/episodes/${seasonId}`,
-      {  cache: "no-store" }
+      { cache: "no-store" }
     );
     const data = await response.json();
 
@@ -83,11 +93,10 @@ async function fetchAniwatchEpisode(seasonId: string) {
 }
 
 async function fetchAniwatchId(id: string): Promise<aniwatchInfo> {
-
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/info?id=${id}`,
-      {  cache: "no-store" }
+      { cache: "no-store" }
     );
 
     const data: aniwatchInfo = await response.json();

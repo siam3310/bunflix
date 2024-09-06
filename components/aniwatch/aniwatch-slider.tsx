@@ -32,7 +32,7 @@ export default function TmdbSlider({ anime }: { anime: aniwatchApi }) {
         <div className="flex relative h-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] w-full">
           {anime.spotlightAnimes.map((res, i) => (
             <Link
-              href={`/video/movie/${res.id}?provider=vidsrc`}
+              href={`/anime/${res.id}`}
               key={res.id}
               style={{
                 pointerEvents: i === imageindex ? "all" : "none",

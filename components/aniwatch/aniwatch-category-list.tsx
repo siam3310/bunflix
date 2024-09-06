@@ -5,9 +5,11 @@ import { MicIcon, CaptionsIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
+import CategoriesSkeleton from "../fallback-ui/categories-skeleton";
+import SearchSkeleton from "../fallback-ui/search-skeleton";
 
 export default function AniwatchCategoryList({ type }: { type: string }) {
-  const { data, fetchNextPage } = useInfiniteQuery({
+  const { data, fetchNextPage,isLoading } = useInfiniteQuery({
     queryKey: ["anime-category", { type }],
     queryFn: ({ pageParam }) =>
       fetchAniwatchCategories(pageParam.hasNextPage, pageParam.pageToFetch),
@@ -41,20 +43,21 @@ export default function AniwatchCategoryList({ type }: { type: string }) {
 
     const res = await fetch(
       `/api/anime/category?category=${type}&page=${pageToFetch}`,
-      {  cache: "no-store" }
+      { cache: "no-store" }
     );
     const data = (await res.json()) as aniwatchSearch;
     return data;
   };
+
   return (
     <>
       <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-        {data?.pages?.map((page) => {
+        {data?.pages?.map((page, pageIndex) => {
           return (
             <>
-              {page?.animes.map((episode) => (
+              {page?.animes.map((episode, animeIndex) => (
                 <Link
-                  key={episode.id}
+                  key={episode.id + pageIndex + animeIndex}
                   href={`/anime/${episode.id}`}
                   className="w-full h-[350px] rounded-md overflow-hidden group  relative text-end"
                 >

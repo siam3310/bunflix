@@ -6,19 +6,10 @@ import { Label } from "../ui/label";
 import { useState } from "react";
 
 export function AniwatchInfo({
-  currentEpisode,
   data,
-  episode,
-  lang,
 }: {
-  currentEpisode: number;
   data: aniwatchInfo;
-  episode: aniwatchEpisodeData;
-  lang: "english" | "japanesse";
 }) {
-  const [audioToogle, setAudioToogle] = useState<"english" | "japanesse">(
-    lang ? lang : "english"
-  );
 
   return (
     <div className="p-4">
@@ -29,80 +20,7 @@ export function AniwatchInfo({
           alt={data.anime.info.name}
         />
         <div className=" lg:flex ">
-          <div className="lg:mr-4">
-            <h1 className="text-3xl font-semibold ">Episodes</h1>
-            <Label className="capitalize">
-              You&apos;re currently watching in {lang}
-            </Label>
-            <div className="flex items-center py-4 space-x-2">
-              <Label htmlFor="audio">English</Label>
-              <Switch
-                defaultChecked={
-                  lang ? (lang === "english" ? false : true) : false
-                }
-                onCheckedChange={() =>
-                  setAudioToogle(
-                    audioToogle === "english" ? "japanesse" : "english"
-                  )
-                }
-                id="audio"
-              />
-              <Label htmlFor="audio">Japanesse</Label>
-            </div>
-            <div className="flex items-center mb-6">
-              <ul
-                ref={(el) => {
-                  el?.scrollBy(0, 64 * --currentEpisode);
-                }}
-                className="max-h-[400px] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg"
-              >
-                {episode.episodes.map((episode, index) => (
-                  <Link
-                    target="_blank"
-                    key={episode.episodeId}
-                    href={`/anime/${episode.episodeId}&episode=${episode.number}&lang=${audioToogle}`}
-                    // className="min-h-[90px]"
-                  >
-                    <button
-                      disabled={
-                        audioToogle === "english"
-                          ? data.anime.info.stats.episodes.dub < episode.number
-                          : false
-                      }
-                      style={{
-                        backgroundColor:
-                          currentEpisode == episode.number &&
-                          audioToogle === lang
-                            ? "#b91c1c"
-                            : index % 2 === 0
-                            ? "#334155"
-                            : "#1e293b",
-                      }}
-                      className="px-4 h-16 text-start flex w-full items-center justify-between disabled:opacity-35"
-                    >
-                      {episode.number}. {episode.title}
-                      {audioToogle === "english" && (
-                        <span className="px-2 bg-purple-700 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap">
-                          <MicIcon size={15} />
-                          {data.anime.info.stats.episodes.dub < episode.number
-                            ? "Dub not available"
-                            : `ENG ${episode.number}`}
-                        </span>
-                      )}
-                      {audioToogle === "japanesse" && (
-                        <span className="px-2 bg-yellow-700 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap">
-                          <CaptionsIcon size={15} />
-                          {data.anime.info.stats.episodes.sub < episode.number
-                            ? "Sub not available"
-                            : `JP ${episode.number}`}
-                        </span>
-                      )}
-                    </button>
-                  </Link>
-                ))}
-              </ul>
-            </div>
-          </div>
+         
 
           <div className=" lg:mt-0 mt-6 lg:px-4">
             <h1 className=" my-2 text-4xl font-semibold">
@@ -264,28 +182,32 @@ export function AniwatchInfo({
           </div>
         </div>
         <div className="lg:w-1/3 p-4">
-          <h1 className="text-3xl font-semibold my-4">Seasons</h1>
-          <div className="flex flex-col gap-3 bg-black/30 p-2 rounded-sm">
-            {data.seasons.map((episode) => (
-              <Link
-                href={`/anime/${episode.id}`}
-                key={episode.id}
-                className="flex gap-2"
-              >
-                <img
-                  src={episode.poster}
-                  className="h-20 rounded-sm"
-                  alt={episode.name}
-                />
-                <div className="">
-                  <h1>{episode.name}</h1>
-                  <div className="flex text-sm gap-1">
-                    <p>{episode?.title}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {data.seasons.length>0 && (
+            <>
+              <h1 className="text-3xl font-semibold my-4">Seasons</h1>
+              <div className="flex flex-col gap-3 bg-black/30 p-2 rounded-sm">
+                {data.seasons.map((episode) => (
+                  <Link
+                    href={`/anime/${episode.id}`}
+                    key={episode.id}
+                    className="flex gap-2"
+                  >
+                    <img
+                      src={episode.poster}
+                      className="h-20 rounded-sm"
+                      alt={episode.name}
+                    />
+                    <div className="">
+                      <h1>{episode.name}</h1>
+                      <div className="flex text-sm gap-1">
+                        <p>{episode?.title}</p>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
 
           <h1 className="text-3xl font-semibold my-4">Related Animes</h1>
 

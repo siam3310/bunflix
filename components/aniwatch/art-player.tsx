@@ -3,12 +3,12 @@ import { useEffect, useRef } from "react";
 import Artplayer from "artplayer";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
 import Hls from "hls.js/dist/hls.light.js";
+import { usePathname } from "next/navigation";
 
 export default function Player({
   src,
   getInstance,
   track,
-  englishSub,
 }: {
   src: string;
   getInstance?: (art: Artplayer) => void;
@@ -18,10 +18,9 @@ export default function Player({
     label: string;
     default: boolean;
   }[];
-  englishSub?: string;
 }) {
   const artRef = useRef<HTMLDivElement>(null);
-  const sub = new Blob([englishSub || ""], { type: "text/vtt" });
+  const pathname = usePathname()
 
   useEffect(() => {
     if (!artRef.current) return;
@@ -80,8 +79,12 @@ export default function Player({
         },
       ],
       subtitle: {
-        url: URL.createObjectURL(sub),
+        url: track?.filter((sub) => sub.label === "English")[0]?.file || "",
         escape: true,
+        name: "English",
+        onVttLoad: (vtt) => {
+          return vtt.replace(/<[^>]+>/g, "")
+        },
         type: "vtt",
         encoding: "utf-8",
         style: {
@@ -121,6 +124,7 @@ export default function Player({
       }
     };
   }, []);
+  
 
   return (
     <div

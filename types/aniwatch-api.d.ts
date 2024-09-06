@@ -148,8 +148,8 @@ type aniwatchEpisodeData = {
   totalEpisodes: number;
   episodes: {
     title: string;
-    episodeId: string | number;
-    number: number | string;
+    episodeId: string;
+    number: string;
     isFiller: boolean;
   }[];
 };

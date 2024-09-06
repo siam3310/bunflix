@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Badge,
   ChevronDown,
   CrownIcon,
   Home,
@@ -37,7 +38,6 @@ export default function Navbar() {
   const navLinks = [
     {
       id: 1,
-      // icon: <img src="/favicon.ico" className="size-4" alt="favicon" />,
       linkName: "Home",
       href: "/",
       currentRoute: isHome,
@@ -76,6 +76,15 @@ export default function Navbar() {
       onMouseEnter: () => setNavIndex(3),
       onClick: () => setNavIndex(3),
     },
+    {
+      id: 6,
+      icon: <Badge color="white" className=" size-4" />,
+      linkName: "Anime Movie",
+      href: "/anime-categories?type=movie",
+      currentRoute: isMostFavoriteAnime,
+      onMouseEnter: () => setNavIndex(4),
+      onClick: () => setNavIndex(4),
+    },
   ];
 
   const linkref = useRef<HTMLDivElement>(null);
@@ -83,32 +92,65 @@ export default function Navbar() {
   return (
     <section className="h-20 bg-black/80 w-full relative">
       <nav className="bg-black/30 backdrop-blur h-20 w-full px-6 fixed mb-20 z-[500] top-0 flex items-center justify-between">
-        <div className="hidden group lg:flex" ref={linkref}>
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.id}
-              onClick={link.onClick}
-              onMouseEnter={link.onMouseEnter}
-              currentRoute={link.currentRoute}
-              href={link.href}
-              icon={link.icon}
-              linkName={link.linkName}
+        <div className="hidden  lg:flex items-center">
+          <img src="/favicon.ico" className="size-4 mr-4" alt="favicon" />
+          <div ref={linkref} className="group flex">
+            {navLinks.slice(0, 4).map((link) => (
+              <NavLink
+                key={link.id}
+                onClick={link.onClick}
+                onMouseEnter={link.onMouseEnter}
+                currentRoute={link.currentRoute}
+                href={link.href}
+                linkName={link.linkName}
+              />
+            ))}
+
+            <div
+              style={{
+                translate: `${
+                  (linkref.current?.children[navIndex]?.getBoundingClientRect()
+                    .left ?? 0) - 16
+                }px`,
+                width:
+                  linkref.current?.children[navIndex]?.getBoundingClientRect()
+                    .width,
+              }}
+              className="group-hover:bg-white h-2 bottom-2 left-4 absolute transition-all  ease-in-out"
             />
-          ))}
+          </div>
+
           <div
-            style={{
-              translate: `${
-                (linkref.current?.children[navIndex]?.getBoundingClientRect()
-                  .left ?? 0) - 16
-              }px`,
-              width:
-                linkref.current?.children[navIndex].getBoundingClientRect()
-                  .width,
-            }}
-            className="group-hover:bg-white h-2 bottom-2 left-4 absolute transition-all  ease-in-out"
-          />
+            onClick={() => setOpenDropdown(!openDropdown)}
+            className="flex cursor-pointer items-center gap-2 py-1.5 px-3 relative"
+          >
+            <span>More</span>
+            <ChevronDown className="size-4" />
+            <div
+              style={{
+                opacity: openDropdown ? "100%" : 0,
+                transform: openDropdown
+                  ? "translateY(0px)"
+                  : "translateY(-30px)",
+              }}
+              className="absolute transition-all  duration-300 top-16 right-0 bg-gray-800  w-fit rounded-lg flex flex-col text-start p-2 z-50"
+            >
+              {navLinks.slice(4).map((link) => (
+                <Link
+                  onClick={() => setOpenDropdown(!openDropdown)}
+                  href={link.href}
+                  className="px-2.5 py-3 flex rounded-md transition-all h-fit hover:bg-white/30 gap-4 text-nowrap items-center"
+                  key={link.id}
+                >
+                  {link.icon}
+                  <button>{link.linkName}</button>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex lg:hidden">
+        <div className="flex lg:hidden items-center">
+          <img src="/favicon.ico" className="size-4" alt="favicon" />
           {navLinks.slice(0, 2).map((link) => (
             <NavLink
               key={link.id}
@@ -126,6 +168,27 @@ export default function Navbar() {
           >
             <span>More</span>
             <ChevronDown className="size-4" />
+            <div
+              style={{
+                opacity: openDropdown ? "100%" : 0,
+                transform: openDropdown
+                  ? "translateY(0px)"
+                  : "translateY(-30px)",
+              }}
+              className="absolute transition-all  duration-300 top-16 right-0 bg-gray-800  w-fit rounded-lg flex flex-col text-start p-2 z-50"
+            >
+              {navLinks.slice(2).map((link) => (
+                <Link
+                  onClick={() => setOpenDropdown(!openDropdown)}
+                  href={link.href}
+                  className="px-2.5 py-3 flex rounded-md transition-all h-fit hover:bg-white/30 gap-4 text-nowrap items-center"
+                  key={link.id}
+                >
+                  {link.icon}
+                  <button>{link.linkName}</button>
+                </Link>
+              ))}
+            </div>
           </button>
         </div>
         <div className="flex gap-4">
@@ -134,14 +197,9 @@ export default function Navbar() {
               setIsSearchOpen(!isSearchOpen);
             }}
             className=" flex items-center gap-2 py-1.5 px-3"
-            style={{
-              backgroundColor:
-                pathname.split("/")[1] === "search" ? "#dc2626" : "",
-              borderRadius: "50px",
-            }}
           >
             <Search color="white" className=" size-6" />
-            <button className="hidden lg:flex">Search</button>
+            <span className="hidden lg:flex">Search</span>
           </button>
           <Link
             target="_blank"
@@ -162,25 +220,6 @@ export default function Navbar() {
         </div>
       </nav>
       <SearchInput />
-      <div
-        style={{
-          opacity: openDropdown ? "100%" : 0,
-          transform: openDropdown ? "translateY(0px)" : "translateY(-30px)",
-        }}
-        className="fixed transition-all  duration-300 top-24 left-4 bg-white/30 backdrop-blur  w-fit rounded-lg flex flex-col text-start p-2 z-50 lg:hidden lg:pointer-events-none"
-      >
-        {navLinks.slice(2).map((link) => (
-          <Link
-          onClick={()=>setOpenDropdown(!openDropdown)}
-            href={link.href}
-            className="px-2.5 py-3 flex rounded-md transition-all h-fit hover:bg-black/30 gap-4 text-nowrap"
-            key={link.id}
-          >
-            {link.icon}
-            <button>{link.linkName}</button>
-          </Link>
-        ))}
-      </div>
     </section>
   );
 }

@@ -17,10 +17,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!res.ok) {
-      return Response.json(
-        { Error: "failed to fetch requested url" },
-        { status: 404 }
-      );
+      redirect(completeUrl); 
     }
 
     const data = await res.arrayBuffer();

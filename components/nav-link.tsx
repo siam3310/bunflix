@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 
 export default function NavLink({
   icon,
@@ -32,10 +30,12 @@ export default function NavLink({
         borderRadius: "10px",
       }}
     >
-      <div className="relative group py-1.5 px-3 w-fit flex gap-2 items-center">
-        {showIcon ? icon : currentRoute ? icon : null}
-        <h1 className="text-nowrap">{linkName}</h1>
-      </div>
+      <button>
+        <div className="relative group py-1.5 px-3 w-fit flex gap-2 items-center">
+          {showIcon ? icon : currentRoute ? icon : null}
+          <h1 className="text-nowrap">{linkName}</h1>
+        </div>
+      </button>
     </Link>
   );
 }
