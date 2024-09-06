@@ -97,7 +97,8 @@ export default function Player({
             const hls = new Hls({
               fragLoadingMaxRetry: 200,
               fragLoadingRetryDelay: 500,
-              fragLoadingMaxRetryTimeout: 10000,
+              fragLoadingTimeOut:5000,
+              fragLoadingMaxRetryTimeout: 1000,
             });
             hls.loadSource(url);
             hls.attachMedia(video);
