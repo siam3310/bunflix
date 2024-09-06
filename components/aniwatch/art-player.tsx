@@ -3,7 +3,6 @@ import { useEffect, useRef } from "react";
 import Artplayer from "artplayer";
 import artplayerPluginHlsQuality from "artplayer-plugin-hls-quality";
 import Hls from "hls.js/dist/hls.light.js";
-import { usePathname } from "next/navigation";
 
 export default function Player({
   src,
@@ -20,7 +19,6 @@ export default function Player({
   }[];
 }) {
   const artRef = useRef<HTMLDivElement>(null);
-  const pathname = usePathname()
 
   useEffect(() => {
     if (!artRef.current) return;
@@ -97,9 +95,9 @@ export default function Player({
           if (Hls.isSupported()) {
             if (art.hls) art.hls.destroy();
             const hls = new Hls({
-              fragLoadingMaxRetry: 20,
-              fragLoadingRetryDelay: 2000,
-              fragLoadingMaxRetryTimeout: 15000,
+              fragLoadingMaxRetry: 200,
+              fragLoadingRetryDelay: 500,
+              fragLoadingMaxRetryTimeout: 10000,
             });
             hls.loadSource(url);
             hls.attachMedia(video);
