@@ -99,6 +99,9 @@ export default function Player({
               fragLoadingRetryDelay: 500,
               fragLoadingTimeOut:5000,
               fragLoadingMaxRetryTimeout: 1000,
+              maxBufferLength: 120,
+              maxMaxBufferLength: 300,
+              maxBufferHole: 0.5, 
             });
             hls.loadSource(url);
             hls.attachMedia(video);
