@@ -99,7 +99,7 @@ export default function Player({
               fragLoadingRetryDelay: 500,
               fragLoadingTimeOut:5000,
               fragLoadingMaxRetryTimeout: 1000,
-              maxBufferLength: 120,
+              maxBufferLength: 300,
               maxMaxBufferLength: 300,
               maxBufferHole: 0.5, 
             });
