@@ -122,7 +122,7 @@ export default function Player({
         art.destroy(false);
       }
     };
-  }, []);
+  }, [src]);
   
 
   return (

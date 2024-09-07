@@ -6,13 +6,11 @@ import { Label } from "../ui/label";
 import { Switch } from "../ui/switch";
 
 export default function EpisodeSelector({
-  currentEpisode,
   currentEpisodeNum,
   data,
   episode,
   lang,
 }: {
-  currentEpisode: string;
   currentEpisodeNum: string;
   data: aniwatchInfo;
   episode: aniwatchEpisodeData;
@@ -49,7 +47,7 @@ export default function EpisodeSelector({
         >
           {episode.episodes.map((episode, index) => (
             <Link
-              target="_blank"
+              // target="_blank"
               key={episode.episodeId}
               href={`/anime/${episode.episodeId}&episode=${episode.episodeId}&lang=${audioToogle}&num=${episode.number}`}
               style={{

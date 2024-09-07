@@ -3,6 +3,7 @@ import AniwatchPlayer from "@/components/aniwatch/aniwatch-player";
 import EpisodeSelector from "@/components/aniwatch/episode-selector";
 import { CircleArrowDownIcon } from "lucide-react";
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 
 export async function generateMetadata({
   params,
@@ -13,9 +14,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const data: aniwatchInfo = await fetchAniwatchId(params.id);
 
-  const title = `${
-    searchParams.num ? `${searchParams.num}` : "1"
-  }  - ${data.anime.info.name}`;
+  const title = `${searchParams.num ? `${searchParams.num}` : "1"}  - ${
+    data.anime.info.name
+  }`;
   return {
     title,
     description: data.anime.info.description,
@@ -44,7 +45,11 @@ export default async function Anime({
   const data: aniwatchInfo = await fetchAniwatchId(params.id);
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(params.id);
 
-  const escapedEpisode = searchParams?.episode?.replace("?", "&");
+  // const escapedEpisode = searchParams?.episode?.replace("?", "&");
+
+  if (!searchParams.episode) {
+    redirect(`/anime/${params.id}?episode=${episode.episodes[0].episodeId}&lang=japanesse&num=1`);
+  }
 
   return (
     <div className="bg-black/60 min-h-screen space-y-6 pb-24">
@@ -52,20 +57,11 @@ export default async function Anime({
         <AniwatchPlayer
           data={data}
           lang={searchParams.lang}
-          ep={
-            searchParams.episode
-              ? escapedEpisode
-              : episode.episodes[0].episodeId
-          }
+          ep={searchParams.episode}
         />
         <EpisodeSelector
           lang={searchParams.lang}
           episode={episode}
-          currentEpisode={
-            searchParams.episode
-              ? escapedEpisode
-              : episode.episodes[0].episodeId
-          }
           currentEpisodeNum={
             searchParams.num ? searchParams.num : episode.episodes[0].number
           }
