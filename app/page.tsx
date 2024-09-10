@@ -46,7 +46,7 @@ async function fetchHeroData() {
 
   const response = await fetch(
     `https://api.themoviedb.org/3/movie/popular?api_key=${key}`,
-    { cache: "no-store" }
+    { cache:"no-store"  }
   );
   if (!response.ok) {
     throw new Error("Failed to fetch Slider data");

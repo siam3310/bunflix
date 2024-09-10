@@ -39,7 +39,7 @@ export default function AniwatchSearch({
 
     const res = await fetch(
       `/api/search?q=${searchTerm}&type=anime&page=${pageToFetch}`,
-      {  cache: "no-store" }
+      {  cache:"no-store"  }
     );
     const data = (await res.json()) as aniwatchSearch;
     return data;

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
         `https://api.themoviedb.org/3/search/multi?query=${q}&page=${
           page || 1
         }&api_key=${key}`,
-      {  cache: "no-store" }
+      {  cache:"no-store"  }
 
       );
 
@@ -27,7 +27,9 @@ export async function GET(request: NextRequest) {
   } else {
     try {
       const response = await fetch(
-        `${process.env.ANIWATCH_API}/anime/search?q=${q}&page=${page || 1}`
+        `${process.env.ANIWATCH_API}/anime/search?q=${q}&page=${page || 1}`,{
+          cache:"no-store"
+        }
       );
       const data = await response.json();
 

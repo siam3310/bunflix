@@ -27,7 +27,7 @@ export default async function Anime() {
 
 async function aniwatchHomeApi() {
   const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`, {
-    cache: "no-store",
+    cache:"no-store" ,
   });
   if (!response.ok) {
     throw new Error(`Fetch failed at Anime Slider`);
@@ -143,7 +143,7 @@ async function fetchAniwatchCategories(
 ) {
   const response = await fetch(
     `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
-    { cache: "no-store" }
+    { cache:"no-store"  }
   );
   if (!response.ok) {
     throw new Error(`Search failed in Categories`);

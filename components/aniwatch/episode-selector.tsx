@@ -47,9 +47,11 @@ export default function EpisodeSelector({
         >
           {episode.episodes.map((episode, index) => (
             <Link
+            prefetch={false}
               // target="_blank"
               key={episode.episodeId}
-              href={`/anime/${episode.episodeId}&episode=${episode.episodeId}&lang=${audioToogle}&num=${episode.number}`}
+              href={`/anime/${episode.episodeId}&lang=${audioToogle}&num=${episode.number}`}
+              // onClick={() => window.location.reload()}
               style={{
                 pointerEvents:
                   audioToogle === "english"

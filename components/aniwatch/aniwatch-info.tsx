@@ -1,9 +1,6 @@
 "use client";
 import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
-import { useState } from "react";
 
 export function AniwatchInfo({
   data,

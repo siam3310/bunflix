@@ -23,7 +23,7 @@ export default function TmdbSearch({ search }: { search: string }) {
       setPage((prePage) => (prePage += 1));
       fetch(`/api/search?q=${search}&type=multi&page=${page}`, {
         
-        cache: "no-store",
+        cache:"no-store" ,
       })
         .then((response) => {
           if (!response.ok) {

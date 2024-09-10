@@ -191,7 +191,7 @@ export default function Navbar() {
                   key={link.id}
                 >
                   {link.icon}
-                  <button>{link.linkName}</button>
+                  <p>{link.linkName}</p>
                 </Link>
               ))}
             </div>

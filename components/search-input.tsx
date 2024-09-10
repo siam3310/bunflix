@@ -30,7 +30,7 @@ export default function SearchInput() {
     } else {
       fetch(`/api/search?q=${debounceSearch}&type=${type}`, {
         
-        cache: "no-store",
+        cache:"no-store" ,
       })
         .then((response) => {
           if (!response.ok) {
@@ -95,7 +95,7 @@ export default function SearchInput() {
         transform: isSearchOpen ? "translateY(0px)" : "translateY(6000px)",
         visibility: isSearchOpen ? "visible" : "hidden",
       }}
-      className="flex w-full flex-col duration-500 fixed z-50  h-fit transition-all px-2 md:px-4 items-center justify-center"
+      className="flex w-full flex-col duration-500 fixed z-[80]  h-fit transition-all px-2 md:px-4 items-center justify-center"
     >
       <div className=" bg-gray-700 w-full z-50 max-w-[800px] p-4 rounded-t-xl">
         <div className="mb-2 flex items-center justify-between ">

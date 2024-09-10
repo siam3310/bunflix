@@ -57,7 +57,7 @@ async function fetchAnimeStudio(genreName: string) {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/genre/${kababCased}`,
-      {  cache: "no-store" }
+      {  cache:"no-store"  }
     );
 
     const data = await response.json();
