@@ -40,7 +40,7 @@ export default function EpisodeSelector({
         <ul
           ref={(el) => {
             if(firstRender){
-              el?.scrollBy(0, 96 * (Number(currentEpisodeNum) - 1));
+              el?.scrollBy(0, 80 * (Number(currentEpisodeNum) - 1));
             }
           }}
           className="max-h-[70vh] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg"
@@ -76,7 +76,7 @@ export default function EpisodeSelector({
                       ? "#334155"
                       : "#1e293b",
                 }}
-                className="px-4 h-24 text-start text-[14px] flex w-full items-center justify-between disabled:opacity-35"
+                className="px-4 h-20 text-start text-[14px] flex w-full items-center justify-between disabled:opacity-35 leading-4"
               >
                 {episode.number}. {episode.title}
                 {audioToogle === "english" && (
