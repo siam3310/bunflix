@@ -71,11 +71,11 @@ export default function EpisodeSelector({
                       ? "#b91c1c"
                       : audioToogle === "english"
                       ? index % 2 === 0
-                        ? "#581c87"
-                        : "#6b21a8"
+                        ? "#1f2937"
+                        : "#374151"
                       : index % 2 === 0
-                      ? "#854d0e"
-                      : "#713f12",
+                      ? "#1e293b"
+                      : "#334155",
                 }}
                 className="px-4 h-20 text-start text-[14px] flex w-full items-center justify-between disabled:opacity-35 leading-4"
               >
@@ -89,7 +89,7 @@ export default function EpisodeSelector({
                   </span>
                 )}
                 {audioToogle === "japanesse" && (
-                  <span className="p-2 bg-white/20  bg-yellow-900 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
+                  <span className="p-2 bg-white/20  hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
                     <CaptionsIcon size={15} />
                     {data.anime.info.stats.episodes.sub < episode.number
                       ? "Not available"
