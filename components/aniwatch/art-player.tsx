@@ -97,11 +97,7 @@ export default function Player({
             const hls = new Hls({
               fragLoadingMaxRetry: 200,
               fragLoadingRetryDelay: 500,
-<<<<<<< HEAD
               fragLoadingTimeOut:30000,
-=======
-              fragLoadingTimeOut: 5000,
->>>>>>> e154523 (refactor: styling changes)
               fragLoadingMaxRetryTimeout: 1000,
               maxBufferLength: 300,
               maxMaxBufferLength: 300,
