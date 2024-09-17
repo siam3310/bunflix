@@ -137,6 +137,7 @@ export default function Navbar() {
                 transform: openDropdown
                   ? "translateY(0px)"
                   : "translateY(-30px)",
+                pointerEvents: openDropdown ? "all" : "none",
               }}
               className="absolute transition-all  duration-300 top-16 right-0 bg-gray-800  w-fit rounded-lg flex flex-col text-start p-2 z-50"
             >
@@ -155,7 +156,7 @@ export default function Navbar() {
           </div>
         </div>
         <div className="flex lg:hidden items-center">
-          <img src="/favicon.ico" className="size-4" alt="favicon" />
+          <img src="/favicon.ico" className="size-4 mr-4" alt="favicon" />
           {navLinks.slice(0, 1).map((link) => (
             <NavLink
               key={link.id}
@@ -179,7 +180,7 @@ export default function Navbar() {
                 transform: openDropdown
                   ? "translateY(0px)"
                   : "translateY(-30px)",
-                pointerEvents:openDropdown?"all":"none"
+                pointerEvents: openDropdown ? "all" : "none",
               }}
               className="absolute transition-all  duration-300 top-16 left-0 bg-gray-800  w-fit rounded-lg flex flex-col text-start p-2 z-50"
             >

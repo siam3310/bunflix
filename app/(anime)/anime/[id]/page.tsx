@@ -15,11 +15,11 @@ export async function generateMetadata({
   const data: aniwatchInfo = await fetchAniwatchId(params.id);
 
   const title = `${searchParams.num ? `${searchParams.num}` : "1"}  - ${
-    data.anime.info.name
+    data.anime?.info.name
   }`;
   return {
     title,
-    description: data.anime.info.description,
+    description: data.anime?.info.description,
     openGraph: {
       title,
       siteName: "Nextflix",

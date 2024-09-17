@@ -81,7 +81,7 @@ export default function Player({
         escape: true,
         name: "English",
         onVttLoad: (vtt) => {
-          return vtt.replace(/<[^>]+>/g, "")
+          return vtt.replace(/<[^>]+>/g, "");
         },
         type: "vtt",
         encoding: "utf-8",
@@ -97,16 +97,26 @@ export default function Player({
             const hls = new Hls({
               fragLoadingMaxRetry: 200,
               fragLoadingRetryDelay: 500,
+<<<<<<< HEAD
               fragLoadingTimeOut:30000,
+=======
+              fragLoadingTimeOut: 5000,
+>>>>>>> e154523 (refactor: styling changes)
               fragLoadingMaxRetryTimeout: 1000,
               maxBufferLength: 300,
               maxMaxBufferLength: 300,
-              maxBufferHole: 0.5, 
+              maxBufferHole: 0.5,
             });
             hls.loadSource(url);
             hls.attachMedia(video);
             art.hls = hls;
             art.on("destroy", () => hls.destroy());
+            video.addEventListener("ended", () => {
+              if (hls) {
+                hls.destroy();
+                console.log("HLS instance destroyed");
+              }
+            });
           } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
             video.src = url;
           } else {
@@ -126,7 +136,6 @@ export default function Player({
       }
     };
   }, [src]);
-  
 
   return (
     <div

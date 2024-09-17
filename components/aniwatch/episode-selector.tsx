@@ -20,7 +20,6 @@ export default function EpisodeSelector({
     lang ? lang : "japanesse"
   );
   const [firstRender, setFirstRender] = useState(true);
-
   useEffect(() => setFirstRender(false), []);
 
   return (
@@ -39,7 +38,7 @@ export default function EpisodeSelector({
       <div className="flex items-center mb-6 text-sm">
         <ul
           ref={(el) => {
-            if(firstRender){
+            if (firstRender) {
               el?.scrollBy(0, 80 * (Number(currentEpisodeNum) - 1));
             }
           }}
@@ -47,11 +46,9 @@ export default function EpisodeSelector({
         >
           {episode.episodes.map((episode, index) => (
             <Link
-            prefetch={false}
-              // target="_blank"
+              prefetch={false}
               key={episode.episodeId}
               href={`/anime/${episode.episodeId}&lang=${audioToogle}&num=${episode.number}`}
-              // onClick={() => window.location.reload()}
               style={{
                 pointerEvents:
                   audioToogle === "english"
@@ -65,31 +62,38 @@ export default function EpisodeSelector({
                 disabled={
                   audioToogle === "english"
                     ? data.anime.info.stats.episodes.dub < episode.number
-                    : false
+                    : data.anime.info.stats.episodes.sub < episode.number
                 }
                 style={{
                   backgroundColor:
                     Number(currentEpisodeNum) == Number(episode.number) &&
                     audioToogle === lang
                       ? "#b91c1c"
+                      : audioToogle === "english"
+                      ? index % 2 === 0
+                        ? "#581c87"
+                        : "#6b21a8"
                       : index % 2 === 0
-                      ? "#334155"
-                      : "#1e293b",
+                      ? "#854d0e"
+                      : "#713f12",
                 }}
                 className="px-4 h-20 text-start text-[14px] flex w-full items-center justify-between disabled:opacity-35 leading-4"
               >
                 {episode.number}. {episode.title}
                 {audioToogle === "english" && (
-                  <span className="px-2 bg-purple-700 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
+                  <span className="p-2 bg-white/20  hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
                     <MicIcon size={15} />
                     {data.anime.info.stats.episodes.dub < episode.number
-                      ? "Dub not available"
+                      ? "Not available"
                       : `EN`}
                   </span>
                 )}
                 {audioToogle === "japanesse" && (
-                  <span className="px-2 bg-yellow-700 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
-                    <CaptionsIcon size={15} />JP
+                  <span className="p-2 bg-white/20  bg-yellow-900 hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
+                    <CaptionsIcon size={15} />
+                    {data.anime.info.stats.episodes.sub < episode.number
+                      ? "Not available"
+                      : `JP`}
                   </span>
                 )}
               </button>

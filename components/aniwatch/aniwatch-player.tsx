@@ -1,4 +1,5 @@
 "use server";
+import { redirect } from "next/navigation";
 import Player from "./art-player";
 
 export default async function AniwatchPlayer({
@@ -25,13 +26,15 @@ export default async function AniwatchPlayer({
     );
   } else {
     const server = await fetchAniwatchEpisodeServer(episodeId, ep);
+    if(server.sub.length === 0){
+      redirect(`/anime/${episodeId}?ep=${ep}&lang=english&num=1`)
+    }
 
     const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
       episodeId,
       ep,
       server.sub[0].serverName
     );
-
 
     return (
       <Player src={`/api/proxy/${sub?.sources[0]?.url}`} track={sub.tracks} />
