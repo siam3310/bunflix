@@ -4,13 +4,19 @@ import SearchSkeleton from "@/components/fallback-ui/search-skeleton";
 import TmdbSearch from "@/components/tmdb/tmdb-search";
 import { Suspense } from "react";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { query: [string, string] };
-}) {
-  const type = params.query[0];
-  const searchTerm = params.query[1];
+type Params = Promise<{ query: [string, string] }>;
+type SearchParams = Promise<{
+  type: AnimeType;
+  lang: AnimeLanguage;
+  sort: AnimeSort;
+  status: AnimeStaus;
+  page?: string;
+}>;
+
+export async function generateMetadata({ params }: { params: Params }) {
+  const { query } = await params;
+  const type = query[0];
+  const searchTerm = query[1];
 
   return {
     title: `'${decodeURIComponent(searchTerm)}' in ${
@@ -22,35 +28,27 @@ export default async function Query({
   params,
   searchParams,
 }: {
-  params: { query: [string, string] };
-  searchParams?: {
-    type: AnimeType;
-    lang: AnimeLanguage;
-    sort: AnimeSort;
-    status: AnimeStaus;
-    page?: string;
-  };
+  params: Params;
+  searchParams?: SearchParams
 }) {
-  const type = params.query[0];
-  const searchTerm = params.query[1];
+  const { query } = await params;
+  const awaitedSearchParams = await searchParams;
+
+  const type = query[0];
+  const searchTerm = query[1];
 
   if (type === "anime") {
     const data: aniwatchSearch = await fetchAniwatchSearch(
       searchTerm,
-      searchParams?.page
+      awaitedSearchParams?.page
     );
 
     return (
       <div className=" bg-black/80 min-h-screen">
         <Suspense fallback={<SearchSkeleton />}>
           <div className="pb-24 p-4 md:flex-row flex-col flex gap-4">
-            <AnimeSearchSidebar 
-             animeData={data}
-             search={searchTerm} 
-             />
-            <AniwatchSearch
-             animeData={data}
-             searchTerm={searchTerm}/>
+            <AnimeSearchSidebar animeData={data} search={searchTerm} />
+            <AniwatchSearch animeData={data} searchTerm={searchTerm} />
           </div>
         </Suspense>
       </div>
@@ -88,7 +86,7 @@ async function fetchAniwatchSearch(searchTerm: string, page?: number | string) {
       `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=${
         page ? page : 1
       }`,
-      {  cache:"no-store"  }
+      { cache: "no-store" }
     );
     const data = await response.json();
 

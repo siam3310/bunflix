@@ -1,16 +1,20 @@
 import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const data: aniwatchGenre = await fetchAnimeStudio(params.id);
+type Params = Promise<{ id: string }>
+
+export async function generateMetadata({ params }: { params: Params }) {
+  const {id} = await params
+  const data: aniwatchGenre = await fetchAnimeStudio(id);
 
   return {
     title: `${data.genreName} - Genres`,
   };
 }
 
-export default async function Genre({ params }: { params: { id: string } }) {
-  const data: aniwatchGenre = await fetchAnimeStudio(params.id);
+export default async function Genre({ params }: { params: Params }) {
+  const {id} = await params
+  const data: aniwatchGenre = await fetchAnimeStudio(id);
 
   return (
     <div className="min-h-screen bg-black/80 p-4 pb-24">

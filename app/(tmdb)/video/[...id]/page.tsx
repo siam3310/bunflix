@@ -1,13 +1,17 @@
 import { TmdbVideo } from "@/components/tmdb/tmdb-video";
 import { createImageUrl } from "@/utils/create-image-url";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { id: [string, string] };
-}) {
-  const type = params.id[0];
-  const id = params.id[1];
+type SearchParams = Promise<{
+  season: number | string;
+  episode: number | string;
+  provider: string;
+}>;
+type Params = Promise<{ id: [string, string] }>;
+
+export async function generateMetadata({ params }: { params: Params }) {
+  const { id: ParamId } = await params;
+  const type = ParamId[0];
+  const id = ParamId[1];
   const data: MovieResults = await fetchTmdbInfo(type, id);
   const title = `${data.title || data.name} - Nextflix`;
   const image = createImageUrl(
@@ -37,22 +41,21 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: { id: [string, string] };
-  searchParams: {
-    season: number | string;
-    episode: number | string;
-    provider: string;
-  };
+  params: Params;
+  searchParams: SearchParams;
 }) {
-  const type = params.id[0];
-  const id = params.id[1];
+  const { id: ParamId } = await params;
+  const { episode,provider,season } = await searchParams;
+  const type = ParamId[0];
+  const id = ParamId[1];
+
   const data: MovieResults = await fetchTmdbInfo(type, id);
 
   let seasonData: tmdbEpisodesInfo | undefined;
   if (type === "tv") {
     seasonData = await fetchSeasonData(
       data.id,
-      searchParams.season || data.seasons[0].season_number
+      season || data.seasons[0].season_number
     );
   }
 
@@ -61,14 +64,14 @@ export default async function Page({
   const superMovieApi = `https://multiembed.mov/?video_id=${id}`;
   const smashystreamMovieApi = `https://embed.smashystream.com/playere.php?tmdb=${id}`;
 
-  const vidsrcTvapi = `https://vidsrc.to/embed/tv/${id}/${searchParams.season}/${searchParams.episode}`;
-  const twoEmbedtvApi = `https://www.2embed.cc/embedtv/${id}&s=${searchParams.season}&e=${searchParams.episode}`;
-  const superTvApi = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=${searchParams.season}&e=${searchParams.episode}`;
-  const smashystreamTvApi = `https://player.smashy.stream/tv/${id}?s=${searchParams.season}&e=${searchParams.episode}`;
+  const vidsrcTvapi = `https://vidsrc.to/embed/tv/${id}/${season}/${episode}`;
+  const twoEmbedtvApi = `https://www.2embed.cc/embedtv/${id}&s=${season}&e=${episode}`;
+  const superTvApi = `https://multiembed.mov/directstream.php?video_id=${id}&tmdb=1&s=${season}&e=${episode}`;
+  const smashystreamTvApi = `https://player.smashy.stream/tv/${id}?s=${season}&e=${episode}`;
 
   let url = "";
   if (type === "tv") {
-    switch (searchParams.provider) {
+    switch (provider) {
       case "vidsrc":
         url = vidsrcTvapi;
         break;
@@ -85,7 +88,7 @@ export default async function Page({
         url = vidsrcTvapi;
     }
   } else {
-    switch (searchParams.provider) {
+    switch (provider) {
       case "vidsrc":
         url = vidsrcMovieApi;
         break;
@@ -109,8 +112,8 @@ export default async function Page({
         type={type}
         id={id}
         url={url}
-        epNo={searchParams.episode}
-        provider={searchParams.provider}
+        epNo={episode}
+        provider={provider}
         seasonData={seasonData}
         data={data}
       />
@@ -124,7 +127,7 @@ async function fetchTmdbInfo(type: string, id: number | string) {
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/${type}/${id}?api_key=${key}`,
-      {  cache:"no-store"  }
+      { cache: "no-store" }
     );
 
     const data = await response.json();
@@ -144,8 +147,7 @@ async function fetchSeasonData(
   try {
     const response = await fetch(
       `https://api.themoviedb.org/3/tv/${series_id}/season/${season_number}?api_key=${key}`,
-      {  cache:"no-store"  }
-
+      { cache: "no-store" }
     );
 
     const data = await response.json();

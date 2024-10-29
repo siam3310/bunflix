@@ -1,20 +1,20 @@
 import { MicIcon, CaptionsIcon } from "lucide-react";
 import Link from "next/link";
 
-export async function generateMetadata({ params }: { params: { id: string } }) {
-  const data: aniwatchStudio = await fetchAnimeStudio(params.id);
+type Params = Promise<{ id: string }>;
+
+export async function generateMetadata({ params }: { params: Params }) {
+  const { id } = await params;
+  const data: aniwatchStudio = await fetchAnimeStudio(id);
 
   return {
     title: `${data.producerName} - Animation Studio`,
   };
 }
 
-export default async function AnimeStudio({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const data: aniwatchStudio = await fetchAnimeStudio(params.id);
+export default async function AnimeStudio({ params }: { params: Params }) {
+  const { id } = await params;
+  const data: aniwatchStudio = await fetchAnimeStudio(id);
 
   return (
     <div className="min-h-screen bg-black/80 p-4 pb-24">
@@ -56,12 +56,14 @@ export default async function AnimeStudio({
 }
 
 async function fetchAnimeStudio(studioName: string) {
-  const parsedStudioName = decodeURIComponent(studioName).replace(/\s+/g, "-").replace(/\./g, "")
+  const parsedStudioName = decodeURIComponent(studioName)
+    .replace(/\s+/g, "-")
+    .replace(/\./g, "");
 
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/anime/producer/${parsedStudioName}`,
-      {  cache:"no-store"  }
+      { cache: "no-store" }
     );
 
     const data = await response.json();

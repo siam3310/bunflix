@@ -5,16 +5,22 @@ import { CircleArrowDownIcon } from "lucide-react";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
+type Params = Promise<{ id: string }>
+type SearchParams = Promise<{ ep: string; num: string; lang: "english" | "japanesse" }>
+
 export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: { ep: string; num: string; lang: "english" | "japanesse" };
+  params:Params
+  searchParams:SearchParams
 }): Promise<Metadata> {
-  const data: aniwatchInfo = await fetchAniwatchId(params.id);
+  const {id} = await params
+  const {num,ep,lang} = await searchParams
 
-  const title = `${searchParams.num ? `${searchParams.num}` : "1"}  - ${
+  const data: aniwatchInfo = await fetchAniwatchId(id);
+
+  const title = `${num ? `${num}` : "1"}  - ${
     data.anime?.info.name
   }`;
   return {
@@ -39,20 +45,18 @@ export default async function Anime({
   params,
   searchParams,
 }: {
-  params: { id: string };
-  searchParams: {
-    episode: string;
-    ep: string;
-    lang: "english" | "japanesse";
-    num: string;
-  };
+  params:Params
+  searchParams:SearchParams
 }) {
-  const data: aniwatchInfo = await fetchAniwatchId(params.id);
-  const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(params.id);
+  const {id} = await params
+  const {num,ep,lang} = await searchParams
+
+  const data: aniwatchInfo = await fetchAniwatchId(id);
+  const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
 
   // const escapedEpisode = searchParams?.episode?.replace("?", "&");
 
-  if (!searchParams.ep) {
+  if (!ep) {
     redirect(`/anime/${episode.episodes[0].episodeId}&lang=japanesse&num=1`);
   }
 
@@ -60,15 +64,15 @@ export default async function Anime({
     <div className="bg-black/60 min-h-screen space-y-6 pb-24">
       <div className="flex lg:flex-row flex-col">
         <AniwatchPlayer
-          episodeId={params.id}
-          lang={searchParams.lang}
-          ep={searchParams.ep}
+          episodeId={id}
+          lang={lang}
+          ep={ep}
         />
         <EpisodeSelector
-          lang={searchParams.lang}
+          lang={lang}
           episode={episode}
           currentEpisodeNum={
-            searchParams.num ? searchParams.num : episode.episodes[0].number
+            num ? num : episode.episodes[0].number
           }
           data={data}
         />
