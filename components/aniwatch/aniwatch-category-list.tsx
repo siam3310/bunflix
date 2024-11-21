@@ -5,8 +5,6 @@ import { MicIcon, CaptionsIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import CategoriesSkeleton from "../fallback-ui/categories-skeleton";
-import SearchSkeleton from "../fallback-ui/search-skeleton";
 
 export default function AniwatchCategoryList({ type }: { type: string }) {
   const { data, fetchNextPage,isLoading } = useInfiniteQuery({
@@ -19,8 +17,8 @@ export default function AniwatchCategoryList({ type }: { type: string }) {
     },
     getNextPageParam: (lastPage) => {
       return {
-        hasNextPage: lastPage?.hasNextPage || false,
-        pageToFetch: lastPage?.currentPage ? lastPage.currentPage + 1 : 1,
+        hasNextPage: lastPage?.data?.hasNextPage || false,
+        pageToFetch: lastPage?.data.currentPage ? lastPage.data.currentPage + 1 : 1,
       };
     },
   });
@@ -54,8 +52,8 @@ export default function AniwatchCategoryList({ type }: { type: string }) {
       <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
         {data?.pages?.map((page, pageIndex) => {
           return (
-            <>
-              {page?.animes.map((episode, animeIndex) => (
+            <div className="h-fit w-fit contents" key={pageIndex}>
+              {page?.data.animes.map((episode, animeIndex) => (
                 <Link
                   key={episode.id + pageIndex + animeIndex}
                   href={`/anime/${episode.id}`}
@@ -84,7 +82,7 @@ export default function AniwatchCategoryList({ type }: { type: string }) {
                   </div>
                 </Link>
               ))}
-            </>
+            </div>
           );
         })}
       </div>

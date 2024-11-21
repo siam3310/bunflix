@@ -44,7 +44,7 @@ export default function EpisodeSelector({
           }}
           className="max-h-[70vh] w-full lg:w-[500px] bg-slate-500 overflow-y-scroll rounded-lg"
         >
-          {episode.episodes.map((episode, index) => (
+          {episode.data.episodes.map((episode, index) => (
             <Link
               prefetch={false}
               key={episode.episodeId}
@@ -52,7 +52,7 @@ export default function EpisodeSelector({
               style={{
                 pointerEvents:
                   audioToogle === "english"
-                    ? data.anime.info.stats.episodes.dub < episode.number
+                    ? data.data.anime.info.stats.episodes.dub < episode.number
                       ? "none"
                       : "all"
                     : "all",
@@ -61,8 +61,8 @@ export default function EpisodeSelector({
               <button
                 disabled={
                   audioToogle === "english"
-                    ? data.anime.info.stats.episodes.dub < episode.number
-                    : data.anime.info.stats.episodes.sub < episode.number
+                    ? data.data.anime.info.stats.episodes.dub < episode.number
+                    : data.data.anime.info.stats.episodes.sub < episode.number
                 }
                 style={{
                   backgroundColor:
@@ -83,7 +83,7 @@ export default function EpisodeSelector({
                 {audioToogle === "english" && (
                   <span className="p-2 bg-white/20  hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
                     <MicIcon size={15} />
-                    {data.anime.info.stats.episodes.dub < episode.number
+                    {data.data.anime.info.stats.episodes.dub < episode.number
                       ? "Not available"
                       : `EN`}
                   </span>
@@ -91,7 +91,7 @@ export default function EpisodeSelector({
                 {audioToogle === "japanesse" && (
                   <span className="p-2 bg-white/20  hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
                     <CaptionsIcon size={15} />
-                    {data.anime.info.stats.episodes.sub < episode.number
+                    {data.data.anime.info.stats.episodes.sub < episode.number
                       ? "Not available"
                       : `JP`}
                   </span>

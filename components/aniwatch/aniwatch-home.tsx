@@ -4,14 +4,14 @@ import Link from "next/link";
 import { useState } from "react";
 
 export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
-  const [date, setDate] = useState(anime.top10Animes.week);
+  const [date, setDate] = useState(anime.data.top10Animes.week);
 
   return (
     <>
       <h1 className="text-3xl py-2 font-semibold px-4">Newly Added</h1>
       <div className="lg:flex">
         <div className="grid align-top self-start gap-4 md:gap-3 p-4 grid-cols-2 sm:grid-cols-3  md:grid-cols-4 xl:grid-cols-6 w-full">
-          {anime.latestEpisodeAnimes.map((episode) => (
+          {anime.data.latestEpisodeAnimes.map((episode) => (
             <Link
               key={episode.id}
               href={`/anime/${episode.id}`}
@@ -45,11 +45,11 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
           <h1 className="text-3xl py-2 font-semibold ">Popular Anime</h1>
           <div className="flex gap-2 my-1">
             <button
-              onClick={() => setDate(anime.top10Animes.today)}
+              onClick={() => setDate(anime.data.top10Animes.today)}
               style={{
                 backgroundColor:
-                  date === anime.top10Animes.today ? "white" : "",
-                color: date === anime.top10Animes.today ? "black" : "",
+                  date === anime.data.top10Animes.today ? "white" : "",
+                color: date === anime.data.top10Animes.today ? "black" : "",
               }}
               className="px-2 py-1 rounded hover:bg-red-600 transition-all"
             >
@@ -57,11 +57,11 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
             </button>
             <button
               style={{
-                backgroundColor: date === anime.top10Animes.week ? "white" : "",
-                color: date === anime.top10Animes.week ? "black" : "",
+                backgroundColor: date === anime.data.top10Animes.week ? "white" : "",
+                color: date === anime.data.top10Animes.week ? "black" : "",
               }}
               className="px-2 py-1 rounded hover:bg-red-600 transition-all"
-              onClick={() => setDate(anime.top10Animes.week)}
+              onClick={() => setDate(anime.data.top10Animes.week)}
             >
               Weekly
             </button>
@@ -69,10 +69,10 @@ export default function AniwatchHome({ anime }: { anime: aniwatchApi }) {
               className="px-2 py-1 rounded hover:bg-red-600 transition-all"
               style={{
                 backgroundColor:
-                  date === anime.top10Animes.month ? "white" : "",
-                color: date === anime.top10Animes.month ? "black" : "",
+                  date === anime.data.top10Animes.month ? "white" : "",
+                color: date === anime.data.top10Animes.month ? "black" : "",
               }}
-              onClick={() => setDate(anime.top10Animes.month)}
+              onClick={() => setDate(anime.data.top10Animes.month)}
             >
               Monthly
             </button>

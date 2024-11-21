@@ -1,11 +1,12 @@
 type aniwatchApi = {
-  spotlightAnimes: spotlightAnimes[];
+  success:boolean
+  data:{spotlightAnimes: spotlightAnimes[];
   trendingAnimes: trendingAnimes[];
   latestEpisodeAnimes: latestEpisodeAnimes[];
   topUpcomingAnimes: topUpcomingAnimes[];
   top10Animes: top10Animes;
   topAiringAnimes: topAiringAnimes[];
-  genres: string[];
+  genres: string[];}
 };
 
 type topAiringAnimes = {
@@ -71,7 +72,7 @@ type spotlightAnimes = {
 };
 
 type aniwatchInfo = {
-  anime: {
+ data:{ anime: {
     info: {
       id: string;
       anilistId: number;
@@ -141,21 +142,22 @@ type aniwatchInfo = {
       sub: number;
       dub: number;
     };
-  }[];
+  }[];}
 };
 
 type aniwatchEpisodeData = {
-  totalEpisodes: number;
+  success: boolean,
+  data:{totalEpisodes: number;
   episodes: {
     title: string;
     episodeId: string;
     number: string;
     isFiller: boolean;
-  }[];
+  }[];}
 };
 
 type aniwatchSearch = {
-  animes: Anime[];
+ data:{ animes: Anime[];
   mostPopularAnimes: {
     id: string;
     name: string;
@@ -168,7 +170,7 @@ type aniwatchSearch = {
   hasNextPage: boolean;
   totalPages: number;
   searchQuery: string;
-  searchFilters: {};
+  searchFilters: {};}
 };
 
 type Anime = {
@@ -183,22 +185,22 @@ type Anime = {
 };
 
 type aniwatchEpisodeSrc = {
-  tracks: { file: string; kind: string; label: string; default: boolean }[];
+  data:{tracks: { file: string; kind: string; label: string; default: boolean }[];
   intro: { start: number; end: number };
   outro: { start: number; end: number };
   sources: { url: string; type: string }[];
   anilistID: [];
-  malID: [];
+  malID: [];}
 };
 
 type aniwatchGenre = {
-  genreName: string;
+  data:{genreName: string;
   animes: Anime[];
   genres: string[];
   topAiringAnimes: topAiringAnimes[];
   totalPages: number;
   hasNextPage: boolean;
-  currentPage: number;
+  currentPage: number;}
 };
 
 type aniwatchStudio = {
@@ -212,13 +214,14 @@ type aniwatchStudio = {
 };
 
 type aniwatchCategories = {
-  genres: string[];
+  success:boolean
+  data:{genres: string[];
   animes: Anime[];
   top10Animes: top10Animes;
   category: string;
   totalPages: number;
   hasNextPage: boolean;
-  currentPage: number;
+  currentPage: number;}
 };
 
 type aniwatchCategoriesName =

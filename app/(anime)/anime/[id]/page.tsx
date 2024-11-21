@@ -21,22 +21,22 @@ export async function generateMetadata({
   const data: aniwatchInfo = await fetchAniwatchId(id);
 
   const title = `${num ? `${num}` : "1"}  - ${
-    data.anime?.info.name
+    data.data.anime?.info.name
   }`;
   return {
     title,
-    description: data.anime?.info.description,
+    description: data.data.anime?.info.description,
     openGraph: {
       title,
       siteName: "Nextflix",
       type: "video.movie",
-      description: data.anime.info.description,
-      images: data.anime.info.poster,
+      description: data.data.anime.info.description,
+      images: data.data.anime.info.poster,
     },
     twitter: {
       title,
-      description: data.anime.info.description,
-      images: data.anime.info.poster,
+      description: data.data.anime.info.description,
+      images: data.data.anime.info.poster,
     },
   };
 }
@@ -57,7 +57,7 @@ export default async function Anime({
   // const escapedEpisode = searchParams?.episode?.replace("?", "&");
 
   if (!ep) {
-    redirect(`/anime/${episode.episodes[0].episodeId}&lang=japanesse&num=1`);
+    redirect(`/anime/${episode.data.episodes[0].episodeId}&lang=japanesse&num=1`);
   }
 
   return (
@@ -72,7 +72,7 @@ export default async function Anime({
           lang={lang}
           episode={episode}
           currentEpisodeNum={
-            num ? num : episode.episodes[0].number
+            num ? num : episode.data.episodes[0].number
           }
           data={data}
         />
@@ -86,7 +86,7 @@ export default async function Anime({
 async function fetchAniwatchEpisode(seasonId: string) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/episodes/${seasonId}`,
+      `${process.env.ANIWATCH_API}/api/v2/hianime/anime/${seasonId}/episodes`,
       { cache:"no-store" }
     );
     const data = await response.json();
@@ -100,7 +100,7 @@ async function fetchAniwatchEpisode(seasonId: string) {
 async function fetchAniwatchId(id: string): Promise<aniwatchInfo> {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/info?id=${id}`,
+      `${process.env.ANIWATCH_API}/api/v2/hianime/anime/${id}`,
       { cache:"no-store" }
     );
 

@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   } else {
     try {
       const response = await fetch(
-        `${process.env.ANIWATCH_API}/anime/search?q=${q}&page=${page || 1}`,{
+        `${process.env.ANIWATCH_API}/api/v2/hianime/search?q=${q}&page=${page || 1}`,{
           cache:"no-store"
         }
       );

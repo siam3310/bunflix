@@ -55,14 +55,14 @@ export default async function AnimeStudio({ params }: { params: Params }) {
   );
 }
 
-async function fetchAnimeStudio(studioName: string) {
+async function fetchAnimeStudio(studioName: string,page?:number|string) {
   const parsedStudioName = decodeURIComponent(studioName)
     .replace(/\s+/g, "-")
     .replace(/\./g, "");
 
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/producer/${parsedStudioName}`,
+      `${process.env.ANIWATCH_API}/api/v2/hianime/producer/${parsedStudioName}?page=${page}`,
       { cache: "no-store" }
     );
 

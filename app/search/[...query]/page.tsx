@@ -83,7 +83,7 @@ type AnimeSort =
 async function fetchAniwatchSearch(searchTerm: string, page?: number | string) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/search?q=${searchTerm}&page=${
+      `${process.env.ANIWATCH_API}/api/v2/hianime/search?q=${searchTerm}&page=${
         page ? page : 1
       }`,
       { cache: "no-store" }

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: "category param is required" });
   }
   const response = await fetch(
-    `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
+    `${process.env.ANIWATCH_API}/api/v2/hianime/category/${category}?page=${page || 1}`,
     {  cache:"no-store"  }
 
   );

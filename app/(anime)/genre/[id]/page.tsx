@@ -1,3 +1,4 @@
+import { log } from "console";
 import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -6,21 +7,22 @@ type Params = Promise<{ id: string }>
 export async function generateMetadata({ params }: { params: Params }) {
   const {id} = await params
   const data: aniwatchGenre = await fetchAnimeStudio(id);
-
+log(data)
   return {
-    title: `${data.genreName} - Genres`,
+    title: `${data.data.genreName} - Genres`,
   };
 }
 
 export default async function Genre({ params }: { params: Params }) {
   const {id} = await params
   const data: aniwatchGenre = await fetchAnimeStudio(id);
-
+  console.log(data);
+  
   return (
     <div className="min-h-screen bg-black/80 p-4 pb-24">
-      <h1 className="text-3xl font-semibold capitalize">{data.genreName}</h1>
+      <h1 className="text-3xl font-semibold capitalize">{data.data.genreName}</h1>
       <div className="grid mt-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-4 text-end">
-        {data.animes.map((show) => (
+        {data.data.animes.map((show) => (
           <div
             className="w-full h-full rounded-md overflow-hidden group   relative"
             key={show.id}
@@ -58,9 +60,10 @@ export default async function Genre({ params }: { params: Params }) {
 async function fetchAnimeStudio(genreName: string) {
   const kababCased = decodeURIComponent(genreName).replace(/\s+/g, "-");
 
+  log(`${process.env.ANIWATCH_API}/api/v2/hianime/genre/${kababCased}`)
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/genre/${kababCased}`,
+      `${process.env.ANIWATCH_API}/api/v2/hianime/genre/${kababCased}`,
       {  cache:"no-store"  }
     );
 

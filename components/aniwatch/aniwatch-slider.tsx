@@ -10,7 +10,7 @@ export default function TmdbSlider({ anime }: { anime: aniwatchApi }) {
 
   useEffect(() => {
     const shownext = () => {
-      if (imageindex == anime.spotlightAnimes.length - 1) {
+      if (imageindex == anime.data.spotlightAnimes.length - 1) {
         setImageindex(0);
         ref.current?.scrollBy({ behavior: "smooth", top: -9999 });
       } else {
@@ -30,7 +30,7 @@ export default function TmdbSlider({ anime }: { anime: aniwatchApi }) {
     <div className="flex w-full">
       <section className="lg:p-6 p-4  w-full">
         <div className="flex relative h-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] w-full">
-          {anime.spotlightAnimes.map((res, i) => (
+          {anime.data.spotlightAnimes.map((res, i) => (
             <Link
               href={`/anime/${res.id}`}
               key={res.id}
@@ -55,7 +55,7 @@ export default function TmdbSlider({ anime }: { anime: aniwatchApi }) {
                 className="absolute bottom-8 right-0 px-6 z-10 opacity-80 text-right w-[80%] space-y-1"
               >
                 <h1 className="text-lg md:text-2xl font-bold">{res.name}</h1>
-                <p className="text-sm md:block hidden line-clamp-2">
+                <p className="text-sm line-clamp-2 lg:line-clamp-4">
                   {res.description}
                 </p>
               </div>
@@ -67,7 +67,7 @@ export default function TmdbSlider({ anime }: { anime: aniwatchApi }) {
         ref={ref}
         className=" flex overflow-x-scroll scrollbar-hide gap-4 m-4 lg:m-6 ml-0 lg:ml-0 flex-col h-[250px] w-[250px] sm:h-[350px] md:h-[400px] lg:h-[500px] overflow-scroll  "
       >
-        {anime.spotlightAnimes.map((res, i) => (
+        {anime.data.spotlightAnimes.map((res, i) => (
           <div
             style={{
               border: imageindex === i ? "2px solid rgb(185 28 28 / 0.8)" : "",

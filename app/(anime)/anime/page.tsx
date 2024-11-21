@@ -26,14 +26,14 @@ export default async function Anime() {
 }
 
 async function aniwatchHomeApi() {
-  const response = await fetch(`${process.env.ANIWATCH_API}/anime/home`, {
+  const response = await fetch(`${process.env.ANIWATCH_API}/api/v2/hianime/home`, {
     cache:"no-store" ,
   });
   if (!response.ok) {
     throw new Error(`Fetch failed at Anime Slider`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as aniwatchApi
 
   return data;
 }
@@ -61,7 +61,7 @@ const AniwatchCategories = ({ anime }: { anime: aniwatchApi }) => {
       <div>
         <h2 className="text-2xl py-2 font-semibold mt-4">Genres</h2>
         <div className="flex flex-wrap gap-2">
-          {anime.genres.map((genre, index) => (
+          {anime.data.genres.map((genre, index) => (
             <Link
               key={genre + index}
               className=" px-2 py-1 bg-white/10 rounded-md hover:bg-red-700"
@@ -104,7 +104,7 @@ const AnimeCategoryList = async ({
       </h1>
 
       <div className="px-4 flex  gap-3 overflow-x-scroll scrollbar-hide">
-        {data.animes.map((episode) => (
+        {data.data.animes.map((episode) => (
           <Link
             key={episode.id}
             href={`/anime/${episode.id}`}
@@ -142,7 +142,7 @@ async function fetchAniwatchCategories(
   page?: number | string
 ) {
   const response = await fetch(
-    `${process.env.ANIWATCH_API}/anime/${category}?page=${page || 1}`,
+    `${process.env.ANIWATCH_API}/api/v2/hianime/category/${category}?page=${page || 1}`,
     { cache:"no-store"  }
   );
   if (!response.ok) {

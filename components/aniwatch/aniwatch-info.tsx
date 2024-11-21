@@ -13,27 +13,27 @@ export function AniwatchInfo({
       <div>
         <img
           className="-z-10 fixed top-0 size-full object-cover blur-2xl "
-          src={data.anime.info.poster}
-          alt={data.anime.info.name}
+          src={data.data.anime.info.poster}
+          alt={data.data.anime.info.name}
         />
         <div className=" lg:flex ">
          
 
           <div className=" lg:mt-0 mt-6 lg:px-4">
             <h1 className=" my-2 text-4xl font-semibold">
-              {data.anime.info.name}
+              {data.data.anime.info.name}
             </h1>
             <h2 className=" italic text-xl opacity-70 my-2 flex gap-2">
-              {data.anime.moreInfo.japanese}
+              {data.data.anime.moreInfo.japanese}
             </h2>
             <p className=" leading-6 text-[18px]">
-              {data.anime.info.description}
+              {data.data.anime.info.description}
             </p>
             <div className=" my-4 flex flex-col gap-2 opacity-70">
-              {data.anime.moreInfo.genres && (
+              {data.data.anime.moreInfo.genres && (
                 <div className="flex items-center gap-2 flex-wrap">
                   Genres :
-                  {data.anime.moreInfo.genres?.map((e) => (
+                  {data.data.anime.moreInfo.genres?.map((e) => (
                     <Link
                       target="_blank"
                       href={`/genre/${e.toLowerCase()}`}
@@ -45,10 +45,10 @@ export function AniwatchInfo({
                   ))}
                 </div>
               )}
-              {data.anime.moreInfo.studios && (
+              {data.data.anime.moreInfo.studios && (
                 <p className=" flex gap-2 flex-wrap">
                   Studio :
-                  {data.anime.moreInfo.studios
+                  {data.data.anime.moreInfo.studios
                     .split(",")
                     .map((studio: string) => (
                       <Link
@@ -62,10 +62,10 @@ export function AniwatchInfo({
                     ))}
                 </p>
               )}
-              {data.anime.moreInfo.producers && (
+              {data.data.anime.moreInfo.producers && (
                 <p className=" flex gap-2 flex-wrap">
                   Producers :
-                  {data.anime.moreInfo.producers.map((studio: string) => (
+                  {data.data.anime.moreInfo.producers.map((studio: string) => (
                     <Link
                       key={studio}
                       target="_blank"
@@ -78,24 +78,24 @@ export function AniwatchInfo({
                 </p>
               )}
               <p className=" flex gap-2">
-                Release Date : {data.anime.moreInfo.aired}
+                Release Date : {data.data.anime.moreInfo.aired}
               </p>
               <p className=" flex gap-2">
-                Premiered : {data.anime.moreInfo.premiered}
+                Premiered : {data.data.anime.moreInfo.premiered}
               </p>
               <p className=" flex gap-2">
-                Duration : {data.anime.moreInfo.duration}
+                Duration : {data.data.anime.moreInfo.duration}
               </p>
               <p className=" flex gap-2">
-                Status : {data.anime.moreInfo.status}
+                Status : {data.data.anime.moreInfo.status}
               </p>
 
               <div className="flex gap-2">
                 <p className=" flex gap-2">
-                  Sub : {data.anime.info.stats.episodes.sub}
+                  Sub : {data.data.anime.info.stats.episodes.sub}
                 </p>
                 <p className=" flex gap-2">
-                  Dub : {data.anime.info.stats.episodes.dub || "Not Available"}
+                  Dub : {data.data.anime.info.stats.episodes.dub || "Not Available"}
                 </p>
               </div>
             </div>
@@ -108,7 +108,7 @@ export function AniwatchInfo({
           <h1 className="text-3xl font-semibold my-4">More Like This</h1>
 
           <div className="grid grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 xl:grid-cols-6 w-full gap-3  ">
-            {data.recommendedAnimes.map((episode, i) => (
+            {data.data.recommendedAnimes.map((episode, i) => (
               <Link
                 key={episode.id + i}
                 href={`/anime/${episode.id}`}
@@ -144,7 +144,7 @@ export function AniwatchInfo({
           <h1 className="text-3xl font-semibold my-4">Most Popular</h1>
 
           <div className="grid grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 xl:grid-cols-6 w-full gap-3  ">
-            {data.mostPopularAnimes.map((episode, i) => (
+            {data.data.mostPopularAnimes.map((episode, i) => (
               <Link
                 key={episode.id + i}
                 href={`/anime/${episode.id}`}
@@ -179,11 +179,11 @@ export function AniwatchInfo({
           </div>
         </div>
         <div className="lg:w-1/3 p-4">
-          {data.seasons.length>0 && (
+          {data.data.seasons.length>0 && (
             <>
               <h1 className="text-3xl font-semibold my-4">Seasons</h1>
               <div className="flex flex-col gap-3 bg-black/30 p-2 rounded-sm">
-                {data.seasons.map((episode) => (
+                {data.data.seasons.map((episode) => (
                   <Link
                     href={`/anime/${episode.id}`}
                     key={episode.id}
@@ -209,7 +209,7 @@ export function AniwatchInfo({
           <h1 className="text-3xl font-semibold my-4">Related Animes</h1>
 
           <div className="flex flex-col gap-3 bg-black/30 p-2 rounded-sm">
-            {data.relatedAnimes.map((episode) => (
+            {data.data.relatedAnimes.map((episode) => (
               <Link
                 href={`/anime/${episode.id}`}
                 key={episode.id}

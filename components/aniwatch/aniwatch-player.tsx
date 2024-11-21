@@ -18,33 +18,33 @@ export default async function AniwatchPlayer({
     const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
       episodeId,
       ep,
-      server.dub[0].serverName
+      server.data.dub[0].serverName
     );
 
     return (
-      <Player src={`/api/proxy/${dub?.sources[0]?.url}`} track={dub.tracks} />
+      <Player src={`/api/proxy/${dub?.data.sources[0]?.url}`} track={dub.data.tracks} />
     );
   } else {
     const server = await fetchAniwatchEpisodeServer(episodeId, ep);
-    if(server.sub.length === 0){
+    if(server.data.sub.length === 0){
       redirect(`/anime/${episodeId}?ep=${ep}&lang=english&num=1`)
     }
 
     const sub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrc(
       episodeId,
       ep,
-      server.sub[0].serverName
+      server.data.sub[0].serverName
     );
 
     return (
-      <Player src={`/api/proxy/${sub?.sources[0]?.url}`} track={sub.tracks} />
+      <Player src={`${sub?.data.sources[0]?.url}`} track={sub.data.tracks} />
     );
   }
 }
 
 async function fetchAniwatchEpisodeSrc(id: string, ep: string, server: string) {
   const response = await fetch(
-    `${process.env.ANIWATCH_API}/anime/episode-srcs?id=${id}?ep=${ep}&server=${
+    `${process.env.ANIWATCH_API}/api/v2/hianime/episode/sources?animeEpisodeId=${id}?ep=${ep}&server=${
       server ? server : "vidstreaming"
     }`,
     { cache: "force-cache" }
@@ -63,7 +63,7 @@ async function fetchAniwatchEpisodeSrcDub(
     const response = await fetch(
       `${
         process.env.ANIWATCH_API
-      }/anime/episode-srcs?id=${id}?ep=${ep}&server=${
+      }/api/v2/hianime/episode/sources?animeEpisodeId=${id}?ep=${ep}&server=${
         server ? server : "vidstreaming"
       }&category=dub`,
       { cache: "no-store" }
@@ -79,7 +79,7 @@ async function fetchAniwatchEpisodeSrcDub(
 async function fetchAniwatchEpisodeServer(id: string, ep: string) {
   try {
     const response = await fetch(
-      `${process.env.ANIWATCH_API}/anime/servers?episodeId=${id}?ep=${ep}`,
+      `${process.env.ANIWATCH_API}/api/v2/hianime/episode/servers?animeEpisodeId=${id}?ep=${ep}`,
       { cache: "no-store" }
     );
     const data = await response.json();
