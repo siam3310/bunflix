@@ -26,8 +26,8 @@ export default function AniwatchSearch({
     },
     getNextPageParam: (lastPage) => {
       return {
-        hasNextPage: lastPage?.hasNextPage || false,
-        pageToFetch: lastPage?.currentPage ? lastPage.currentPage + 1 : 1,
+        hasNextPage: lastPage?.data.hasNextPage || false,
+        pageToFetch: lastPage?.data.currentPage ? lastPage.data.currentPage + 1 : 1,
       };
     },
   });
@@ -59,7 +59,7 @@ export default function AniwatchSearch({
         {data?.pages.map((page, i) => {
           return (
             <>
-              {page?.animes
+              {page?.data.animes
                 .filter((ep) => (!type ? ep : ep.type == type))
                 .map((episode, i) => (
                   <Link

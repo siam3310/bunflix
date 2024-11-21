@@ -53,7 +53,7 @@ export default function AnimeSearchSidebar({
         )}
         <h1 className="text-3xl font-semibold my-2">Most Popular</h1>
         <div className="max-h-[50vh] flex gap-2 flex-col overflow-y-scroll ">
-          {animeData?.mostPopularAnimes?.map((episode, i) => (
+          {animeData?.data.mostPopularAnimes?.map((episode, i) => (
             <div
               key={episode.id}
               className="hover:bg-white/30 p-2 leading-tight mr-2 rounded"

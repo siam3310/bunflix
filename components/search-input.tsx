@@ -149,7 +149,7 @@ export default function SearchInput() {
 
           {term.length > 0 &&
             type === "anime" &&
-            anime?.animes?.map((res) => (
+            anime?.data.animes?.map((res) => (
               <AnimeInSearchArray anime={res} term={term} key={res.id} />
             ))}
         </div>
