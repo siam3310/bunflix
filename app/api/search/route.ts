@@ -15,25 +15,35 @@ export async function GET(request: NextRequest) {
         `https://api.themoviedb.org/3/search/multi?query=${q}&page=${
           page || 1
         }&api_key=${key}`,
-      {  cache:"no-store"  }
-
+        { cache: "no-store" }
       );
 
       const data = await response.json();
-      return Response.json(data);
+      return Response.json(data, {
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      });
     } catch {
       return Response.json({ Error: "error searching" });
     }
   } else {
     try {
       const response = await fetch(
-        `${process.env.ANIWATCH_API}/api/v2/hianime/search?q=${q}&page=${page || 1}`,{
-          cache:"no-store"
+        `${process.env.ANIWATCH_API}/api/v2/hianime/search?q=${q}&page=${
+          page || 1
+        }`,
+        {
+          cache: "no-store",
         }
       );
       const data = await response.json();
 
-      return Response.json(data);
+      return Response.json(data, {
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      });
     } catch (error) {
       return Response.json({ Error: "error searching" });
     }

@@ -2,12 +2,7 @@
 import { CaptionsIcon, MicIcon } from "lucide-react";
 import Link from "next/link";
 
-export function AniwatchInfo({
-  data,
-}: {
-  data: aniwatchInfo;
-}) {
-
+export function AniwatchInfo({ data }: { data: aniwatchInfo }) {
   return (
     <div className="p-4">
       <div>
@@ -17,8 +12,6 @@ export function AniwatchInfo({
           alt={data.data.anime.info.name}
         />
         <div className=" lg:flex ">
-         
-
           <div className=" lg:mt-0 mt-6 lg:px-4">
             <h1 className=" my-2 text-4xl font-semibold">
               {data.data.anime.info.name}
@@ -95,7 +88,8 @@ export function AniwatchInfo({
                   Sub : {data.data.anime.info.stats.episodes.sub}
                 </p>
                 <p className=" flex gap-2">
-                  Dub : {data.data.anime.info.stats.episodes.dub || "Not Available"}
+                  Dub :{" "}
+                  {data.data.anime.info.stats.episodes.dub || "Not Available"}
                 </p>
               </div>
             </div>
@@ -179,7 +173,7 @@ export function AniwatchInfo({
           </div>
         </div>
         <div className="lg:w-1/3 p-4">
-          {data.data.seasons.length>0 && (
+          {data.data.seasons.length > 0 && (
             <>
               <h1 className="text-3xl font-semibold my-4">Seasons</h1>
               <div className="flex flex-col gap-3 bg-black/30 p-2 rounded-sm">
@@ -239,29 +233,6 @@ export function AniwatchInfo({
           </div>
         </div>
       </div>
-
-      {/* <div>
-        <h1 className="font-semibold my-4 text-4xl">Seasons</h1>
-        <div className=" mt-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 2xl:grid-cols-8 gap-4">
-          {data.seasons.map((e) => (
-            <Link
-              target="_blank"
-              href={`/anime/${e.id}`}
-              key={e.id}
-              className=" p-2 rounded-lg bg-black/50 flex flex-col "
-            >
-              <img
-                className="h-[200px] w-full rounded object-cover "
-                src={e.poster}
-                alt={e.title}
-              />
-              <p className=" opacity-65 my-1 text-sm">{e.title}</p>
-              <p className=" opacity-65 leading-tight font-bold ">{e.name}</p>
-            </Link>
-          ))}
-        </div>
-        {data.seasons.length == 0 && <p>Related Content Found !</p>}
-      </div> */}
     </div>
   );
 }

@@ -51,14 +51,13 @@ export default async function Anime({
   const {id} = await params
   const {num,ep,lang} = await searchParams
 
-  const data: aniwatchInfo = await fetchAniwatchId(id);
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
-
-  // const escapedEpisode = searchParams?.episode?.replace("?", "&");
-
+  
   if (!ep) {
     redirect(`/anime/${episode.data.episodes[0].episodeId}&lang=japanesse&num=1`);
   }
+  
+  const data: aniwatchInfo = await fetchAniwatchId(id);
 
   return (
     <div className="bg-black/60 min-h-screen space-y-6 pb-24">

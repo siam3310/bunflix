@@ -12,8 +12,8 @@ export default async function AniwatchPlayer({
   lang: "english" | "japanesse";
 }) {
   if (!ep) return;
+  const server = await fetchAniwatchEpisodeServer(episodeId, ep);
   if (lang === "english") {
-    const server = await fetchAniwatchEpisodeServer(episodeId, ep);
 
     const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
       episodeId,
@@ -25,7 +25,6 @@ export default async function AniwatchPlayer({
       <Player src={`/api/proxy/${dub?.data.sources[0]?.url}`} track={dub.data.tracks} />
     );
   } else {
-    const server = await fetchAniwatchEpisodeServer(episodeId, ep);
     if(server.data.sub.length === 0){
       redirect(`/anime/${episodeId}?ep=${ep}&lang=english&num=1`)
     }
