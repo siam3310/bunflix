@@ -9,7 +9,8 @@ export async function GET(req: NextRequest) {
     .map((part) => (part === "https:" ? part + "//" : part + "/"))
     .join("");
 
-  const masterManifest = completeUrl.split("/")[completeUrl.split("/").length - 2];
+  const masterManifest =
+    completeUrl.split("/")[completeUrl.split("/").length - 2];
 
   if (masterManifest === "master.m3u8") {
     const res = await fetch(completeUrl, {
@@ -17,12 +18,17 @@ export async function GET(req: NextRequest) {
     });
 
     if (!res.ok) {
-      redirect(completeUrl); 
+      redirect(completeUrl);
     }
 
     const data = await res.arrayBuffer();
 
-    return new Response(data, { status: 200 });
+    return new Response(data, {
+      status: 200,
+      headers: {
+        "Cache-Control": "no-store",
+      },
+    });
   } else {
     redirect(completeUrl);
   }

@@ -12,14 +12,19 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: "category param is required" });
   }
   const response = await fetch(
-    `${process.env.ANIWATCH_API}/api/v2/hianime/category/${category}?page=${page || 1}`,
-    {  cache:"no-store"  }
-
+    `${process.env.ANIWATCH_API}/api/v2/hianime/category/${category}?page=${
+      page || 1
+    }`,
+    { cache: "no-store" }
   );
   if (!response.ok) {
     return Response.json({ error: "failed to fetch category info" });
   }
   const data = (await response.json()) as aniwatchCategories;
 
-  return Response.json(data);
+  return Response.json(data, {
+    headers: {
+      "Cache-Control": "no-store",
+    },
+  });
 }
