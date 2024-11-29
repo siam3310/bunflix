@@ -1,5 +1,5 @@
 "use client";
-import { createImageUrl } from "@/utils/create-image-url";
+import { createImageUrl } from "@/lib/utils";
 import { Ref, useEffect, useRef, useState } from "react";
 
 import Link from "next/link";

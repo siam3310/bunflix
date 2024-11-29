@@ -1,4 +1,4 @@
-import { createImageUrl } from "@/utils/create-image-url";
+import { createImageUrl } from "@/lib/utils";
 import { Play, SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
 

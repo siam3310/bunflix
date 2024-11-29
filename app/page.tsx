@@ -1,7 +1,6 @@
 "use server";
 import TmdbSlider from "@/components/tmdb/tmdb-slider";
 import TmdbShowRow from "@/components/tmdb/tmdb-shows-row";
-import endpoint from "@/data/apiEndpoint";
 import { Suspense } from "react";
 import TmdbHomeSkeleton from "@/components/fallback-ui/tmdb-home-row";
 
@@ -11,6 +10,18 @@ export async function generateMetadata() {
 
 export default async function Home() {
   const data: TmdbMovie = await fetchHeroData();
+
+  const key = process.env.TMDB_KEY;
+  const baseUrl = "https://api.themoviedb.org/3";
+
+  const endpoint = {
+    popularMovies: `${baseUrl}/movie/popular?api_key=${key}`,
+    trendingMovies: `${baseUrl}/trending/movie/week?api_key=${key}&region=IN&with_original_language=hi`,
+    upcomingMovies: `${baseUrl}/movie/upcoming?api_key=${key}`,
+    topRatedMovies: `${baseUrl}/movie/top_rated?api_key=${key}`,
+    nowPlayingMovies: `${baseUrl}/movie/now_playing?api_key=${key}`,
+    topRatedTvShows: `${baseUrl}/tv/top_rated?api_key=${key}&region=US`,
+  };
 
   return (
     <div className=" pb-24 bg-black/80">
@@ -46,7 +57,7 @@ async function fetchHeroData() {
 
   const response = await fetch(
     `https://api.themoviedb.org/3/movie/popular?api_key=${key}`,
-    { cache:"no-store"  }
+    { cache: "no-store" }
   );
   if (!response.ok) {
     throw new Error("Failed to fetch Slider data");

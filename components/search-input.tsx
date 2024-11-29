@@ -3,9 +3,8 @@ import { Search, CircleX, X, FileWarningIcon, HistoryIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import useDebounce from "@/hooks/useDebounce";
 import { useSearchBarFocus } from "@/context/searchContext";
-import { createImageUrl } from "@/utils/create-image-url";
+import { createImageUrl } from "@/lib/utils";
 import { useLiveQuery } from "dexie-react-hooks";
 import { searchHistory } from "@/lib/search-history";
 import { toast } from "sonner";
@@ -370,3 +369,18 @@ const highlightSearchText = (text: string, highlight: string) => {
     </span>
   );
 };
+
+
+function useDebounce<T>(value: T, delay = 700) {
+  const [debounceValue, setDebounceValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebounceValue(value);
+    }, delay);
+
+    return () => clearTimeout(timeout);
+  }, [value, delay]);
+
+  return debounceValue
+}

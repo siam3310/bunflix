@@ -1,5 +1,5 @@
 import { TmdbVideo } from "@/components/tmdb/tmdb-video";
-import { createImageUrl } from "@/utils/create-image-url";
+import { createImageUrl } from "@/lib/utils";
 
 type SearchParams = Promise<{
   season: number | string;
