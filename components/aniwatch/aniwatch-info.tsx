@@ -48,7 +48,7 @@ export function AniwatchInfo({ data }: { data: aniwatchInfo }) {
                         key={studio}
                         target="_blank"
                         className="flex gap-2 underline py-1 px-2 text-sm rounded-md items-center bg-black/30"
-                        href={`/anime-studio/${studio.toLowerCase()}`}
+                        href={`/anime-producers?type=${studio.toLowerCase()}`}
                       >
                         {studio}
                       </Link>

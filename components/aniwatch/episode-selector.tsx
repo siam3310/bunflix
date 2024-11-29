@@ -14,10 +14,10 @@ export default function EpisodeSelector({
   currentEpisodeNum: string;
   data: aniwatchInfo;
   episode: aniwatchEpisodeData;
-  lang: "english" | "japanesse";
+  lang: "english" | "japanese";
 }) {
-  const [audioToogle, setAudioToogle] = useState<"english" | "japanesse">(
-    lang ? lang : "japanesse"
+  const [audioToogle, setAudioToogle] = useState<"english" | "japanese">(
+    lang ? lang : "japanese"
   );
   const [firstRender, setFirstRender] = useState(true);
   useEffect(() => setFirstRender(false), []);
@@ -29,11 +29,11 @@ export default function EpisodeSelector({
         <Switch
           defaultChecked={lang === "english" ? false : true}
           onCheckedChange={() =>
-            setAudioToogle(audioToogle === "english" ? "japanesse" : "english")
+            setAudioToogle(audioToogle === "english" ? "japanese" : "english")
           }
           id="audio"
         />
-        <Label htmlFor="audio">Japanesse</Label>
+        <Label htmlFor="audio">japanese</Label>
       </div>
       <div className="flex items-center mb-6 text-sm">
         <ul
@@ -88,7 +88,7 @@ export default function EpisodeSelector({
                       : `EN`}
                   </span>
                 )}
-                {audioToogle === "japanesse" && (
+                {audioToogle === "japanese" && (
                   <span className="p-2 bg-white/20  hidden sm:flex gap-2 items-center w-fit rounded text-nowrap ml-2">
                     <CaptionsIcon size={15} />
                     {data.data.anime.info.stats.episodes.sub < episode.number

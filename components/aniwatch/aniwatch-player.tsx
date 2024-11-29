@@ -9,7 +9,7 @@ export default async function AniwatchPlayer({
 }: {
   episodeId: string;
   ep: string;
-  lang: "english" | "japanesse";
+  lang: "english" | "japanese";
 }) {
   if (!ep) return;
   const server = await fetchAniwatchEpisodeServer(episodeId, ep);

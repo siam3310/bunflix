@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 type Params = Promise<{ id: string }>
-type SearchParams = Promise<{ ep: string; num: string; lang: "english" | "japanesse" }>
+type SearchParams = Promise<{ ep: string; num: string; lang: "english" | "japanese" }>
 
 export async function generateMetadata({
   params,
@@ -54,7 +54,7 @@ export default async function Anime({
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
   
   if (!ep) {
-    redirect(`/anime/${episode.data.episodes[0].episodeId}&lang=japanesse&num=1`);
+    redirect(`/anime/${episode.data.episodes[0].episodeId}&lang=japanese&num=1`);
   }
   
   const data: aniwatchInfo = await fetchAniwatchId(id);
