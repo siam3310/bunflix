@@ -38,17 +38,13 @@ export default async function Query({
   const searchTerm = query[1];
 
   if (type === "anime") {
-    const data: aniwatchSearch = await fetchAniwatchSearch(
-      searchTerm,
-      awaitedSearchParams?.page
-    );
 
     return (
       <div className=" bg-black/80 min-h-screen">
         <Suspense fallback={<SearchSkeleton />}>
           <div className="pb-24 p-4 md:flex-row flex-col flex gap-4">
-            <AnimeSearchSidebar animeData={data} search={searchTerm} />
-            <AniwatchSearch animeData={data} searchTerm={searchTerm} />
+            <AnimeSearchSidebar search={searchTerm} />
+            <AniwatchSearch searchTerm={searchTerm} />
           </div>
         </Suspense>
       </div>
@@ -80,18 +76,3 @@ type AnimeSort =
   | "released-date"
   | "recently-updated";
 
-async function fetchAniwatchSearch(searchTerm: string, page?: number | string) {
-  try {
-    const response = await fetch(
-      `${process.env.ANIWATCH_API}/api/v2/hianime/search?q=${searchTerm}&page=${
-        page ? page : 1
-      }`,
-      { cache: "no-store" }
-    );
-    const data = await response.json();
-
-    return data;
-  } catch (error) {
-    throw new Error(`Search failed in Search`);
-  }
-}

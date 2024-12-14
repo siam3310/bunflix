@@ -12,17 +12,16 @@ export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params:Params
-  searchParams:SearchParams
+  params: Params
+  searchParams: SearchParams
 }): Promise<Metadata> {
-  const {id} = await params
-  const {num,ep,lang} = await searchParams
+  const { id } = await params
+  const { num, ep, lang } = await searchParams
 
   const data: aniwatchInfo = await fetchAniwatchId(id);
 
-  const title = `${num ? `${num}` : "1"}  - ${
-    data.data.anime?.info.name
-  }`;
+  const title = `${num ? `${num}` : "1"}  - ${data.data.anime?.info.name
+    }`;
   return {
     title,
     description: data.data.anime?.info.description,
@@ -45,18 +44,18 @@ export default async function Anime({
   params,
   searchParams,
 }: {
-  params:Params
-  searchParams:SearchParams
+  params: Params
+  searchParams: SearchParams
 }) {
-  const {id} = await params
-  const {num,ep,lang} = await searchParams
+  const { id } = await params
+  const { num, ep, lang } = await searchParams
 
   const episode: aniwatchEpisodeData = await fetchAniwatchEpisode(id);
-  
+
   if (!ep) {
     redirect(`/anime/${episode.data.episodes[0].episodeId}&lang=japanese&num=1`);
   }
-  
+
   const data: aniwatchInfo = await fetchAniwatchId(id);
 
   return (
@@ -86,7 +85,7 @@ async function fetchAniwatchEpisode(seasonId: string) {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/api/v2/hianime/anime/${seasonId}/episodes`,
-      { cache:"no-store" }
+      { cache: "no-store" }
     );
     const data = await response.json();
 
@@ -100,7 +99,7 @@ async function fetchAniwatchId(id: string): Promise<aniwatchInfo> {
   try {
     const response = await fetch(
       `${process.env.ANIWATCH_API}/api/v2/hianime/anime/${id}`,
-      { cache:"no-store" }
+      { cache: "no-store" }
     );
 
     const data: aniwatchInfo = await response.json();

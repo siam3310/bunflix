@@ -8,10 +8,8 @@ import { useInView } from "react-intersection-observer";
 
 export default function AniwatchSearch({
   searchTerm,
-  animeData,
 }: {
   searchTerm: string;
-  animeData: aniwatchSearch;
 }) {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
@@ -46,7 +44,7 @@ export default function AniwatchSearch({
   };
 
   const { ref, inView } = useInView({
-    threshold: 0,
+    threshold: 1,
   });
 
   useEffect(() => {
@@ -58,7 +56,7 @@ export default function AniwatchSearch({
       <div className="grid grid-cols-2 sm:grid-cols-3  lg:grid-cols-4 xl:grid-cols-6 w-full gap-3  ">
         {data?.pages.map((page, i) => {
           return (
-            <>
+            <div className="contents  " key={i}>
               {page?.data.animes
                 .filter((ep) => (!type ? ep : ep.type == type))
                 .map((episode, i) => (
@@ -93,7 +91,7 @@ export default function AniwatchSearch({
                     </div>
                   </Link>
                 ))}
-            </>
+            </div>
           );
         })}
       </div>

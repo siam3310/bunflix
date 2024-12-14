@@ -15,6 +15,10 @@ export default async function AniwatchPlayer({
   const server = await fetchAniwatchEpisodeServer(episodeId, ep);
   if (lang === "english") {
 
+    if (server.data.dub.length === 0) {
+      redirect(`/error?err=${encodeURIComponent("No Dub Available")}`)
+    }
+
     const dub: aniwatchEpisodeSrc = await fetchAniwatchEpisodeSrcDub(
       episodeId,
       ep,
@@ -22,10 +26,11 @@ export default async function AniwatchPlayer({
     );
 
     return (
-      <Player src={`/api/proxy/${dub?.data.sources[0]?.url}`} track={dub.data.tracks} />
+      <Player src={dub?.data.sources[0]?.url} track={dub.data.tracks} />
     );
   } else {
-    if(server.data.sub.length === 0){
+
+    if (server.data.sub.length === 0) {
       redirect(`/anime/${episodeId}?ep=${ep}&lang=english&num=1`)
     }
 
@@ -35,16 +40,19 @@ export default async function AniwatchPlayer({
       server.data.sub[0].serverName
     );
 
+    if (sub.data.sources.length === 0) {
+      redirect(`/error?err=${encodeURIComponent("No Sub Available")}`)
+    }
+
     return (
-      <Player src={`${sub?.data.sources[0]?.url}`} track={sub.data.tracks} />
+      <Player src={sub?.data.sources[0]?.url} track={sub.data.tracks} />
     );
   }
 }
 
 async function fetchAniwatchEpisodeSrc(id: string, ep: string, server: string) {
   const response = await fetch(
-    `${process.env.ANIWATCH_API}/api/v2/hianime/episode/sources?animeEpisodeId=${id}?ep=${ep}&server=${
-      server ? server : "vidstreaming"
+    `${process.env.ANIWATCH_API}/api/v2/hianime/episode/sources?animeEpisodeId=${id}?ep=${ep}&server=${server ? server : "vidstreaming"
     }`,
     { cache: "force-cache" }
   );
@@ -60,10 +68,8 @@ async function fetchAniwatchEpisodeSrcDub(
 ) {
   try {
     const response = await fetch(
-      `${
-        process.env.ANIWATCH_API
-      }/api/v2/hianime/episode/sources?animeEpisodeId=${id}?ep=${ep}&server=${
-        server ? server : "vidstreaming"
+      `${process.env.ANIWATCH_API
+      }/api/v2/hianime/episode/sources?animeEpisodeId=${id}?ep=${ep}&server=${server ? server : "vidstreaming"
       }&category=dub`,
       { cache: "no-store" }
     );

@@ -6,10 +6,8 @@ import { useState } from "react";
 
 export default function AnimeSearchSidebar({
   search,
-  animeData,
 }: {
   search: string;
-  animeData: aniwatchSearch;
 }) {
   const types = ["ONA", "Special", "Movie", "TV", "OVA"];
 
@@ -51,22 +49,7 @@ export default function AnimeSearchSidebar({
             </button>
           </Link>
         )}
-        <h1 className="text-3xl font-semibold my-2">Most Popular</h1>
-        <div className="max-h-[50vh] flex gap-2 flex-col overflow-y-scroll ">
-          {animeData?.data.mostPopularAnimes?.map((episode, i) => (
-            <div
-              key={episode.id}
-              className="hover:bg-white/30 p-2 leading-tight mr-2 rounded"
-            >
-              <h1 className="font-semibold">{episode.name}</h1>
-              <div className="flex gap-2 opacity-70">
-                <p>{episode.episodes.dub}</p>
-                <p>{episode.episodes.sub}</p>
-                <p>{episode.type}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+     
       </div>
     </>
   );
